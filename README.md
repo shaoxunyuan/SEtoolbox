@@ -11,7 +11,7 @@ devtools::install_github("shaoxunyuan/SEtoolbox")
 ```
 
 To run the sample code in our [vignette](
-https://bioconductor.org/packages/devel/bioc/vignettes/G4SNVHunter/inst/doc/G4SNVHunter.html
+https://shaoxunyuan.github.io/SEtoolbox/
 ), set the `dependencies` parameter to `TRUE`,
 ```r
 # install.packages("devtools")

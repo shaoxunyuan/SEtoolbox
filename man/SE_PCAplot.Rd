@@ -2,30 +2,37 @@
 % Please edit documentation in R/SE_PCAplot.R
 \name{SE_PCAplot}
 \alias{SE_PCAplot}
-\title{生成PCA图}
+\title{Generate PCA plots  
+ 
+This function takes a SummarizedExperiment object, computes PCA, and visualizes the results.}
 \usage{
 SE_PCAplot(
   SE,
   assayname = "TPM",
   groupname = "group",
   outlier_threshold = 2,
-  scale = TRUE
+  scale = TRUE,
+  feature_of_interesting = NULL
 )
 }
 \arguments{
-\item{SE}{SummarizedExperiment对象，包含基因表达数据。}
+\item{SE}{SummarizedExperiment object containing gene expression data.}
 
-\item{assayname}{指定的表达数据名称，默认为"TPM"。}
+\item{assayname}{Name of the expression data, default is "TPM".}
 
-\item{groupname}{分组列名称，默认为"group"。}
+\item{groupname}{Name of the grouping column, default is "group".}
 
-\item{outlier_threshold}{离群值过滤阈值，默认为2。}
+\item{outlier_threshold}{Outlier filtering threshold, default is 2.}
 
-\item{scale}{是否对数据进行标准化，默认为TRUE。}
+\item{scale}{Whether to standardize the data, default is TRUE.}
+
+\item{feature_of_interesting}{Vector of specific feature names; if NULL, all features are used, default is NULL.}
 }
 \value{
-包含两个ggplot对象的列表，原始PCA图和过滤后的PCA图。
+A list containing two ggplot objects: the original PCA plot and the filtered PCA plot.
 }
 \description{
-该函数接受一个SummarizedExperiment对象，计算PCA并对结果进行可视化。
+Generate PCA plots  
+ 
+This function takes a SummarizedExperiment object, computes PCA, and visualizes the results.
 }
