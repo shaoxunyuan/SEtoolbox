@@ -3,13 +3,14 @@
 #' This function loads the example SummarizedExperiment object from the package.  
 #' The example file should be located in the `extdata` directory of the package.  
 #'  
+#' @name loadSE  
 #' @return A SummarizedExperiment object containing example data.  
 #' @export  
 #'   
 #' @examples  
 #' library(SEtoolbox)  
 #' example_SE <- loadSE()  
-#' # Now you can analyze the example_SE object 
+#' # Now you can analyze the example_SE object  
 library(SummarizedExperiment)
 loadSE <- function() {  
   # 设文件路径  
