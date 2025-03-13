@@ -3,7 +3,6 @@
 SEtoolbox is an R package for SummarizedExperiment analysis and visualization.
 
 # Installation
-### Option 1: Install from GitHub
 
 You can install the package directly from GitHub,
 ```r
@@ -24,3 +23,17 @@ You can check all available functions
 ls("package:SEtoolbox") 
 getNamespaceExports("SEtoolbox")
 ```
+
+# Usage Example  
+
+To load the example SummarizedExperiment object, use the following command:  
+
+```r  
+library(your_package_name)  
+
+# Load the example SummarizedExperiment object  
+example_SE <- loadSE()  
+
+# Now you can use example_SE with your analysis functions  
+results <- my_analysis_function(example_SE)  
+print(results)
