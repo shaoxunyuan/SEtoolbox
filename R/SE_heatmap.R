@@ -1,8 +1,29 @@
-#' 计算表达数据的检测比例
-#'
-#' @param SE SummarizedExperiment对象，包含表达数据和样本信息。
-#' @param assayname 表达矩阵的assay名称，默认为"TPM"
-#' @return 返回包含检测比例信息的SummarizedExperiment对象
+#' Calculate the Detection Proportion of Expression Data  
+#'  
+#' This function computes the detection proportion of expression data   
+#' contained within a SummarizedExperiment object.  
+#'  
+#' @name SE_heatmap  
+#' @param SE A SummarizedExperiment object containing the expression data   
+#'   and sample information.  
+#' @param assayname A character string specifying the assay name of the   
+#'   expression matrix. Default is "TPM".  
+#' @param group_col An optional character string specifying the column name   
+#'   in the sample metadata to group the samples. If NULL, no grouping will   
+#'   be applied.  
+#' @param normalization A character string specifying the normalization method   
+#'   to be used. Default is "none". Options may include "log" or "scale".  
+#' @param genes_of_interest An optional vector of gene names to focus on   
+#'   in the analysis. If NULL, all genes will be included.  
+#' @param use_raster A logical value indicating whether to use rasterization   
+#'   for heatmap plotting. Default is TRUE.  
+#' @return A SummarizedExperiment object containing updated information on  
+#'   the detection proportions.  
+#'  
+#' @import SummarizedExperiment  
+#' @import ggplot2  
+#' @importFrom grid rasterGrob  
+#' @export  
 SE_heatmap <- function(SE, assayname = "TPM", group_col = NULL, normalization = "none", genes_of_interest = NULL, use_raster = TRUE) {
 	#SE_heatmap(SE, assayname = "TPM", group_col = NULL, normalization = "scale", genes_of_interest = c("AAGAB","AARS"), use_raster = TRUE)  
     library(SummarizedExperiment)  
