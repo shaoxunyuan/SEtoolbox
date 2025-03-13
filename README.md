@@ -1,6 +1,6 @@
 # SEtoolbox <img src="./vignettes/images/logo.png" align = "right" width = "150" />
 
-SEtoolbox is an R package for SE analysis and visualization.
+SEtoolbox is an R package for SummarizedExperiment analysis and visualization.
 
 # Installation
 ### Option 1: Install from GitHub
