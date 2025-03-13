@@ -6,6 +6,9 @@
  
 This function loads the example SummarizedExperiment object from the package.  
 The example file should be located in the `extdata` directory of the package.}
+\usage{
+loadSE()
+}
 \value{
 A SummarizedExperiment object containing example data.
 }

@@ -11,8 +11,8 @@
 #' library(SEtoolbox)  
 #' example_SE <- loadSE()  
 #' # Now you can analyze the example_SE object  
-library(SummarizedExperiment)
 loadSE <- function() {  
+  library(SummarizedExperiment)
   # 设文件路径  
   file_path <- system.file("extdata", "example.SE", package = "SEtoolbox")  
   

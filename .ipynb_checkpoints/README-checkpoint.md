@@ -18,7 +18,7 @@ https://bioconductor.org/packages/devel/bioc/vignettes/G4SNVHunter/inst/doc/G4SN
 devtools::install_github("shaoxunyuan/SEtoolbox", dependencies = TRUE)
 ```
 
-You can check all available functions
+You can check all available functions,
 ```r
 ls("package:SEtoolbox") 
 getNamespaceExports("SEtoolbox")
