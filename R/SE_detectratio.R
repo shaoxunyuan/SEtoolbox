@@ -1,4 +1,9 @@
-
+#' 计算检测比例并更新SummarizedExperiment对象的rowData
+#'
+#' @param SE SummarizedExperiment对象
+#' @param assayname 用于计算的assay名称，默认为"TPM"
+#' @return 更新了detectsample和detectratio列的SummarizedExperiment对象
+#' @export
 SE_detectratio <- function(SE, assayname = "TPM") {  
     # 加载必要的库  
     library(SummarizedExperiment)  

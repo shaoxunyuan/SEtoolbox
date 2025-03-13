@@ -1,4 +1,11 @@
 
+#' Perform differential expression analysis using DESeq2
+#'
+#' @param SE A SummarizedExperiment object containing count data.
+#' @param assayname The name of the assay to use for the analysis. Default is "Count".
+#' @param groupname The name of the column in colData(SE) that contains the factor for grouping samples. Default is "group".
+#' @return A SummarizedExperiment object with DESeq2 results stored in its metadata.
+#' @export
 SE_DEseq2 <- function(SE, assayname = "Count", groupname = "group") {
   suppressPackageStartupMessages({
     library(DESeq2)

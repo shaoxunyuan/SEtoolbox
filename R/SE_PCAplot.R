@@ -1,4 +1,13 @@
-
+#' 生成PCA图
+#'
+#' 该函数接受一个SummarizedExperiment对象，计算PCA并对结果进行可视化。
+#' @param SE SummarizedExperiment对象，包含基因表达数据。
+#' @param assayname 指定的表达数据名称，默认为"TPM"。
+#' @param groupname 分组列名称，默认为"group"。
+#' @param outlier_threshold 离群值过滤阈值，默认为2。
+#' @param scale 是否对数据进行标准化，默认为TRUE。
+#' @return 包含两个ggplot对象的列表，原始PCA图和过滤后的PCA图。
+#' @export
 SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", outlier_threshold = 2, scale = TRUE){  
   message("可以通过 SE_subset <- SE[rownames(SE) %in% feature, ]筛选一个SE子集")  
   message("可以通过 SE_subset <- SE[,  colnames(SE) %in% sample]筛选一个SE子集")  

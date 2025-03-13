@@ -1,4 +1,8 @@
-
+#' 计算表达数据的检测比例
+#'
+#' @param SE SummarizedExperiment对象，包含表达数据和样本信息。
+#' @param assayname 表达矩阵的assay名称，默认为"TPM"
+#' @return 返回包含检测比例信息的SummarizedExperiment对象
 SE_heatmap <- function(SE, assayname = "TPM", group_col = NULL, normalization = "none", genes_of_interest = NULL, use_raster = TRUE) {
 	#SE_heatmap(SE, assayname = "TPM", group_col = NULL, normalization = "scale", genes_of_interest = c("AAGAB","AARS"), use_raster = TRUE)  
     library(SummarizedExperiment)  
