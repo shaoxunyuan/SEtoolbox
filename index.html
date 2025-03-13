@@ -1,0 +1,75 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>SEtoolbox - A Comprehensive Toolkit for SummarizedExperiment Analysis</title>  
+    <link rel="stylesheet" href="style.css"> <!-- Link to external CSS if any -->  
+</head>  
+<body>  
+
+<header>  
+    <h1>SEtoolbox</h1>  
+    <p>A Comprehensive Toolkit for SummarizedExperiment Analysis</p>  
+</header>  
+
+<nav>  
+    <ul>  
+        <li><a href="#installation">Installation</a></li>  
+        <li><a href="#usage">Usage</a></li>  
+        <li><a href="#features">Features</a></li>  
+        <li><a href="#contributing">Contributing</a></li>  
+        <li><a href="#contact">Contact</a></li>  
+    </ul>  
+</nav>  
+
+<main>  
+
+<section id="installation">  
+    <h2>Installation</h2>  
+    <p>To install SEtoolbox, you can use Bioconductor. Run the following command in your R console:</p>  
+    <pre><code>if (!requireNamespace("BiocManager", quietly = TRUE))  
+    install.packages("BiocManager")  
+BiocManager::install("SEtoolbox")</code></pre>  
+</section>  
+
+<section id="usage">  
+    <h2>Usage</h2>  
+    <p>After installation, load the package and start using it:</p>  
+    <pre><code>library(SEtoolbox)  
+example_SE <- loadSE()  
+# Perform your analysis here</code></pre>  
+    <p>For more in-depth examples and functions, refer to the vignette included in the package:</p>  
+    <pre><code>vignette("SEtoolbox")</code></pre>  
+</section>  
+
+<section id="features">  
+    <h2>Features</h2>  
+    <ul>  
+        <li>Load and manage SummarizedExperiment objects effortlessly.</li>  
+        <li>Provide comprehensive analysis functions tailored for genomic data.</li>  
+        <li>Integrate with existing Bioconductor packages for enhanced functionality.</li>  
+        <li>Vignettes and documentation for easy reference and guidance.</li>  
+    </ul>  
+</section>  
+
+<section id="contributing">  
+    <h2>Contributing</h2>  
+    <p>Contributions are welcomed! If you find a bug or have suggestions for improvements, please open an issue or submit a pull request on GitHub.</p>  
+</section>  
+
+<section id="contact">  
+    <h2>Contact</h2>  
+    <p>If you have any questions or need further information, feel free to reach out:</p>  
+    <p>Email: <a href="mailto:your-email@example.com">your-email@example.com</a></p>  
+</section>  
+
+</main>  
+
+<footer>  
+    <p>&copy; 2023 SEtoolbox. All rights reserved.</p>  
+    <p>GitHub: <a href="https://github.com/shaoxunyuan/SEtoolbox">https://github.com/shaoxunyuan/SEtoolbox</a></p>  
+</footer>  
+
+</body>  
+</html>
