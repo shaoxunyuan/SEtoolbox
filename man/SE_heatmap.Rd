@@ -2,7 +2,10 @@
 % Please edit documentation in R/SE_heatmap.R
 \name{SE_heatmap}
 \alias{SE_heatmap}
-\title{计算表达数据的检测比例}
+\title{Calculate the Detection Proportion of Expression Data  
+ 
+This function computes the detection proportion of expression data   
+contained within a SummarizedExperiment object.}
 \usage{
 SE_heatmap(
   SE,
@@ -14,13 +17,32 @@ SE_heatmap(
 )
 }
 \arguments{
-\item{SE}{SummarizedExperiment对象，包含表达数据和样本信息。}
+\item{SE}{A SummarizedExperiment object containing the expression data
+and sample information.}
 
-\item{assayname}{表达矩阵的assay名称，默认为"TPM"}
+\item{assayname}{A character string specifying the assay name of the
+expression matrix. Default is "TPM".}
+
+\item{group_col}{An optional character string specifying the column name
+in the sample metadata to group the samples. If NULL, no grouping will   
+be applied.}
+
+\item{normalization}{A character string specifying the normalization method
+to be used. Default is "none". Options may include "log" or "scale".}
+
+\item{genes_of_interest}{An optional vector of gene names to focus on
+in the analysis. If NULL, all genes will be included.}
+
+\item{use_raster}{A logical value indicating whether to use rasterization
+for heatmap plotting. Default is TRUE.}
 }
 \value{
-返回包含检测比例信息的SummarizedExperiment对象
+A SummarizedExperiment object containing updated information on  
+  the detection proportions.
 }
 \description{
-计算表达数据的检测比例
+Calculate the Detection Proportion of Expression Data  
+ 
+This function computes the detection proportion of expression data   
+contained within a SummarizedExperiment object.
 }

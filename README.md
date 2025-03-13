@@ -1,6 +1,6 @@
 # SEtoolbox <img src="./vignettes/images/logo.png" align = "right" width = "150" />
 
-SEtoolbox is an R package for SummarizedExperiment analysis and visualization.
+SEtoolbox is a comprehensive toolkit for SummarizedExperiment analysis
 
 # Installation
 
@@ -42,7 +42,3 @@ SE_boxplot(SE)
 SE_DEseq2(SE)
 SE_PCAplot(SE)
 SE_heatmap(SE)
-
-
-
-
