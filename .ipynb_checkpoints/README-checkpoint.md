@@ -29,11 +29,9 @@ getNamespaceExports("SEtoolbox")
 To load the example SummarizedExperiment object, use the following command:  
 
 ```r  
-library(your_package_name)  
+library(SEtoolbox)  
 
 # Load the example SummarizedExperiment object  
-example_SE <- loadSE()  
+SE <- loadSE()  
 
-# Now you can use example_SE with your analysis functions  
-results <- my_analysis_function(example_SE)  
-print(results)
+# Now you can use SE with all functions  
