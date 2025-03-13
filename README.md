@@ -18,13 +18,6 @@ https://shaoxunyuan.github.io/SEtoolbox/
 devtools::install_github("shaoxunyuan/SEtoolbox", dependencies = TRUE)
 ```
 
-You can check all available functions,
-```r
-library(SEtoolbox)  
-ls("package:SEtoolbox") 
-getNamespaceExports("SEtoolbox")
-```
-
 # Quick use
 
 To load the example SummarizedExperiment object, use the following command:  
