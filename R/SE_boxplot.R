@@ -1,3 +1,11 @@
+#' Generates a boxplot for specified features in a SummarizedExperiment object.
+#'
+#' @param SE A SummarizedExperiment object.
+#' @param feature_of_interest Character vector of gene identifiers.
+#' @param assayname The assay name in the SummarizedExperiment object.
+#' @param group_col Column name in colData(SE) for grouping.
+#' @param normalization Normalization method ("scale", "log", or "none").
+#' @export
 SE_boxplot <- function(SE, feature_of_interest = c("AAK1", "ABCA13", "ABCB10", "ABCC1"), assayname = "TPM", group_col = NA, normalization = "none") {  
     library(SummarizedExperiment)  
     library(reshape2)  

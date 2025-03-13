@@ -1,3 +1,10 @@
+#' Perform detectsample analysis on SummarizedExperiment object
+#'
+#' @param SE A SummarizedExperiment object containing count data.
+#' @param assayname The name of the assay to use for count data. Default is "Count".
+#' @param groupname The name of the column in colData(SE) to use for grouping. Default is "group".
+#' @return The input SummarizedExperiment object with DESeq2 results added to its metadata.
+#' @export
 SE_detectratio <- function(SE, assayname = "TPM") {  
     # 加载必要的库  
     library(SummarizedExperiment)  
