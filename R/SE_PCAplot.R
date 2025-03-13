@@ -1,10 +1,4 @@
-#' Perform PCAplot analysis on SummarizedExperiment object
-#'
-#' @param SE A SummarizedExperiment object containing count data.
-#' @param assayname The name of the assay to use for count data. Default is "Count".
-#' @param groupname The name of the column in colData(SE) to use for grouping. Default is "group".
-#' @return The input SummarizedExperiment object with DESeq2 results added to its metadata.
-#' @export
+
 SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", outlier_threshold = 2, scale = TRUE){  
   message("可以通过 SE_subset <- SE[rownames(SE) %in% feature, ]筛选一个SE子集")  
   message("可以通过 SE_subset <- SE[,  colnames(SE) %in% sample]筛选一个SE子集")  
