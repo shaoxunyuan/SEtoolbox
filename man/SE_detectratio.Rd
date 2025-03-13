@@ -2,18 +2,27 @@
 % Please edit documentation in R/SE_detectratio.R
 \name{SE_detectratio}
 \alias{SE_detectratio}
-\title{计算检测比例并更新SummarizedExperiment对象的rowData}
+\title{Calculate Detection Ratio and Update SummarizedExperiment Object's rowData  
+ 
+This function computes the detection ratio of expression data and updates   
+the rowData of the provided SummarizedExperiment object with detection sample counts   
+and ratios. It also generates a histogram of detection ratios.}
 \usage{
 SE_detectratio(SE, assayname = "TPM")
 }
 \arguments{
-\item{SE}{SummarizedExperiment对象}
+\item{SE}{A SummarizedExperiment object containing expression data.}
 
-\item{assayname}{用于计算的assay名称，默认为"TPM"}
+\item{assayname}{The name of the assay to be used for calculations. Default is "TPM".}
 }
 \value{
-更新了detectsample和detectratio列的SummarizedExperiment对象
+An updated SummarizedExperiment object with detection sample counts   
+  and ratios in rowData, and a histogram of detection ratios is displayed.
 }
 \description{
-计算检测比例并更新SummarizedExperiment对象的rowData
+Calculate Detection Ratio and Update SummarizedExperiment Object's rowData  
+ 
+This function computes the detection ratio of expression data and updates   
+the rowData of the provided SummarizedExperiment object with detection sample counts   
+and ratios. It also generates a histogram of detection ratios.
 }

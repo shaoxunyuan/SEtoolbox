@@ -50,9 +50,6 @@ SE_detectratio <- function(SE, assayname = "TPM") {
                       y = "Count") +  
                  theme_minimal()  
 
-    # Print the histogram  
-    print(hist_plot)  
-
     # Return the updated SE  
-    return(SE)  
+    return(list(SE=SE,plot=plot))  
 }  
