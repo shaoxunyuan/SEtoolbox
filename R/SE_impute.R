@@ -1,10 +1,10 @@
 #' 填补 SummarizedExperiment 或 phyloseq 对象中的缺失值  
 #'  
-#' 本函数利用指定的方法对给定的 phyloseq 或 SummarizedExperiment 对象中的缺失值 (NA) 进行填补。  
+#' 本函数利用指定的方法对给定的 SummarizedExperiment 对象中的缺失值 (NA) 进行填补。  
 #' 可以使用多种插补技术来处理缺失值，以确保后续分析的稳健性。  
 #'  
-#' @param object 一个 phyloseq 或 SummarizedExperiment 对象，包含需插补的数据。  
-#' @param level 可选。一个字符字符串，指定聚合的分类水平（仅适用于 phyloseq）。  
+#' @param object 一个 SummarizedExperiment 对象，包含需插补的数据。  
+#' @param assayname SummarizedExperiment assay名字，选择待插补数据类型。 
 #' @param group 一个字符字符串，指定样本数据中的分组变量。  
 #' @param ZerosAsNA 一个逻辑值，指示是否将零视为 NA。默认值为 FALSE。  
 #' @param RemoveNA 一个逻辑值，指示是否基于 cutoff 删除高 NA 百分比的样本。默认值为 TRUE。  
@@ -14,59 +14,32 @@
 #' @param LOD 一个数值，表示检出限（用于 LOD 插补方法）。默认值为 NULL。  
 #' @param knum 一个整数值，表示 KNN 插补方法中邻居的数量。默认值为 10。  
 #'  
-#' @return 返回一个 phyloseq 或 SummarizedExperiment 对象，包含填补后的值。  
+#' @return SummarizedExperiment 对象，包含填补后的值。  
 #'  
 #' @examples  
 #' # 使用示例  
 #' # 假设 `se` 是一个 SummarizedExperiment 对象  
-#' se_imputed <- SE_impute(se, group = "my_group_column", method = "median", ZerosAsNA = TRUE)  
+#' se_imputed <- SE_impute(se, assayname = "TPM", group = "my_group_column", method = "median", ZerosAsNA = TRUE)  
 #'  
 #' @export  
-SE_impute <- function(object, level = NULL, group, ZerosAsNA = FALSE, RemoveNA = TRUE,  
-                      cutoff = 20, method = c("none", "LOD", "half_min", "median",  
-                                               "mean", "min", "knn", "rf", "global_mean", "svd", "QRILC"),  
+SE_impute <- function(object, assayname = "TPM", group, ZerosAsNA = FALSE, RemoveNA = TRUE,  
+                      cutoff = 20, method = c("none", "LOD", "half_min", "median", "mean", "min", "knn", "rf", "global_mean", "svd", "QRILC"),  
                       LOD = NULL, knum = 10) {  
     
-    # 检查 object 参数是否为空  
-    if (base::missing(object)) {  
-        stop("object 参数为空！")  
-    }  
-    
-    # 验证输入对象是否为 phyloseq 或 SummarizedExperiment  
-    if (all(!methods::is(object, "phyloseq"), !methods::is(object, "SummarizedExperiment"))) {  
-        stop("object 既不是 phyloseq 也不是 SummarizedExperiment 对象。")  
-    }  
-    
     # 匹配方法参数  
-    method <- match.arg(method, c("none", "LOD", "half_min", "median",   
-                                   "mean", "min", "knn", "rf", "global_mean", "svd", "QRILC"))  
+    method <- match.arg(method, c("none", "LOD", "half_min", "median", "mean", "min", "knn", "rf", "global_mean", "svd", "QRILC"))  
     
-    if (base::missing(method)) {  
-        message("method 参数为空！将使用 KNN。")  
-    }  
+    #if (base::missing(method)) {  
+    #    message("method 参数为空！将使用 KNN。")  
+    #}  
 
-    # 对于 phyloseq 对象的处理  
-    if (all(!is.null(object), inherits(object, "phyloseq"))) {  
-        ps <- check_sample_names(object = object)  
-        if (!is.null(level)) {  
-            ps <- aggregate_taxa(x = ps, level = level)  
-        }  
-        sam_tab <- phyloseq::sample_data(ps) %>% data.frame() %>%   
-            tibble::rownames_to_column("TempRowNames")  
-            
-        if (phyloseq::taxa_are_rows(ps)) {  
-            prf_tab <- phyloseq::otu_table(phyloseq::t(ps)) %>% data.frame()  
-        } else {  
-            prf_tab <- phyloseq::otu_table(ps) %>% data.frame()  
-        }  
-    }  
     # 对于 SummarizedExperiment 对象的处理  
-    else if (all(!is.null(object), inherits(object, "SummarizedExperiment"))) {  
-        sam_tab <- SummarizedExperiment::colData(object) %>%   
-            data.frame() %>% tibble::rownames_to_column("TempRowNames")  
-        prf_tab <- SummarizedExperiment::assay(object) %>% as.data.frame() %>%   
-            t()  
-    }  
+    sam_tab <- SummarizedExperiment::colData(object) 
+    sam_tab[] <- lapply(sam_tab, function(x){if(inherits(x,"integer64")) {return(as.numeric(x))}  
+        return(x)  
+    }) 
+    sam_tab = as.data.frame(sam_tab) %>% tibble::rownames_to_column("TempRowNames") 
+    prf_tab <- SummarizedExperiment::assay(object,assayname) %>% as.data.frame() %>% t() 
 
     # 找到样本分组的索引  
     group_index <- which(colnames(sam_tab) == group)  
@@ -170,12 +143,7 @@ SE_impute <- function(object, level = NULL, group, ZerosAsNA = FALSE, RemoveNA =
     colnames(depurdata) <- correct_names  
     rownames(depurdata) <- rownames(prf_tab)  
 
-    # 最终返回结果  
-    if (methods::is(object, "phyloseq")) {  
-        res <- ps  
-        phyloseq::otu_table(res) <- phyloseq::otu_table(t(depurdata), taxa_are_rows = TRUE)  
-    }   
-    if (methods::is(object, "SummarizedExperiment")) {  
+    # 最终返回结果   
         if (ncol(depurdata) != ncol(prf_tab)) {  
             rdata <- SummarizedExperiment::rowData(object)  
             cdata <- SummarizedExperiment::colData(object)  
@@ -184,13 +152,12 @@ SE_impute <- function(object, level = NULL, group, ZerosAsNA = FALSE, RemoveNA =
             } else {  
                 mdata <- object@metadata  
             }  
-            res <- import_SE(object = t(depurdata), rowdata = rdata,   
-                             coldata = cdata, metadata = mdata)  
+            rdata = rdata[rownames(rdata) %in% colnames(depurdata),]
+            res <- SummarizedExperiment(assays =  t(depurdata), rowData = rdata, colData = cdata, metadata = mdata)
         } else {  
             res <- object  
             SummarizedExperiment::assay(res) <- t(depurdata)  
-        }  
-    }  
+        }    
 
     return(res)  
 }
