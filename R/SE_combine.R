@@ -1,4 +1,4 @@
-SE_merge <- function(se_list, merge_type = "intersection") {  
+SE_combine <- function(se_list, merge_type = "intersection") {  
     all_assay_names <- unique(unlist(lapply(se_list, function(se) assayNames(se))))  
     cat("assayNames of all SE obj:", all_assay_names, "\n")  
                                         
