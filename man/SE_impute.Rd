@@ -10,7 +10,7 @@
 SE_impute(
   object,
   assayname = "TPM",
-  group,
+  group = "group",
   ZerosAsNA = FALSE,
   RemoveNA = TRUE,
   cutoff = 20,
