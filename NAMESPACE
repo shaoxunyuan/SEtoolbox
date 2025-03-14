@@ -3,6 +3,7 @@
 export(SE_DEseq2)
 export(SE_PCAplot)
 export(SE_boxplot)
+export(SE_combine)
 export(SE_detectratio)
 export(SE_heatmap)
 export(loadSE)
