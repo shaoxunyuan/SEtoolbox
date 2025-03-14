@@ -4,12 +4,12 @@
 \alias{SE_impute}
 \title{填补 SummarizedExperiment 或 phyloseq 对象中的缺失值  
  
-本函数利用指定的方法对给定的 phyloseq 或 SummarizedExperiment 对象中的缺失值 (NA) 进行填补。  
+本函数利用指定的方法对给定的 SummarizedExperiment 对象中的缺失值 (NA) 进行填补。  
 可以使用多种插补技术来处理缺失值，以确保后续分析的稳健性。}
 \usage{
 SE_impute(
   object,
-  level = NULL,
+  assayname = "TPM",
   group,
   ZerosAsNA = FALSE,
   RemoveNA = TRUE,
@@ -21,9 +21,9 @@ SE_impute(
 )
 }
 \arguments{
-\item{object}{一个 phyloseq 或 SummarizedExperiment 对象，包含需插补的数据。}
+\item{object}{一个 SummarizedExperiment 对象，包含需插补的数据。}
 
-\item{level}{可选。一个字符字符串，指定聚合的分类水平（仅适用于 phyloseq）。}
+\item{assayname}{SummarizedExperiment assay名字，选择待插补数据类型。}
 
 \item{group}{一个字符字符串，指定样本数据中的分组变量。}
 
@@ -41,18 +41,18 @@ SE_impute(
 \item{knum}{一个整数值，表示 KNN 插补方法中邻居的数量。默认值为 10。}
 }
 \value{
-返回一个 phyloseq 或 SummarizedExperiment 对象，包含填补后的值。
+SummarizedExperiment 对象，包含填补后的值。
 }
 \description{
 填补 SummarizedExperiment 或 phyloseq 对象中的缺失值  
  
-本函数利用指定的方法对给定的 phyloseq 或 SummarizedExperiment 对象中的缺失值 (NA) 进行填补。  
+本函数利用指定的方法对给定的 SummarizedExperiment 对象中的缺失值 (NA) 进行填补。  
 可以使用多种插补技术来处理缺失值，以确保后续分析的稳健性。
 }
 \examples{
  
 # 使用示例  
 # 假设 `se` 是一个 SummarizedExperiment 对象  
-se_imputed <- SE_impute(se, group = "my_group_column", method = "median", ZerosAsNA = TRUE)  
+se_imputed <- SE_impute(se, assayname = "TPM", group = "my_group_column", method = "median", ZerosAsNA = TRUE)  
  
 }

@@ -22,7 +22,7 @@
 #' se_imputed <- SE_impute(se, assayname = "TPM", group = "my_group_column", method = "median", ZerosAsNA = TRUE)  
 #'  
 #' @export  
-SE_impute <- function(object, assayname = "TPM", group, ZerosAsNA = FALSE, RemoveNA = TRUE,  
+SE_impute <- function(object, assayname = "TPM", group = "group", ZerosAsNA = FALSE, RemoveNA = TRUE,  
                       cutoff = 20, method = c("none", "LOD", "half_min", "median", "mean", "min", "knn", "rf", "global_mean", "svd", "QRILC"),  
                       LOD = NULL, knum = 10) {  
     
