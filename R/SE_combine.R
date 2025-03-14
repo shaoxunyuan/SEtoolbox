@@ -1,3 +1,19 @@
+#' Combine Multiple SummarizedExperiment Objects  
+#'  
+#' This function merges multiple SummarizedExperiment objects based on the specified merge type (intersection or union) for all assays present in the input list.  
+#'  
+#' @param se_list A list of SummarizedExperiment objects to be combined.  
+#' @param merge_type A character string specifying the type of merge to perform. Options are "intersection" (default) to keep only common features across all objects, or "union" to keep all features.  
+#'   
+#' @return A SummarizedExperiment object containing the combined data for all assays.  
+#'   
+#' @examples  
+#' se1 <- SummarizedExperiment(assays = list(TPM = matrix(rnorm(100), nrow = 10)), colData = DataFrame(sample = 1:10))  
+#' se2 <- SummarizedExperiment(assays = list(TPM = matrix(rnorm(100), nrow = 10)), colData = DataFrame(sample = 11:20))  
+#' combined_se <- SE_combine(list(se1, se2), merge_type = "union")  
+#'   
+#' @import SummarizedExperiment  
+#' @export  
 SE_combine <- function(se_list, merge_type = "intersection") {  
     all_assay_names <- unique(unlist(lapply(se_list, function(se) assayNames(se))))  
     cat("assayNames of all SE obj:", all_assay_names, "\n")  
