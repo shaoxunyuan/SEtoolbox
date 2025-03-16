@@ -2,7 +2,7 @@
 % Please edit documentation in R/SE_impute.R
 \name{SE_impute}
 \alias{SE_impute}
-\title{填补 SummarizedExperiment 或 phyloseq 对象中的缺失值  
+\title{填补 SummarizedExperiment 对象中的缺失值  
  
 本函数利用指定的方法对给定的 SummarizedExperiment 对象中的缺失值 (NA) 进行填补。  
 可以使用多种插补技术来处理缺失值，以确保后续分析的稳健性。}
@@ -44,7 +44,7 @@ SE_impute(
 SummarizedExperiment 对象，包含填补后的值。
 }
 \description{
-填补 SummarizedExperiment 或 phyloseq 对象中的缺失值  
+填补 SummarizedExperiment 对象中的缺失值  
  
 本函数利用指定的方法对给定的 SummarizedExperiment 对象中的缺失值 (NA) 进行填补。  
 可以使用多种插补技术来处理缺失值，以确保后续分析的稳健性。
