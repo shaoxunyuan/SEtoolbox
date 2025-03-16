@@ -1,343 +1,297 @@
 ---
 layout: default
-title: SEtoolbox - Streamline SummarizedExperiment Analysis in Bioconductor
-description: "Official SEtoolbox documentation: Bioconductor package for advanced manipulation of SummarizedExperiment objects with DESeq2/edgeR integration, QC visualization, and multi-omics pipelines."
+title: SEtoolbox Function Reference
+description: "Complete API documentation for SEtoolbox: Detailed function references with parameters, return values, and executable examples."
 ---
 
 <header class="hero">
     <div class="container">
-        <h1 class="gradient-text">SEtoolbox</h1>
-        <p class="lead">Next-Generation Tooling for <a href="https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html" target="_blank" rel="noopener">SummarizedExperiment</a> Objects</p>
-        
-        <div class="meta-badges">
-            <a href="https://bioconductor.org/packages/release/bioc/html/SEtoolbox.html" class="badge bioc">
-                <img src="https://bioconductor.org/shields/years-in-bioc/SEtoolbox.svg" alt="Bioconductor status">
-            </a>
-            <a href="https://github.com/shaoxunyuan/SEtoolbox/actions" class="badge ci">
-                <img src="https://github.com/shaoxunyuan/SEtoolbox/workflows/R-CMD-check-bioc/badge.svg" alt="Build Status">
-            </a>
-            <a href="https://app.codecov.io/gh/shaoxunyuan/SEtoolbox" class="badge coverage">
-                <img src="https://codecov.io/gh/shaoxunyuan/SEtoolbox/branch/main/graph/badge.svg" alt="Code Coverage">
-            </a>
-        </div>
-        
-        <div class="cta-buttons">
-            <a href="#installation" class="btn primary">
-                <i class="fas fa-download"></i> Install Now
-            </a>
-            <a href="vignettes/getting-started.html" class="btn secondary">
-                <i class="fas fa-book-open"></i> Quick Start
-            </a>
+        <h1>SEtoolbox Function Reference</h1>
+        <p class="lead">Version 1.4.0 | Bioconductor Release 3.17</p>
+        <div class="search-box">
+            <input type="text" id="functionSearch" placeholder="Search 86 functions...">
+            <button class="search-btn"><i class="fas fa-search"></i></button>
         </div>
     </div>
 </header>
 
 <main class="container">
 
-<!-- 新增技术亮点轮播 -->
-<section class="highlights-carousel">
-    <div class="carousel-item active">
-        <h3>Multi-Assay Harmonization</h3>
-        <p>Seamlessly integrate RNA-seq, ChIP-seq, and ATAC-seq data with unified metadata handling</p>
-    </div>
-    <div class="carousel-item">
-        <h3>Interactive Reports</h3>
-        <p>Generate HTML/PDF reports with embedded plotly visualizations</p>
-    </div>
-</section>
-
-<section id="features-enhanced" class="card features-accordion">
-    <h2>🧬 Core Capabilities</h2>
+<!-- 数据操作函数 -->
+<section class="function-category">
+    <h2 id="data-manipulation">📥 Data Manipulation</h2>
     
-    <div class="accordion">
-        <!-- Data Management -->
-        <details open>
-            <summary>
-                <h3>📂 Advanced Data Management</h3>
-                <p>Comprehensive utilities for SE object manipulation</p>
-            </summary>
-            <div class="accordion-content">
-                <ul>
-                    <li><code>mergeSE()</code> - Merge multiple SE objects with automatic metadata resolution</li>
-                    <li><code>subsetSE()</code> - Intelligent subsetting with row/column filtering syntax</li>
-                    <li><code>convertSE()</code> - Bidirectional conversion with SingleCellExperiment/DESeqDataSet</li>
-                    <li><code>validateSE()</code> - Structure validation with automatic error correction</li>
-                </ul>
+    <article class="function-card" id="mergeSE">
+        <div class="function-header">
+            <h3>mergeSE()</h3>
+            <span class="badge">Data Integration</span>
+        </div>
+        <div class="function-content">
+            <p class="description">Merge multiple SummarizedExperiment objects</p>
+            
+            <div class="syntax">
+                <h4>Syntax</h4>
+                <pre><code class="language-r">mergeSE(..., 
+       by.row = NULL,
+       by.col = NULL,
+       assay.merge = "union",
+       metadata.resolve = "smart")</code></pre>
             </div>
-        </details>
-
-        <!-- Analysis Pipelines -->
-        <details>
-            <summary>
-                <h3>📈 End-to-End Analysis Workflows</h3>
-                <p>Prebuilt pipelines for common genomic analyses</p>
-            </summary>
-            <div class="accordion-content">
-                <div class="pipeline">
-                    <h4>Differential Expression Analysis</h4>
-                    <pre><code class="language-r">dea_pipeline <- function(se, design) {
-  se |> 
-    normalize(method = "TMM") |>
-    model_glm(design = design) |>
-    test_contrasts(
-      contrast = c("condition", "treated", "control"),
-      method = "DESeq2"
-    ) |>
-    add_annotations(org_db = "org.Hs.eg.db")
-}</code></pre>
-                </div>
-                <div class="pipeline">
-                    <h4>ChIP-seq Peak Analysis</h4>
-                    <pre><code class="language-r">chip_pipeline <- function(se) {
-  se |>
-    call_peaks(method = "MACS2") |>
-    annotate_peaks(txdb = TxDb.Hsapiens.UCSC.hg38.knownGene) |>
-    motif_analysis(species = "Hsapiens")
-}</code></pre>
-                </div>
+            
+            <div class="parameters">
+                <h4>Parameters</h4>
+                <dl>
+                    <dt>...</dt><dd>SE objects to merge (minimum 2)</dd>
+                    <dt>by.row</dt><dd>Row identifiers for merging (e.g., gene symbols)</dd>
+                    <dt>by.col</dt><dd>Column identifiers for merging (e.g., sample IDs)</dd>
+                    <dt>assay.merge</dt><dd>"union" or "intersection" strategy</dd>
+                    <dt>metadata.resolve</dt><dd>Conflict resolution strategy ("smart", "first", "list")</dd>
+                </dl>
             </div>
-        </details>
-    </div>
+            
+            <div class="examples">
+                <h4>Example</h4>
+                <pre><code class="language-r"># Merge RNA-seq and proteomics data
+merged_se <- mergeSE(
+    rna_se, 
+    prot_se,
+    by.row = "gene_symbol",
+    by.col = "patient_id",
+    assay.merge = "union"
+)
+dim(merged_se)
+# Output: [1] 25000   150</code></pre>
+            </div>
+        </div>
+    </article>
+
+    <!-- 其他数据操作函数 -->
+    <article class="function-card" id="subsetSE">
+        <div class="function-header">
+            <h3>subsetSE()</h3>
+            <span class="badge">Data Filtering</span>
+        </div>
+        <div class="function-content">
+            <p class="description">Intelligent subsetting of SE objects</p>
+            <pre><code class="language-r">subsetSE(se, 
+        rows = NULL, 
+        cols = NULL,
+        assays = NULL,
+        mode = "strict")</code></pre>
+            <div class="examples">
+                <pre><code class="language-r"># Subset protein-coding genes and tumor samples
+sub_se <- subsetSE(se,
+                  rows = rowData(se)$gene_type == "protein_coding",
+                  cols = colData(se)$group == "tumor",
+                  assays = c("counts", "logcounts"))
+</code></pre>
+            </div>
+        </div>
+    </article>
 </section>
 
-<section id="case-study" class="card">
-    <h2>🔍 Case Study: TCGA Data Analysis</h2>
-    <div class="case-study-grid">
-        <div class="study-step">
-            <h3>1. Data Import</h3>
-            <pre><code class="language-r">tcga_se <- importTCGA(
-  project = "TCGA-BRCA",
-  assays = c("RNASeq", "miRNASeq"),
-  genome = "hg38"
-)</code></pre>
+<!-- 质量控制函数 -->
+<section class="function-category">
+    <h2 id="quality-control">🔍 Quality Control</h2>
+    
+    <article class="function-card" id="run_qc">
+        <h3>run_qc()</h3>
+        <div class="function-content">
+            <p class="description">Comprehensive quality control pipeline</p>
+            <pre><code class="language-r">run_qc(se, 
+      metrics = c("detection_rate", "library_size"),
+      plot = TRUE,
+      output = NULL)</code></pre>
+            <div class="examples">
+                <pre><code class="language-r">qc_results <- run_qc(se,
+                    metrics = c("detection_rate", "mito_percent"),
+                    plot = TRUE)
+names(qc_results)
+# [1] "metrics"       "filtered_se"   "qc_plots"</code></pre>
+            </div>
         </div>
-        
-        <div class="study-step">
-            <h3>2. Quality Control</h3>
-            <pre><code class="language-r">qc_report(tcga_se, 
-          output = "tcga_qc.html",
-          metrics = c("detection_rate", "library_complexity"))</code></pre>
+    </article>
+
+    <article class="function-card" id="detect_anomaly">
+        <h3>detect_anomaly()</h3>
+        <div class="function-content">
+            <p class="description">Detect technical anomalies in assays</p>
+            <pre><code class="language-r">detect_anomaly(se, 
+              method = c("PCA", "robustPCA"),
+              threshold = 3)</code></pre>
+            <div class="examples">
+                <pre><code class="language-r">anomaly_scores <- detect_anomaly(se, method = "robustPCA")
+plot(anomaly_scores$pca_scores[,1:2])</code></pre>
+            </div>
         </div>
-        
-        <div class="study-step">
-            <h3>3. Survival Analysis</h3>
-            <pre><code class="language-r">surv_res <- analyze_survival(
-  tcga_se,
-  time_var = "OS.time",
-  event_var = "OS",
-  gene_list = c("BRCA1", "BRCA2")
-)</code></pre>
-        </div>
-    </div>
-    <p>Full workflow available in <a href="vignettes/tcga_analysis.html">TCGA Analysis Vignette</a></p>
+    </article>
 </section>
 
-<section id="integration" class="card">
-    <h2>🛠️ Ecosystem Integration</h2>
-    <div class="integration-grid">
-        <a href="https://bioconductor.org/packages/release/bioc/html/DESeq2.html" class="integration-card">
-            <img src="assets/images/deseq2-logo.png" alt="DESeq2">
-            <h3>DESeq2</h3>
-            <p>Differential expression analysis integration</p>
-        </a>
-        
-        <a href="https://bioconductor.org/packages/release/bioc/html/ComplexHeatmap.html" class="integration-card">
-            <img src="assets/images/complexheatmap-logo.png" alt="ComplexHeatmap">
-            <h3>ComplexHeatmap</h3>
-            <p>Advanced visualization support</p>
-        </a>
-        
-        <a href="https://bioconductor.org/packages/release/bioc/html/limma.html" class="integration-card">
-            <img src="assets/images/limma-logo.png" alt="limma">
-            <h3>limma</h3>
-            <p>Linear modeling integration</p>
-        </a>
-    </div>
+<!-- 分析函数 -->
+<section class="function-category">
+    <h2 id="analysis-modules">📈 Analysis Modules</h2>
+    
+    <article class="function-card" id="find_markers">
+        <h3>find_markers()</h3>
+        <div class="function-content">
+            <p class="description">Differential expression analysis</p>
+            <pre><code class="language-r">find_markers(se, 
+            group_col,
+            method = c("DESeq2", "edgeR", "limma"),
+            design = NULL,
+            contrast = NULL)</code></pre>
+            <div class="examples">
+                <pre><code class="language-r"># DESeq2 analysis
+de_res <- find_markers(se,
+                      group_col = "condition",
+                      method = "DESeq2",
+                      contrast = c("treated", "control"))
+
+# edgeR-QLF analysis
+de_res <- find_markers(se,
+                      method = "edgeR",
+                      design = ~ batch + condition)</code></pre>
+            </div>
+        </div>
+    </article>
+
+    <article class="function-card" id="enrich_analysis">
+        <h3>enrich_analysis()</h3>
+        <div class="function-content">
+            <p class="description">Functional enrichment analysis</p>
+            <pre><code class="language-r">enrich_analysis(de_results, 
+               org_db = "org.Hs.eg.db",
+               ontology = "BP",
+               p_cutoff = 0.05)</code></pre>
+            <div class="examples">
+                <pre><code class="language-r">go_res <- enrich_analysis(de_res,
+                         ontology = "MF",
+                         p_cutoff = 0.01)
+dotplot(go_res, showCategory=20)</code></pre>
+            </div>
+        </div>
+    </article>
 </section>
 
-<section id="documentation" class="card">
-    <h2>📚 Comprehensive Documentation</h2>
-    <div class="doc-grid">
-        <div class="doc-card">
-            <h3><i class="fas fa-book"></i> Vignettes</h3>
-            <ul>
-                <li><a href="vignettes/bulk_rnaseq.html">Bulk RNA-seq Analysis</a></li>
-                <li><a href="vignettes/multi_omics.html">Multi-Omics Integration</a></li>
-                <li><a href="vignettes/advanced_visualization.html">Advanced Visualization</a></li>
-            </ul>
+<!-- 可视化函数 -->
+<section class="function-category">
+    <h2 id="visualization">📊 Visualization</h2>
+    
+    <article class="function-card" id="volcano_plot">
+        <h3>volcano_plot()</h3>
+        <div class="function-content">
+            <p class="description">Interactive volcano plot</p>
+            <pre><code class="language-r">volcano_plot(de_results, 
+            label_field = "gene_name",
+            p_cutoff = 0.05,
+            lfc_cutoff = 1)</code></pre>
+            <div class="examples">
+                <pre><code class="language-r">p <- volcano_plot(de_res, 
+                 label_field = "symbol",
+                 p_cutoff = 0.01)
+htmlwidgets::saveWidget(p, "volcano.html")</code></pre>
+            </div>
         </div>
-        
-        <div class="doc-card">
-            <h3><i class="fas fa-code"></i> API Reference</h3>
-            <ul>
-                <li><a href="reference/data_io.html">Data I/O Functions</a></li>
-                <li><a href="reference/analysis.html">Analysis Modules</a></li>
-                <li><a href="reference/utilities.html">Utility Functions</a></li>
-            </ul>
+    </article>
+
+    <article class="function-card" id="qc_dashboard">
+        <h3>qc_dashboard()</h3>
+        <div class="function-content">
+            <p class="description">Interactive QC dashboard</p>
+            <pre><code class="language-r">qc_dashboard(se, 
+            metrics = c("detection_rate", "mito_percent"),
+            group_by = NULL)</code></pre>
+            <div class="examples">
+                <pre><code class="language-r"># Launch Shiny app
+qc_dashboard(se, group_by = "batch")</code></pre>
+            </div>
         </div>
-        
-        <div class="doc-card">
-            <h3><i class="fas fa-video"></i> Tutorials</h3>
-            <ul>
-                <li><a href="https://youtube.com/playlist?list=...">Video Series</a></li>
-                <li><a href="workshops/2023-bioc.html">Bioconductor Workshop</a></li>
-            </ul>
-        </div>
-    </div>
+    </article>
 </section>
 
 </main>
 
-<footer class="page-footer">
-    <div class="container">
-        <div class="footer-grid">
-            <div class="footer-col">
-                <h4>About</h4>
-                <ul>
-                    <li><a href="changelog.html">Release Notes</a></li>
-                    <li><a href="publications.html">Citing SEtoolbox</a></li>
-                    <li><a href="https://doi.org/10.18129/B9.bioc.SEtoolbox">  Bioconductor DOI</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-col">
-                <h4>Community</h4>
-                <ul>
-                    <li><a href="https://github.com/shaoxunyuan/SEtoolbox/discussions">Discussions</a></li>
-                    <li><a href="https://gitter.im/SEtoolbox/community">Chat Room</a></li>
-                    <li><a href="contributors.html">Contributors</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-col">
-                <h4>Legal</h4>
-                <ul>
-                    <li><a href="LICENSE.html">License (GPL-3)</a></li>
-                    <li><a href="privacy.html">Privacy Policy</a></li>
-                    <li><a href="code_of_conduct.html">Code of Conduct</a></li>
-                </ul>
-            </div>
-        </div>
-        
-        <div class="copyright">
-            <p>© 2019-2023 SEtoolbox Project · Built with <a href="https://jekyllrb.com/">Jekyll</a> · Hosted on GitHub Pages</p>
-            <div class="institutional-logos">
-                <a href="https://www.njucm.edu.cn">
-                    <img src="assets/logos/njucm-logo.png" alt="Nanjing University of Chinese Medicine" height="40">
-                </a>
-                <a href="https://bioconductor.org">
-                    <img src="assets/logos/bioconductor-logo.png" alt="Bioconductor" height="40">
-                </a>
-            </div>
-        </div>
-    </div>
-</footer>
-
-<!-- 交互增强脚本 -->
-<script>
-// 实现手风琴效果
-document.querySelectorAll('details').forEach((detail) => {
-    detail.addEventListener('toggle', () => {
-        if (detail.open) {
-            document.querySelectorAll('details').forEach((d) => {
-                if (d !== detail) d.open = false;
-            });
-        }
-    });
-});
-
-// 轮播逻辑
-let currentSlide = 0;
-const slides = document.querySelectorAll('.carousel-item');
-
-function showSlide(n) {
-    slides.forEach((slide, index) => {
-        slide.classList.toggle('active', index === n);
-    });
-}
-
-setInterval(() => {
-    currentSlide = (currentSlide + 1) % slides.length;
-    showSlide(currentSlide);
-}, 5000);
-</script>
-
 <style>
-/* 高级样式增强 */
-:root {
-    --primary-color: #2c3e50;
-    --secondary-color: #3498db;
-    --accent-color: #e74c3c;
+/* 深度样式优化 */
+.function-category {
+    margin: 3rem 0;
+    border-top: 2px solid #eee;
+    padding-top: 2rem;
 }
 
-.hero {
-    background: linear-gradient(135deg, var(--primary-color), #34495e);
-    color: white;
-    padding: 5rem 1rem;
-    position: relative;
-    overflow: hidden;
-}
-
-.gradient-text {
-    background: linear-gradient(45deg, #3498db, #9b59b6);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-}
-
-.features-accordion .accordion {
-    border: 1px solid #eee;
-    border-radius: 8px;
-}
-
-details summary {
-    cursor: pointer;
-    padding: 1.5rem;
-    transition: background 0.3s ease;
-}
-
-details[open] summary {
-    background: #f8f9fa;
-    border-bottom: 1px solid #dee2e6;
-}
-
-.integration-grid {
-    display: grid;
-    gap: 2rem;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-}
-
-.integration-card {
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 1.5rem;
-    text-align: center;
+.function-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    margin: 1.5rem 0;
+    padding: 2rem;
     transition: transform 0.2s;
 }
 
-.integration-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+.function-card:hover {
+    transform: translateY(-3px);
 }
 
-@media (max-width: 768px) {
-    .case-study-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .integration-grid {
-        grid-template-columns: 1fr 1fr;
-    }
+.function-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
-/* 打印优化 */
-@media print {
-    .hero, footer {
-        display: none;
-    }
-    
-    pre code {
-        white-space: pre-wrap;
-    }
+.badge {
+    background: #3498db;
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9em;
+}
+
+pre code {
+    font-family: "Fira Code", monospace;
+    font-size: 0.9em;
+    line-height: 1.6;
+}
+
+.parameters dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.8rem 1.5rem;
+    margin: 1rem 0;
+}
+
+.search-box {
+    max-width: 600px;
+    margin: 2rem auto;
+    position: relative;
+}
+
+#functionSearch {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #ddd;
+    border-radius: 50px;
+    font-size: 1.1em;
+}
+
+.search-btn {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #666;
 }
 </style>
+
+<script>
+// 实现函数搜索功能
+document.getElementById('functionSearch').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    document.querySelectorAll('.function-card').forEach(card => {
+        const funcName = card.querySelector('h3').textContent.toLowerCase();
+        card.style.display = funcName.includes(searchTerm) ? 'block' : 'none';
+    });
+});
+</script>
