@@ -1,4 +1,4 @@
-#' 填补 SummarizedExperiment 或 phyloseq 对象中的缺失值  
+#' 填补 SummarizedExperiment 对象中的缺失值  
 #'  
 #' 本函数利用指定的方法对给定的 SummarizedExperiment 对象中的缺失值 (NA) 进行填补。  
 #' 可以使用多种插补技术来处理缺失值，以确保后续分析的稳健性。  
