@@ -1,3 +1,5 @@
+{% toc %}  
+
 * **Shaoxun Yuan**
   
 * **Affiliation**: School of Artificial Intelligence and Information Technology, Nanjing University of Chinese Medicine, China
@@ -244,6 +246,6 @@ The author would like to thank Deepseek.
     [53] munsell_0.5.1               RCurl_1.98-1.16
     [55] cachem_1.1.0
 
-# 8. References
+## References
 
 Will update soon
