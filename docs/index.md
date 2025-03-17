@@ -8,6 +8,9 @@ toc: true
 
 * **Email**: [yuanshaoxun@njucm.edu.cn](mailto:yuanshaoxun@njucm.edu.cn)
 
+{% toc %}  
+
+
 ## 1. Introduction
 
 SEtoolbox is an R package that operates, analyzes and visualizes SummarizedExperiment objects.
