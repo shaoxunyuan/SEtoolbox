@@ -1,5 +1,5 @@
-source "https://rubygems.org"  
-gem "jekyll", "~> 4.2" # 指定 Jekyll 的版本  
+source "https://rubygems.org"
+gem "github-pages", group: :jekyll_plugins
 
 # 添加需要的插件  
 gem "jekyll-feed" # RSS feed 插件  

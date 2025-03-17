@@ -1,8 +1,0 @@
-title: SEtoolbox
-description: SEtoolbox is a comprehensive toolkit for SummarizedExperiment analysis  
-author:  
-  name: Shaoxun Yuan  
-  email: yuanshaoxun@njucm.edu.cn  
-baseurl: "" # 站点基础 URL，通常用于 GitHub Pages  
-url: "https://github.com/shaoxunyuan/SEtoolbox" # 网站域名  
-theme: minima # 使用的主题
