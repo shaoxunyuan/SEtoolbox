@@ -7,7 +7,6 @@ author:
     Nanjing University of Chinese Medicine, China"
   email: yuanshaoxun@njucm.edu.cn
 package: SEtoolbox
-date: "`r Sys.Date()`"
 output: 
   BiocStyle::html_document
 bibliography: references.bib
