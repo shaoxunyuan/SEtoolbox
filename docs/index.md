@@ -9,10 +9,10 @@
 
 # Contents
 
-1. [Introduction](#1.-Introduction)  
-2. [Installation](#2.-Installation)  
+1. [Introduction](#Introduction)  
+2. [Installation](#Installation)  
 3. [Load packages required for this tutorial](#3.-Load-packages-required-for-this-tutorial)  
-4. [Input data](#4. Input data)  
+4. [Input data](#4Input data)  
 5. [Functions](#5. Functions)  
    1. [SE_combine](#5.1. SE_combine)  
    2. [SE_impute](#5.2 SE_impute)  
@@ -24,11 +24,11 @@
 7. [Session Info](#7. Session Info)  
 8. [References](#8. References)
 
-# 1. Introduction
+# Introduction
 
 SEtoolbox is an R package that operates, analyzes and visualizes SummarizedExperiment objects.
 
-# 2. Installation
+# Installation
 
 To install the SEtoolbox package, you first need to install the `devtools` package, which provides functions to facilitate package installation from various sources, including GitHub. Run the following command in your R console: install.packages("devtools") devtools::install_github("shaoxunyuan/SEtoolbox")
 
