@@ -1,4 +1,4 @@
-# SEtoolbox <img src="./vignettes/images/logo.png" align = "right" width = "150" />
+# SEtoolbox
 
 SEtoolbox is a comprehensive toolkit for SummarizedExperiment analysis
 
