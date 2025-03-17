@@ -1,6 +1,0 @@
-title: SEtoolbox
-theme: minima
-plugins:
-  - jekyll-feed
-exclude:
-  - index.html 
