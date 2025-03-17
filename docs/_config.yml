@@ -1,2 +1,2 @@
-plugins:  
-  - jekyll-toc
+ gems: [jekyll-coffeescript, jekyll-watch, jekyll-assets, jekyll-toc]
+ # This will require each of these gems automatically.

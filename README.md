@@ -20,29 +20,43 @@ devtools::install_github("shaoxunyuan/SEtoolbox", dependencies = TRUE)
 
 # Quick use
 
-To load the example SummarizedExperiment object, use the following command:  
+To load the example `SummarizedExperiment` object, use the following command:  
 
 ```r  
 library(SEtoolbox)  
 
-# Load the example SummarizedExperiment object  
 SE <- loadSE()  
+```
 
-# Now you can use SE with all functions 
+Now you can use SE with all functions 
 
-## Calculate the number of non-zero samples for each feature and update the results in rowData  
+
+Combine multiple SummarizedExperiment objects into one SummarizedExperiment object
+```r
+SE_Combine(list(SE1,SE2,SE3))  
+```
+
+Calculate the number of non-zero samples for each feature and update the results in rowData  
+```r
 SE_detectratio(SE)  
+```
 
-## Select specific features to create a boxplot, supports grouping or non-grouping  
-SE_boxplot(SE)  
+Imputes missing values (NA) in the given SummarizedExperiment object using specified methods.
+```r
+SE_impute(SE)  
+```
 
-## Use the count matrix to calculate differential results, with results updated in rowData  
+Use the count matrix to calculate differential results, with results updated in rowData  
+```r
 SE_DEseq2(SE)  
+```
 
-## Select specific features for PCA plot  
+Select specific features for PCA plot  
+```r
 SE_PCAplot(SE)  
+```
 
-## Select specific features for heatmap  
+Select specific features for heatmap 
+```r 
 SE_heatmap(SE)  
-
 ```
