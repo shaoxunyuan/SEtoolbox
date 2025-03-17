@@ -1,6 +1,3 @@
-layout: post
-title: "SEtoolbox"
-toc: true
 
 * **Shaoxun Yuan**
 
@@ -8,8 +5,8 @@ toc: true
 
 * **Email**: [yuanshaoxun@njucm.edu.cn](mailto:yuanshaoxun@njucm.edu.cn)
 
-{% toc %}  
-
+<!-- 使用 Jekyll TOC 添加目录 -->  
+{% include toc.html %}   
 
 ## 1. Introduction
 
