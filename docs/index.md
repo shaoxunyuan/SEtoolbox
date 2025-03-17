@@ -7,22 +7,6 @@
 
 {:toc} 
 
-# Table of Contents  
-
-1. [Introduction](#1-introduction)  
-2. [Installation](#2-installation)  
-3. [Load Packages Required for This Tutorial](#3-load-packages-required-for-this-tutorial)  
-4. [Input Data](#4-input-data)  
-5. [Functions](#5-functions)  
-   - [5.1 SE_combine](#51-se_combine)  
-   - [5.2 SE_impute](#52-se_impute)  
-   - [5.3 SE_detectratio](#53-se_detectraio)  
-   - [5.4 SE_DEseq2](#54-se_deseq2)  
-   - [5.5 SE_boxplot](#55-se_boxplot)  
-   - [5.6 SE_PCAplot](#56-se_pcaplot)  
-6. [Acknowledgements](#6-acknowledgements)  
-7. [Session Info](#7-session-info)  
-8. [References](#8-references)
 
 ## 1. Introduction
 
