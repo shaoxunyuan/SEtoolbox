@@ -1,7 +1,3 @@
----  
-layout: default  
-title: SEtoolbox  
----  
 
 # SEtoolbox  
 
