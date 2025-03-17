@@ -60,3 +60,20 @@ Select specific features for heatmap
 ```r 
 SE_heatmap(SE)  
 ```
+
+# Vignette
+
+For full use of our package, please refer to our [documents](
+https://shaoxunyuan.github.io/SEtoolbox/)
+(highly recommended). 
+
+# Bug Reports
+
+If you encounter any issues, have questions, or would like to make suggestions, 
+feel free to report them at our [bug tracker](
+https://github.com/shaoxunyuan/SEtoolbox/issues).
+
+# Contact
+
+For additional inquiries, contact us at: 
+Email: shaoxunyuan@njucm.edu.cn
