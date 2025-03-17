@@ -18,7 +18,7 @@ https://shaoxunyuan.github.io/SEtoolbox/
 devtools::install_github("shaoxunyuan/SEtoolbox", dependencies = TRUE)
 ```
 
-# Quick use
+# Quick Start
 
 To load the example `SummarizedExperiment` object, use the following command:  
 
