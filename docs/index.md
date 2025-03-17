@@ -82,7 +82,7 @@ This function merges multiple `SummarizedExperiment` objects based on the specif
 
 #### Arguments
 
-`se_list`: A list of SummarizedExperiment objects to be combined.
+`se_list`: A list of SummarizedExperiment objects to be combined (se_list = list(SE1,SE2,SE3))
 
 `merge_type`: A character string specifying the type of merge to perform. Options are:
 
