@@ -27,7 +27,14 @@ SEtoolbox is an R package that operates, analyzes and visualizes SummarizedExper
 
 ## 2. Installation
 
-To install the SEtoolbox package, you first need to install the `devtools` package, which provides functions to facilitate package installation from various sources, including GitHub. Run the following command in your R console: install.packages("devtools") devtools::install_github("shaoxunyuan/SEtoolbox")
+To install the SEtoolbox package, you first need to install the `devtools` package. 
+
+Run the following command in your R console: 
+```r
+install.packages("devtools")
+
+devtools::install_github("shaoxunyuan/SEtoolbox")
+```
 
 ## 3. Load packages required for this tutorial
 
