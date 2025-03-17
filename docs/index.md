@@ -9,9 +9,9 @@
 
 # Contents
 
-1. [Introduction](#1. Introduction)  
-2. [Installation](#2. Installation)  
-3. [Load packages required for this tutorial](#3. Load packages required for this tutorial)  
+1. [Introduction](#1.-Introduction)  
+2. [Installation](#2.-Installation)  
+3. [Load packages required for this tutorial](#3.-Load-packages-required-for-this-tutorial)  
 4. [Input data](#4. Input data)  
 5. [Functions](#5. Functions)  
    1. [SE_combine](#5.1. SE_combine)  
