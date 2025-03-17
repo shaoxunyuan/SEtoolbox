@@ -35,7 +35,7 @@ During this tutorial, we might need to use a few additional packages.
 
 Since we specified dependencies = TRUE when installing SEtoolbox package, these additional packages have already been installed.
 
-We can load them directly. library(SummarizedExperiment) library(tidyverse)
+We can load them directly. library(SummarizedExperiment) library(tidyverse) library(plyr) library(dplyr) library(reshape2) library(DESeq2)
 
 ## 4. Input data
 

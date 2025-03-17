@@ -2,10 +2,10 @@
 % Please edit documentation in R/SE_impute.R
 \name{SE_impute}
 \alias{SE_impute}
-\title{填补 SummarizedExperiment 对象中的缺失值  
+\title{Fill Missing Values in a SummarizedExperiment Object  
  
-本函数利用指定的方法对给定的 SummarizedExperiment 对象中的缺失值 (NA) 进行填补。  
-可以使用多种插补技术来处理缺失值，以确保后续分析的稳健性。}
+This function imputes missing values (NA) in the provided SummarizedExperiment object using specified methods.  
+Various imputation techniques can be used to handle missing values, ensuring the robustness of subsequent analyses.}
 \usage{
 SE_impute(
   object,
@@ -21,38 +21,38 @@ SE_impute(
 )
 }
 \arguments{
-\item{object}{一个 SummarizedExperiment 对象，包含需插补的数据。}
+\item{object}{A SummarizedExperiment object containing the data to be imputed.}
 
-\item{assayname}{SummarizedExperiment assay名字，选择待插补数据类型。}
+\item{assayname}{The name of the assay in the SummarizedExperiment, specifying the type of data to be imputed.}
 
-\item{group}{一个字符字符串，指定样本数据中的分组变量。}
+\item{group}{A character string specifying the grouping variable in the sample data.}
 
-\item{ZerosAsNA}{一个逻辑值，指示是否将零视为 NA。默认值为 FALSE。}
+\item{ZerosAsNA}{A logical value indicating whether to treat zeros as NA. Default is FALSE.}
 
-\item{RemoveNA}{一个逻辑值，指示是否基于 cutoff 删除高 NA 百分比的样本。默认值为 TRUE。}
+\item{RemoveNA}{A logical value indicating whether to remove samples with a high percentage of NA values based on the cutoff. Default is TRUE.}
 
-\item{cutoff}{一个数值，表示 NA 样本的百分比截断值。默认值为 20。}
+\item{cutoff}{A numeric value representing the percentage cutoff for NA samples. Default is 20.}
 
-\item{method}{一个字符字符串，指定使用的插补方法。可选项包括 "none"、"LOD"、"half_min"、
-"median"、"mean"、"min"、"knn"、"rf"、"global_mean"、"svd" 和 "QRILC"。默认值为 "none"。}
+\item{method}{A character string specifying the imputation method to use. Options include "none", "LOD", "half_min",
+"median", "mean", "min", "knn", "rf", "global_mean", "svd", and "QRILC". Default is "none".}
 
-\item{LOD}{一个数值，表示检出限（用于 LOD 插补方法）。默认值为 NULL。}
+\item{LOD}{A numeric value representing the limit of detection (used for the LOD imputation method). Default is NULL.}
 
-\item{knum}{一个整数值，表示 KNN 插补方法中邻居的数量。默认值为 10。}
+\item{knum}{An integer representing the number of neighbors in the KNN imputation method. Default is 10.}
 }
 \value{
-SummarizedExperiment 对象，包含填补后的值。
+A SummarizedExperiment object containing the imputed values.
 }
 \description{
-填补 SummarizedExperiment 对象中的缺失值  
+Fill Missing Values in a SummarizedExperiment Object  
  
-本函数利用指定的方法对给定的 SummarizedExperiment 对象中的缺失值 (NA) 进行填补。  
-可以使用多种插补技术来处理缺失值，以确保后续分析的稳健性。
+This function imputes missing values (NA) in the provided SummarizedExperiment object using specified methods.  
+Various imputation techniques can be used to handle missing values, ensuring the robustness of subsequent analyses.
 }
 \examples{
  
-# 使用示例  
-# 假设 `se` 是一个 SummarizedExperiment 对象  
+# Example usage  
+# Assuming `se` is a SummarizedExperiment object  
 se_imputed <- SE_impute(se, assayname = "TPM", group = "my_group_column", method = "median", ZerosAsNA = TRUE)  
  
 }

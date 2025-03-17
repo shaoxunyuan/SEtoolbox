@@ -2,7 +2,7 @@
 #'  
 #' This function merges multiple SummarizedExperiment objects based on the specified merge type (intersection or union) for all assays present in the input list.  
 #'  
-#' @param se_list A list of SummarizedExperiment objects to be combined.  
+#' @param se_list A list of SummarizedExperiment objects to be combined (se_list = list(SE1,SE2,SE3))
 #' @param merge_type A character string specifying the type of merge to perform. Options are "intersection" (default) to keep only common features across all objects, or "union" to keep all features.  
 #'  
 #' @return A SummarizedExperiment object containing the combined data for all assays.  
