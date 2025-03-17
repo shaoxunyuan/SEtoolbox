@@ -30,12 +30,14 @@ To install the SEtoolbox package, you first need to install the `devtools` packa
 
 ```r  
 install.packages("devtools")  
-devtools::install_github("shaoxunyuan/SEtoolbox")
 
+devtools::install_github("shaoxunyuan/SEtoolbox")
 ```
 
 # Load packages required for this tutorial  
-During this tutorial, we might need to use a few additional packages. Since we specified dependencies = TRUE when installing G4SNVHunter package, these additional packages have already been installed.
+During this tutorial, we might need to use a few additional packages. 
+
+Since we specified dependencies = TRUE when installing SEtoolbox package, these additional packages have already been installed.
 
 We can load them directly.
 ```r  
@@ -50,13 +52,35 @@ library(rtracklayer)
 
 # Input data  
 
-For this tutorial, we will be working with a [`SummarizedExperiment`](https://www.bioconductor.org/packages/devel/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html) object. This object is a central data structure in Bioconductor that provides a way to store and work with high-dimensional genomic data, such as RNA-seq counts or other assays.
+For this tutorial, we will be working with a [`SummarizedExperiment`](https://www.bioconductor.org/packages/devel/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html) object. 
+
+This object is a central data structure in Bioconductor that provides a way to store and work with high-dimensional genomic data, such as RNA-seq counts or other assays.
 
 # Main functions  
-这里是主函数的内容。  
+Functions in SEtoolbox can be obtain using
+```r
+help(package="SEtoobox")
+```
 
-## functions1  
-这里是函数1的内容。  
+## SE_combine  
+
+Combine multiple `SummarizedExperiment` objects.  
+
+This function merges multiple `SummarizedExperiment` objects based on the specified merge type (intersection or union) for all assays present in the input list.  
+
+## Usage  
+
+```r  
+SE_combine(se_list, merge_type = "intersection") 
+```
+Arguments
+se_list: A list of SummarizedExperiment objects to be combined.
+
+merge_type: A character string specifying the type of merge to perform. Options are:
+
+"intersection" (default): Keep only common features across all objects.
+"union": Keep all features.
+
 
 ## functions2  
 这里是函数2的内容。  
