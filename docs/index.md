@@ -9,18 +9,20 @@
 
 # Contents
 
-1. [Introduction](#introduction)
-2. [Installation](#installation)
-3. [Load packages required for this tutorial](#load-packages-required-for-this-tutorial)
-4. [Input data](#input-data)
-5. [Main functions](#main-functions)
-  1. [functions1](#functions1)
-  2. [functions2](#functions2)
-  3. [functions3](#functions3)
-6. [A coherent example](#a-coherent-example)
-7. [Acknowledgements](#acknowledgements)
-8. [Session Info](#session-info)
-9. [References](#references)
+1. [Introduction](#1. introduction)
+2. [Installation](#2. installation)
+3. [Load packages required for this tutorial](#3. load-packages-required-for-this-tutorial)
+4. [Input data](#4. input-data)
+5. [Functions](#5. Functions)
+  1. [SE_combine](#5.1. SE_combine)
+  2. [SE_impute](#5.2 SE_impute)
+  3. [SE_detectraio](#5.3 SE_detectraio)
+  4. [SE_DEseq2](#5.4 SE_DEseq2)
+  5. [SE_boxplot](#5.5. SE_boxplot)
+  6. [SE_PCAplot](#5.5 SE_PCAplot)
+6. [Acknowledgements](#acknowledgements)
+7. [Session Info](#session-info)
+8. [References](#references)
 
 # 1. Introduction
 
@@ -28,11 +30,7 @@ SEtoolbox is an R package that operates, analyzes and visualizes SummarizedExper
 
 # 2. Installation
 
-To install the SEtoolbox package, you first need to install the `devtools` package, which provides functions to facilitate package installation from various sources, including GitHub. Run the following command in your R console:
-
-    install.packages("devtools")  
-    
-    devtools::install_github("shaoxunyuan/SEtoolbox")
+To install the SEtoolbox package, you first need to install the `devtools` package, which provides functions to facilitate package installation from various sources, including GitHub. Run the following command in your R console: install.packages("devtools") devtools::install_github("shaoxunyuan/SEtoolbox")
 
 # 3. Load packages required for this tutorial
 
@@ -40,11 +38,7 @@ During this tutorial, we might need to use a few additional packages.
 
 Since we specified dependencies = TRUE when installing SEtoolbox package, these additional packages have already been installed.
 
-We can load them directly.
-
-    library(SummarizedExperiment)
-    
-    library(tidyverse) 
+We can load them directly. library(SummarizedExperiment) library(tidyverse)
 
 # 4. Input data
 
@@ -52,9 +46,7 @@ For this tutorial, SEtoolbox will be working with a [`SummarizedExperiment`](htt
 
 # 5. Functions
 
-Functions in SEtoolbox can be obtain using
-
-    help(package="SEtoolbox")
+Functions in SEtoolbox can be obtain using help(package="SEtoolbox")
 
 ## 5.1. SE_combine
 
@@ -166,7 +158,7 @@ This function performs differential expression analysis on count data contained 
 
 `groupname`: The name of the column in `colData(SE)` that contains the factor for grouping samples. Default is `"group"`.
 
-## SE_boxplot
+## 5.5 SE_boxplot
 
 Generates a boxplot for specified features in a `SummarizedExperiment` object.
 
@@ -190,7 +182,7 @@ It supports normalization and grouping of the data.
 
 `normalization`: Normalization method ("scale", "log", or "none").
 
-## SE_PCAplot
+## 5.6 SE_PCAplot
 
 Generate PCA plots.
 
@@ -214,11 +206,11 @@ This function takes a `SummarizedExperiment` object, computes PCA, and visualize
 
 `feature_of_interesting`: Vector of specific feature names; if NULL, all features are used, default is NULL.
 
-# Acknowledgements
+# 6. Acknowledgements
 
 The author would like to thank Deepseek.
 
-# Session Info
+# 7. Session Info
 
     > sessionInfo()
     R version 4.2.0 (2022-04-22)
@@ -271,8 +263,7 @@ The author would like to thank Deepseek.
     [51] xtable_1.8-4                httpuv_1.6.15
     [53] munsell_0.5.1               RCurl_1.98-1.16
     [55] cachem_1.1.0
-    
 
-# References
+# 8. References
 
 Will update soon
