@@ -64,7 +64,11 @@ For this tutorial, SEtoolbox will be working with a [`SummarizedExperiment`](htt
 
 ## 5. Functions
 
-Functions in SEtoolbox can be obtain using help(package="SEtoolbox")
+Functions in SEtoolbox can be obtain using 
+
+```r
+help(package="SEtoolbox")
+```
 
 ### 5.1. SE_combine
 
