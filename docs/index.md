@@ -1,5 +1,3 @@
-# Introduction to SEtoolbox
-
 * **Shaoxun Yuan**
   
 * **Affiliation**: School of Artificial Intelligence and Information Technology, Nanjing University of Chinese Medicine, China
