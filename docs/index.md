@@ -21,16 +21,36 @@
 9. [References](#references)  
 
 # Introduction  
-这里是介绍内容。  
+
+ 
 
 # Installation  
-这里是安装内容。  
+
+To install the SEtoolbox package, you first need to install the `devtools` package, which provides functions to facilitate package installation from various sources, including GitHub. Run the following command in your R console:  
+
+```r  
+install.packages("devtools")  
+devtools::install_github("shaoxunyuan/SEtoolbox")
+
+```
 
 # Load packages required for this tutorial  
-这里是加载所需包的内容。  
+During this tutorial, we might need to use a few additional packages. Since we specified dependencies = TRUE when installing G4SNVHunter package, these additional packages have already been installed.
+
+We can load them directly.
+```r  
+library(BSgenome.Hsapiens.UCSC.hg19)
+
+library(GenomicRanges)
+
+library(DT)
+
+library(rtracklayer) 
+```
 
 # Input data  
-这里是输入数据的内容。  
+
+For this tutorial, we will be working with a [`SummarizedExperiment`](https://www.bioconductor.org/packages/devel/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html) object. This object is a central data structure in Bioconductor that provides a way to store and work with high-dimensional genomic data, such as RNA-seq counts or other assays.
 
 # Main functions  
 这里是主函数的内容。  
