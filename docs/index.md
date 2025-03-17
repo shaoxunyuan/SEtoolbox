@@ -1,20 +1,35 @@
 * **Shaoxun Yuan**
-  
-* **Affiliation**: School of Artificial Intelligence and Information Technology, Nanjing University of Chinese Medicine, China
-  
-* **Email**: [yuanshaoxun@njucm.edu.cn](mailto:yuanshaoxun@njucm.edu.cn)
-  
-# 1. Introduction
 
-{% toc %}  <!-- 在引言部分之后放置目录标签 -->  
+* **Affiliation**: School of Artificial Intelligence and Information Technology, Nanjing University of Chinese Medicine, China
+
+* **Email**: [yuanshaoxun@njucm.edu.cn](mailto:yuanshaoxun@njucm.edu.cn)
+
+# Table of Contents  
+
+1. [Introduction](#1-introduction)  
+2. [Installation](#2-installation)  
+3. [Load Packages Required for This Tutorial](#3-load-packages-required-for-this-tutorial)  
+4. [Input Data](#4-input-data)  
+5. [Functions](#5-functions)  
+   - [5.1 SE_combine](#51-se_combine)  
+   - [5.2 SE_impute](#52-se_impute)  
+   - [5.3 SE_detectratio](#53-se_detectraio)  
+   - [5.4 SE_DEseq2](#54-se_deseq2)  
+   - [5.5 SE_boxplot](#55-se_boxplot)  
+   - [5.6 SE_PCAplot](#56-se_pcaplot)  
+6. [Acknowledgements](#6-acknowledgements)  
+7. [Session Info](#7-session-info)  
+8. [References](#8-references)
+
+## 1. Introduction
 
 SEtoolbox is an R package that operates, analyzes and visualizes SummarizedExperiment objects.
 
-# 2. Installation
+## 2. Installation
 
 To install the SEtoolbox package, you first need to install the `devtools` package, which provides functions to facilitate package installation from various sources, including GitHub. Run the following command in your R console: install.packages("devtools") devtools::install_github("shaoxunyuan/SEtoolbox")
 
-# 3. Load packages required for this tutorial
+## 3. Load packages required for this tutorial
 
 During this tutorial, we might need to use a few additional packages.
 
@@ -22,25 +37,25 @@ Since we specified dependencies = TRUE when installing SEtoolbox package, these 
 
 We can load them directly. library(SummarizedExperiment) library(tidyverse)
 
-# 4. Input data
+## 4. Input data
 
 For this tutorial, SEtoolbox will be working with a [`SummarizedExperiment`](https://www.bioconductor.org/packages/devel/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html) object.
 
-# 5. Functions
+## 5. Functions
 
 Functions in SEtoolbox can be obtain using help(package="SEtoolbox")
 
-## 5.1. SE_combine
+### 5.1. SE_combine
 
 Combine multiple `SummarizedExperiment` objects.
 
 This function merges multiple `SummarizedExperiment` objects based on the specified merge type (intersection or union) for all assays present in the input list.
 
-#### #### Usage
+#### Usage
 
     SE_combine(se_list, merge_type = "intersection") 
 
-#### #### Arguments
+#### Arguments
 
 `se_list`: A list of SummarizedExperiment objects to be combined.
 
@@ -50,7 +65,7 @@ This function merges multiple `SummarizedExperiment` objects based on the specif
 
     2.`union`: Keep all features.
 
-## 5.2 SE_impute
+### 5.2 SE_impute
 
 Fill missing values in a `SummarizedExperiment` object.
 
@@ -106,7 +121,7 @@ Multiple imputation techniques can be utilized to handle missing values, ensurin
 
 `knum`: An integer value representing the number of neighbors in the KNN imputation method. Default is `10`.
 
-## 5.3 SE_detectraio
+### 5.3 SE_detectraio
 
 Calculate detection ratio and update `SummarizedExperiment` object's `rowData`.
 
@@ -122,7 +137,7 @@ This function computes the detection ratio of expression data and updates the `r
 
 `assayname`: The name of the assay to be used for calculations. Default is `"TPM"`.
 
-## 5.4 SE_DEseq2
+### 5.4 SE_DEseq2
 
 Perform differential expression analysis using `DESeq2`.
 
@@ -140,7 +155,7 @@ This function performs differential expression analysis on count data contained 
 
 `groupname`: The name of the column in `colData(SE)` that contains the factor for grouping samples. Default is `"group"`.
 
-## 5.5 SE_boxplot
+### 5.5 SE_boxplot
 
 Generates a boxplot for specified features in a `SummarizedExperiment` object.
 
@@ -164,7 +179,7 @@ It supports normalization and grouping of the data.
 
 `normalization`: Normalization method ("scale", "log", or "none").
 
-## 5.6 SE_PCAplot
+### 5.6 SE_PCAplot
 
 Generate PCA plots.
 
@@ -188,11 +203,11 @@ This function takes a `SummarizedExperiment` object, computes PCA, and visualize
 
 `feature_of_interesting`: Vector of specific feature names; if NULL, all features are used, default is NULL.
 
-# 6. Acknowledgements
+## 6. Acknowledgements
 
 The author would like to thank Deepseek.
 
-# 7. Session Info
+## 7. Session Info
 
     > sessionInfo()
     R version 4.2.0 (2022-04-22)
@@ -246,6 +261,6 @@ The author would like to thank Deepseek.
     [53] munsell_0.5.1               RCurl_1.98-1.16
     [55] cachem_1.1.0
 
-## References
+## 8. References
 
 Will update soon
