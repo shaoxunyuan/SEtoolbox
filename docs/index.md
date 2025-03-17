@@ -78,8 +78,9 @@ SE_combine(se_list, merge_type = "intersection")
 
 `merge_type`: A character string specifying the type of merge to perform. Options are:
 
-1."intersection" (default): Keep only common features across all objects.
-2."union": Keep all features.
+  1.`intersection` (default): Keep only common features across all objects.
+  
+  2.`union`: Keep all features.
 
 
 ## functions2  
