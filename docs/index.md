@@ -6,6 +6,8 @@
   
 # 1. Introduction
 
+{% toc %}  <!-- 在引言部分之后放置目录标签 -->  
+
 SEtoolbox is an R package that operates, analyzes and visualizes SummarizedExperiment objects.
 
 # 2. Installation
