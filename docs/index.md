@@ -16,8 +16,9 @@
    - [5.2 SE_impute](#52-se_impute)  
    - [5.3 SE_detectratio](#53-se_detectraio)  
    - [5.4 SE_DEseq2](#54-se_deseq2)  
-   - [5.5 SE_boxplot](#55-se_boxplot)  
-   - [5.6 SE_PCAplot](#56-se_pcaplot)  
+   - [5.5 SE_distribution](#55-se_distributio)  
+   - [5.6 SE_boxplot](#55-se_boxplot)  
+   - [5.7 SE_PCAplot](#56-se_pcaplot)  
 6. [Acknowledgements](#6-acknowledgements)  
 7. [Session Info](#7-session-info)  
 8. [References](#8-references) 
@@ -175,13 +176,33 @@ This function performs differential expression analysis on count data contained 
 
 #### Arguments
 
-`SE`: A `SummarizedExperiment` object containing count data.
+`SE`: An `SummarizedExperiment` object containing count data.
 
 `assayname`: The name of the assay to use for the analysis. Default is `"Count"`.
 
 `groupname`: The name of the column in `colData(SE)` that contains the factor for grouping samples. Default is `"group"`.
 
-### 5.5 SE_boxplot
+### 5.5 SE_distribution  
+
+Generates two plots illustrating the distribution of non-zero entries in a `SummarizedExperiment` object.  
+
+This function creates a bar plot to display the count of non-zero entries for each feature (gene) in the specified expression matrix and a histogram showing the distribution of the fraction of non-zero entries across samples.  
+
+It allows for the option to treat zeros as `NA`, thereby excluding them from the count.  
+
+#### Usage  
+
+SE_distribution(SE, assayname = "TPM", ZeroasNA = TRUE)
+
+#### Arguments
+
+`SE`: An `SummarizedExperiment` object containing the expression data.
+
+`assayname`: A string indicating the assay name to use from the SummarizedExperiment object. The default is "TPM".
+
+`ZeroasNA`: A logical value indicating whether zeros should be treated as NA. The default is TRUE.
+
+### 5.6 SE_boxplot
 
 Generates a boxplot for specified features in a `SummarizedExperiment` object.
 
@@ -205,7 +226,7 @@ It supports normalization and grouping of the data.
 
 `normalization`: Normalization method ("scale", "log", or "none").
 
-### 5.6 SE_PCAplot
+### 5.7 SE_PCAplot
 
 Generate PCA plots.
 
