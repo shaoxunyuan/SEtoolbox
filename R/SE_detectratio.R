@@ -73,12 +73,12 @@ SE_detectratio <- function(SE, assayname = "TPM", group_col = "group") {
 	
     # Plot histogram of detection ratios  
     plot <- ggplot(as.data.frame(rowData(SE)), aes(x = detectratio)) +  
-        geom_histogram(binwidth = 0.05, fill = "steelblue", color = "black", alpha = 0.7) +  
+        geom_histogram(binwidth = 0.1, fill = "steelblue", color = "black", alpha = 0.7) +  
         geom_density(aes(y = ..count.. * 0.05), color = "salmon", size = 1) +  
         labs(title = "",  x = "Detection Ratio",  y = "Count") +  
         scale_x_continuous(breaks = seq(0, 1, by = 0.1)) +  
         theme_minimal() +  
-        theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), panel.grid = element_blank())  
+        theme(panel.grid = element_blank())  
 
     return(list(SE = SE, plot = plot))  
 }
