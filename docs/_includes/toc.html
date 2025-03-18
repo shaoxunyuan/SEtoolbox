@@ -1,0 +1,13 @@
+{% comment %}  
+    Use this file for TOC.  
+{% endcomment %}  
+<div class="toc">  
+  {% for item in site.toc %}  
+    <h2>{{ item.title }}</h2>  
+    <ul>  
+      {% for sub_item in item.items %}  
+        <li><a href="#{{ sub_item.id }}">{{ sub_item.title }}</a></li>  
+      {% endfor %}  
+    </ul>  
+  {% endfor %}  
+</div>
