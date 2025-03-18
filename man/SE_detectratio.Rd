@@ -3,25 +3,27 @@
 \name{SE_detectratio}
 \alias{SE_detectratio}
 \title{Calculate Detection Ratio and Update SummarizedExperiment Object's rowData  
- 
+  
 This function computes the detection ratio of expression data and updates   
 the rowData of the provided SummarizedExperiment object with detection sample counts   
 and ratios. It also generates a histogram of detection ratios.}
 \usage{
-SE_detectratio(SE, assayname = "TPM")
+SE_detectratio(SE, assayname = "TPM", group_col = "group")
 }
 \arguments{
 \item{SE}{A SummarizedExperiment object containing expression data.}
 
 \item{assayname}{The name of the assay to be used for calculations. Default is "TPM".}
+
+\item{group_col}{The name of the column containing group information. Default is "group".}
 }
 \value{
 An updated SummarizedExperiment object with detection sample counts   
-  and ratios in rowData, and a histogram of detection ratios is displayed.
+  and ratios in rowData, along with a displayed histogram of detection ratios.
 }
 \description{
 Calculate Detection Ratio and Update SummarizedExperiment Object's rowData  
- 
+  
 This function computes the detection ratio of expression data and updates   
 the rowData of the provided SummarizedExperiment object with detection sample counts   
 and ratios. It also generates a histogram of detection ratios.
