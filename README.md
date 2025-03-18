@@ -51,6 +51,11 @@ Use the count matrix to calculate differential results, with results updated in 
 SE_DEseq2(SE)  
 ```
 
+Distribution plot of missing value
+```r
+SE_distribution(SE)  
+```
+
 Select specific features for PCA plot  
 ```r
 SE_PCAplot(SE)  
