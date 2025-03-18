@@ -16,7 +16,7 @@
    - [5.2 SE_impute](#52-se_impute)  
    - [5.3 SE_detectratio](#53-se_detectraio)  
    - [5.4 SE_DEseq2](#54-se_deseq2)  
-   - [5.5 SE_distribution](#55-se_distributio)  
+   - [5.5 SE_distribution](#55-se_distribution)  
    - [5.6 SE_boxplot](#56-se_boxplot)  
    - [5.7 SE_PCAplot](#57-se_pcaplot)  
 6. [Acknowledgements](#6-acknowledgements)  
