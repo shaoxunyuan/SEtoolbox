@@ -28,14 +28,15 @@ SE_detectratio <- function(SE, assayname = "TPM", group_col = "group") {
     
 	# Get feature/sample information and expression matrix  
     feature_info <- as.data.frame(rowData(SE)  )
-    sample_info <- as.data.frame(colData(SE))
+    sample_info <- colData(SE)
 	sample_info[] <- lapply(sample_info, function(x) {  
     if (inherits(x, "integer64")) {  
         return(as.integer(x))  # 或者根据需要使用as.numeric(x)  
     } else {  
         return(x)  
     }  
-})  
+	})  
+	sample_info = as.data.frame(sample_info)
     expdata <- as.data.frame(assay(SE, assayname))
     
     # Calculate detection samples and ratios  
