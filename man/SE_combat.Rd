@@ -5,15 +5,19 @@
 \title{Batch Effect Correction for SummarizedExperiment Objects  
  
 This function applies the ComBat algorithm to correct batch effects in   
-a SummarizedExperiment object based on a specified batch variable.}
+a SummarizedExperiment object based on a specified batch variable and optional experimental design comparison.}
 \usage{
-SE_combat(SE, col_for_combat)
+SE_combat(SE, col_for_combat, col_for_compare = NULL)
 }
 \arguments{
 \item{SE}{A SummarizedExperiment object containing the assay data.}
 
 \item{col_for_combat}{A character string specifying the column name of
 the batch variable in the sample data. This must be provided and valid.}
+
+\item{col_for_compare}{A character string specifying the column name of
+the condition variable in the sample data for controlling comparisons.  
+This can be NULL, in which case it will not be used.}
 }
 \value{
 A SummarizedExperiment object with the assay data corrected for   
@@ -23,5 +27,5 @@ A SummarizedExperiment object with the assay data corrected for
 Batch Effect Correction for SummarizedExperiment Objects  
  
 This function applies the ComBat algorithm to correct batch effects in   
-a SummarizedExperiment object based on a specified batch variable.
+a SummarizedExperiment object based on a specified batch variable and optional experimental design comparison.
 }

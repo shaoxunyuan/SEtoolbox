@@ -9,19 +9,20 @@
 
 1. [Introduction](#1-introduction)  
 2. [Installation](#2-installation)  
-3. [Load Packages Required for This Tutorial](#3-load-packages-required-for-this-tutorial)  
-4. [Input Data](#4-input-data)  
+3. [Load packages required for this tutorial](#3-load-packages-required-for-this-tutorial)  
+4. [Input data](#4-input-data)  
 5. [Functions](#5-functions)  
-   - [5.1 SE_combine](#51-se_combine)  
-   - [5.2 SE_impute](#52-se_impute)  
-   - [5.3 SE_detectratio](#53-se_detectraio)  
-   - [5.4 SE_DEseq2](#54-se_deseq2)  
-   - [5.5 SE_distribution](#55-se_distribution)  
-   - [5.6 SE_boxplot](#56-se_boxplot)  
-   - [5.7 SE_PCAplot](#57-se_pcaplot)  
+   1. [SE_combine](#51-se_combine)  
+   2. [SE_combat](#52-se_combat)  
+   3. [SE_impute](#53-se_impute)  
+   4. [SE_detectratio](#54-se_detectratio)  
+   5. [SE_DEseq2](#55-se_deseq2)  
+   6. [SE_distribution](#56-se_distribution)  
+   7. [SE_boxplot](#57-se_boxplot)  
+   8. [SE_PCAplot](#58-se_pcaplot)  
 6. [Acknowledgements](#6-acknowledgements)  
 7. [Session Info](#7-session-info)  
-8. [References](#8-references) 
+8. [References](#8-references)
 
 ## 1. Introduction
 
@@ -92,7 +93,19 @@ This function merges multiple `SummarizedExperiment` objects based on the specif
 
     2.`union`: Keep all features.
 
-### 5.2 SE_impute
+### 5.2. SE_combat
+
+Batch effect correct using Combat in sva package for `SummarizedExperiment` object.
+
+#### Usage
+
+    SE_combat(SE, col_for_combat, col_for_compare) 
+
+#### Arguments
+
+	`SE`: A `SummarizedExperiment` object containing the data to be imputed.
+
+### 5.3 SE_impute
 
 Fill missing values in a `SummarizedExperiment` object.
 
@@ -102,13 +115,13 @@ Multiple imputation techniques can be utilized to handle missing values, ensurin
 
 #### Usage
 
-    SE_impute(object, assayname = "TPM", group = "group", ZerosAsNA = FALSE, RemoveNA = TRUE,  
+    SE_impute(SE, assayname = "TPM", group = "group", ZerosAsNA = FALSE, RemoveNA = TRUE,  
               cutoff = 20, method = c("none", "LOD", "half_min", "median", "mean", "min", "knn", "rf", "global_mean", "svd", "QRILC"),  
               LOD = NULL, knum = 10)  
 
 #### Arguments
 
-`object`: A `SummarizedExperiment` object containing the data to be imputed.
+`SE`: A `SummarizedExperiment` object containing the data to be imputed.
 
 `assayname`: The name of the `SummarizedExperiment` assay, specifying the type of data to be imputed.
 
@@ -148,7 +161,7 @@ Multiple imputation techniques can be utilized to handle missing values, ensurin
 
 `knum`: An integer value representing the number of neighbors in the KNN imputation method. Default is `10`.
 
-### 5.3 SE_detectraio
+### 5.4 SE_detectraio
 
 Calculate detection ratio and update `SummarizedExperiment` object's `rowData`.
 
@@ -164,7 +177,7 @@ This function computes the detection ratio of expression data and updates the `r
 
 `assayname`: The name of the assay to be used for calculations. Default is `"TPM"`.
 
-### 5.4 SE_DEseq2
+### 5.5 SE_DEseq2
 
 Perform differential expression analysis using `DESeq2`.
 
@@ -182,7 +195,7 @@ This function performs differential expression analysis on count data contained 
 
 `groupname`: The name of the column in `colData(SE)` that contains the factor for grouping samples. Default is `"group"`.
 
-### 5.5 SE_distribution  
+### 5.6 SE_distribution  
 
 Generates two plots illustrating the distribution of non-zero entries in a `SummarizedExperiment` object.  
 
@@ -202,7 +215,7 @@ SE_distribution(SE, assayname = "TPM", ZeroasNA = TRUE)
 
 `ZeroasNA`: A logical value indicating whether zeros should be treated as NA. The default is TRUE.
 
-### 5.6 SE_boxplot
+### 5.7 SE_boxplot
 
 Generates a boxplot for specified features in a `SummarizedExperiment` object.
 
@@ -226,7 +239,7 @@ It supports normalization and grouping of the data.
 
 `normalization`: Normalization method ("scale", "log", or "none").
 
-### 5.7 SE_PCAplot
+### 5.8 SE_PCAplot
 
 Generate PCA plots.
 

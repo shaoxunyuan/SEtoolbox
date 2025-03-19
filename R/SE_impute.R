@@ -22,7 +22,7 @@
 #' se_imputed <- SE_impute(se, assayname = "TPM", group = "my_group_column", method = "median", ZerosAsNA = TRUE)  
 #'  
 #' @export  
-SE_impute <- function(object, assayname = "TPM", group = "group", ZerosAsNA = FALSE, RemoveNA = TRUE,  
+SE_impute <- function(SE, assayname = "TPM", group = "group", ZerosAsNA = FALSE, RemoveNA = TRUE,  
                       cutoff = 20, method = c("none", "LOD", "half_min", "median", "mean", "min", "knn", "rf", "global_mean", "svd", "QRILC"),  
                       LOD = NULL, knum = 10) {  
     library(plyr)  
@@ -32,7 +32,7 @@ SE_impute <- function(object, assayname = "TPM", group = "group", ZerosAsNA = FA
     method <- match.arg(method, c("none", "LOD", "half_min", "median", "mean", "min", "knn", "rf", "global_mean", "svd", "QRILC"))  
     
     # Process the SummarizedExperiment object  
-    sam_tab <- SummarizedExperiment::colData(object)   
+    sam_tab <- SummarizedExperiment::colData(SE)   
     sam_tab[] <- lapply(sam_tab, function(x) {   
         if(inherits(x, "integer64")) {   
             return(as.numeric(x))  
@@ -40,7 +40,7 @@ SE_impute <- function(object, assayname = "TPM", group = "group", ZerosAsNA = FA
         return(x)  
     })   
     sam_tab <- as.data.frame(sam_tab) %>% tibble::rownames_to_column("TempRowNames")   
-    prf_tab <- SummarizedExperiment::assay(object, assayname) %>% as.data.frame() %>% t()   
+    prf_tab <- SummarizedExperiment::assay(SE, assayname) %>% as.data.frame() %>% t()   
 
     # Find index for sample grouping  
     group_index <- which(colnames(sam_tab) == group)  
@@ -126,7 +126,7 @@ SE_impute <- function(object, assayname = "TPM", group = "group", ZerosAsNA = FA
         fit <- missForest::missForest(t(depurdata))  
         depurdata <- fit$ximp %>% t()  
     } else if (method == "global_mean") {  
-        depurdata <- .GlobalMean(object = t(depurdata)) %>% t()  
+        depurdata <- .GlobalMean(SE = t(depurdata)) %>% t()  
     } else if (method == "svd") {  
         depurdata <- .SVD_wrapper(depurdata)  
     } else if (method == "QRILC") {  
@@ -139,13 +139,13 @@ SE_impute <- function(object, assayname = "TPM", group = "group", ZerosAsNA = FA
 
     # Return final result   
     if (ncol(depurdata) != ncol(prf_tab)) {  
-        rdata <- SummarizedExperiment::rowData(object)  
-        cdata <- SummarizedExperiment::colData(object)  
-        mdata <- if (length(object@metadata) == 0) { NULL } else { object@metadata }  
+        rdata <- SummarizedExperiment::rowData(SE)  
+        cdata <- SummarizedExperiment::colData(SE)  
+        mdata <- if (length(SE@metadata) == 0) { NULL } else { SE@metadata }  
         rdata = rdata[rownames(rdata) %in% colnames(depurdata),]  
         res <- SummarizedExperiment(assays = t(depurdata), rowData = rdata, colData = cdata, metadata = mdata)  
     } else {  
-        res <- object  
+        res <- SE  
         SummarizedExperiment::assay(res) <- t(depurdata)  
     }    
 
