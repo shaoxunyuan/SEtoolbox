@@ -12,7 +12,8 @@ SE_PCAplot(
   groupname = "group",
   outlier_threshold = 2,
   scale = TRUE,
-  feature_of_interesting = NULL
+  feature_of_interesting = NULL,
+  show_caption = TRUE
 )
 }
 \arguments{
@@ -27,6 +28,8 @@ SE_PCAplot(
 \item{scale}{Whether to standardize the data, default is TRUE.}
 
 \item{feature_of_interesting}{Vector of specific feature names; if NULL, all features are used, default is NULL.}
+
+\item{show_caption}{Logical value indicating whether to display caption, default is TRUE.}
 }
 \value{
 A list containing two ggplot objects: the original PCA plot and the filtered PCA plot.
