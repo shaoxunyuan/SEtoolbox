@@ -8,7 +8,7 @@ This function imputes missing values (NA) in the provided SummarizedExperiment o
 Various imputation techniques can be used to handle missing values, ensuring the robustness of subsequent analyses.}
 \usage{
 SE_impute(
-  object,
+  SE,
   assayname = "TPM",
   group = "group",
   ZerosAsNA = FALSE,
@@ -21,8 +21,6 @@ SE_impute(
 )
 }
 \arguments{
-\item{object}{A SummarizedExperiment object containing the data to be imputed.}
-
 \item{assayname}{The name of the assay in the SummarizedExperiment, specifying the type of data to be imputed.}
 
 \item{group}{A character string specifying the grouping variable in the sample data.}
@@ -39,6 +37,8 @@ SE_impute(
 \item{LOD}{A numeric value representing the limit of detection (used for the LOD imputation method). Default is NULL.}
 
 \item{knum}{An integer representing the number of neighbors in the KNN imputation method. Default is 10.}
+
+\item{object}{A SummarizedExperiment object containing the data to be imputed.}
 }
 \value{
 A SummarizedExperiment object containing the imputed values.

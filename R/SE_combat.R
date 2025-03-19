@@ -1,22 +1,21 @@
-#' Batch Effect Correction for SummarizedExperiment Objects  
+#' Perform Batch Effect Correction using ComBat  
 #'  
-#' This function applies the ComBat algorithm to correct batch effects in   
-#' a SummarizedExperiment object based on a specified batch variable and optional experimental design comparison.  
+#' This function adjusts for batch effects in a SummarizedExperiment object using the ComBat method.  
 #'  
-#' @param SE A SummarizedExperiment object containing the assay data.  
-#' @param col_for_combat A character string specifying the column name of   
-#'   the batch variable in the sample data. This must be provided and valid.  
-#' @param col_for_compare A character string specifying the column name of  
-#'   the condition variable in the sample data for controlling comparisons.  
-#'   This can be NULL, in which case it will not be used.  
+#' @param SE A SummarizedExperiment object containing expression data.  
+#' @param col_for_combat A string specifying the column name in the sample information that contains batch information.  
+#' @param col_for_compare An optional string specifying the column name in the sample information that contains the condition for comparison.  
 #'  
-#' @return A SummarizedExperiment object with the assay data corrected for   
-#'   batch effects.  
+#' @return A SummarizedExperiment object with batch effects corrected.  
 #'   
 #' @import SummarizedExperiment  
 #' @import sva  
-#' @export  
-
+#'   
+#' @examples  
+#' # Assuming 'se' is a SummarizedExperiment object  
+#' corrected_se <- SE_combat(se, col_for_combat = "batch", col_for_compare = "condition")  
+#'  
+#' @export
 SE_combat = function(SE, col_for_combat, col_for_compare = NULL) {  
     library(SummarizedExperiment)  
     library(sva)  
@@ -39,16 +38,31 @@ SE_combat = function(SE, col_for_combat, col_for_compare = NULL) {
         stop("Error: 'col_for_compare' must be a valid column name in sample_info if provided.")  
     }  
 
+    # Check for col_for_compare correlation with batch  
+    if (!is.null(col_for_compare)) {  
+        compare <- sample_info[[col_for_compare]]  # Extract compare information  
+        
+        # Create a contingency table and perform a chi-squared test  
+        contingency_table <- table(batch, compare)  
+        chisq_test <- chisq.test(contingency_table)  
+
+        # If p-value is significant, indicating correlation  
+        if (chisq_test$p.value < 0.05) {  
+            message("Warning: compare information is strongly correlated with the batch. Please consider removing the compare information before batch effect correction.")  
+            return(NULL)  # Stop further execution and return NULL  
+        }  
+    }  
+
     # Function to perform batch effect correction  
     ExpdataBatch = function(assayname) {  
         expdata = assay(SE, assayname)  # Extract expression data for the given assay  
         
         # Perform ComBat correction  
         if (!is.null(col_for_compare)) {  
-            condition <- sample_info[[col_for_compare]]  # Extract condition information  
-            expdata_combat <- ComBat(dat = expdata, batch = batch, mod = model.matrix(~ condition))  # Remove batch effects using ComBat with condition  
+            compare <- sample_info[[col_for_compare]]  # Extract compare information  
+            expdata_combat <- ComBat(dat = expdata, batch = batch, mod = model.matrix(~ compare))  # Remove batch effects using ComBat with compare  
         } else {  
-            expdata_combat <- ComBat(dat = expdata, batch = batch)  # Remove batch effects using ComBat without condition  
+            expdata_combat <- ComBat(dat = expdata, batch = batch)  # Remove batch effects using ComBat without compare  
         }  
         
         return(expdata_combat)  # Return the corrected expression data  
