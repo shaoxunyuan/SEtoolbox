@@ -7,9 +7,10 @@
 #' @param outlier_threshold Outlier filtering threshold, default is 2.  
 #' @param scale Whether to standardize the data, default is TRUE.  
 #' @param feature_of_interesting Vector of specific feature names; if NULL, all features are used, default is NULL.  
+#' @param show_caption Logical value indicating whether to display caption, default is TRUE.  
 #' @return A list containing two ggplot objects: the original PCA plot and the filtered PCA plot.  
 #' @export  
-SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", outlier_threshold = 2, scale = TRUE, feature_of_interesting = NULL){  
+SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", outlier_threshold = 2, scale = TRUE, feature_of_interesting = NULL, show_caption = TRUE){  
   library(ggplot2)  
   library(plyr)  
   library(gridExtra)  
@@ -69,9 +70,9 @@ SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", outlier_thresh
   caption_text2 <- paste("feature:", num_feature, ";", "sample:", paste(names(group_counts_filtered), ":", group_counts_filtered, collapse = ", "))  
 
   plot_pca <- function(data, title, caption) {  
-    ggplot(data, aes(x = PC1, y = PC2, color = group)) +  
+    p <- ggplot(data, aes(x = PC1, y = PC2, color = group)) +  
       geom_point(size = 3) +  
-      labs(title = paste0("PCAplot: ", SCvalue(data)), x = "PCA1", y = "PCA2", caption = caption) +  
+      labs(title = paste0("PCAplot: ", SCvalue(data)), x = "PCA1", y = "PCA2") +  
       theme_minimal() +  
       stat_ellipse(type = "norm", level = 0.95, linetype = 2) +  
       theme(axis.title.x = element_text(size = 12),  
@@ -84,6 +85,11 @@ SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", outlier_thresh
             panel.border = element_rect(color = "gray", fill = NA, size = 1),  
             legend.position = c(0.9, 0.2), legend.text = element_text(size = 12),  
             legend.title = element_text(size = 12))  
+
+    if (show_caption) {  
+      p <- p + labs(caption = caption)  
+    }  
+    return(p)  
   }  
 
   pca_plot1 <- plot_pca(pca_data, "PCAplot", caption_text1)  
