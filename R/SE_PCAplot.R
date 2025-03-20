@@ -69,7 +69,7 @@ SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", outlier_thresh
   group_counts_filtered <- table(pca_data_filter$group)  
   caption_text2 <- paste("feature:", num_feature, ";", "sample:", paste(names(group_counts_filtered), ":", group_counts_filtered, collapse = ", "))  
 
-  plot_pca <- function(data, title, caption) {  
+  plot_pca <- function(data, title, caption, show_legend = TRUE) {  
     p <- ggplot(data, aes(x = PC1, y = PC2, color = group)) +  
       geom_point(size = 3) +  
       labs(title = paste0("PCAplot: ", SCvalue(data)), x = "PCA1", y = "PCA2") +  
@@ -83,17 +83,18 @@ SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", outlier_thresh
             panel.grid.minor = element_blank(),  
             strip.text = element_text(size = 12),  
             panel.border = element_rect(color = "gray", fill = NA, size = 1),  
-            legend.position = c(0.9, 0.2), legend.text = element_text(size = 12),  
+            legend.position = ifelse(show_legend, "right", "none"),  # 将图例位置设置为右侧  
+            legend.text = element_text(size = 12),  
             legend.title = element_text(size = 12))  
 
     if (show_caption) {  
       p <- p + labs(caption = caption)  
     }  
     return(p)  
-  }  
+	}  
 
-  pca_plot1 <- plot_pca(pca_data, "PCAplot", caption_text1)  
-  pca_plot2 <- plot_pca(pca_data_filter, "PCAplot Filtered", caption_text2)  
+  pca_plot1 <- plot_pca(pca_data, "PCAplot", caption_text1, show_legend = FALSE)  # 不显示图例  
+  pca_plot2 <- plot_pca(pca_data_filter, "PCAplot Filtered", caption_text2, show_legend = TRUE)  # 显示图例，位置设置为右侧  
 
   grid.arrange(pca_plot1, pca_plot2, nrow = 1)  
   invisible(list(pca_plot1 = pca_plot1, pca_plot2 = pca_plot2))   
