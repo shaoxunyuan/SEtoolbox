@@ -13,7 +13,7 @@
 SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", outlier_threshold = 2, scale = TRUE, feature_of_interesting = NULL, show_caption = TRUE){  
   library(ggplot2)  
   library(plyr)  
-  library(gridExtra)  
+  library(cowplot)    
   library(cluster)  
 
   SCvalue = function(data){   
@@ -93,9 +93,8 @@ SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", outlier_thresh
     return(p)  
 	}  
 
-  pca_plot1 <- plot_pca(pca_data, "PCAplot", caption_text1, show_legend = FALSE)  # 不显示图例  
+  pca_plot1 <- plot_pca(pca_data, "PCAplot", caption_text1, show_legend = FALSE)     # 不显示图例  
   pca_plot2 <- plot_pca(pca_data_filter, "PCAplot Filtered", caption_text2, show_legend = TRUE)  # 显示图例，位置设置为右侧  
 
-  grid.arrange(pca_plot1, pca_plot2, nrow = 1)  
-  invisible(list(pca_plot1 = pca_plot1, pca_plot2 = pca_plot2))   
+  return(plot_grid(pca_plot1, pca_plot2, align = 'hv', ncol = 2))
 }
