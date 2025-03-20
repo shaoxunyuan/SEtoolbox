@@ -6,7 +6,7 @@
 #' @param group_col Column name in colData(SE) for grouping.
 #' @param normalization Normalization method ("scale", "log", or "none").
 #' @export
-SE_boxplot <- function(SE, feature_of_interest = c("AAGAB", "ABCA13", "ABCC4", "ABHD2"), assayname = "TPM", group_col = NA, normalization = "none") {  
+SE_boxplot <- function(SE, feature_of_interest = c("AAGAB", "ABCA13", "ABCC4", "ABHD2"), assayname = "TPM", group_col = NULL, normalization = "none") {  
     library(SummarizedExperiment)  
     library(reshape2)  
     library(ggplot2)  

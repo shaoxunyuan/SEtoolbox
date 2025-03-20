@@ -6,7 +6,7 @@
 \usage{
 SE_boxplot(
   SE,
-  feature_of_interest = c("AAK1", "ABCA13", "ABCB10", "ABCC1"),
+  feature_of_interest = c("AAGAB", "ABCA13", "ABCC4", "ABHD2"),
   assayname = "TPM",
   group_col = NA,
   normalization = "none"
