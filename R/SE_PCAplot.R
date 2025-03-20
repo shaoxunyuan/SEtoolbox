@@ -13,7 +13,7 @@
 SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", outlier_threshold = 2, scale = TRUE, feature_of_interesting = NULL, show_caption = TRUE){  
   library(ggplot2)  
   library(plyr)  
-  library(cowplot)    
+  library(patchwork)  
   library(cluster)  
 
   SCvalue = function(data){   
