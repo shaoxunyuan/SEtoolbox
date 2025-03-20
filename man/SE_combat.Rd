@@ -2,30 +2,30 @@
 % Please edit documentation in R/SE_combat.R
 \name{SE_combat}
 \alias{SE_combat}
-\title{Batch Effect Correction for SummarizedExperiment Objects  
+\title{Perform Batch Effect Correction using ComBat  
  
-This function applies the ComBat algorithm to correct batch effects in   
-a SummarizedExperiment object based on a specified batch variable and optional experimental design comparison.}
+This function adjusts for batch effects in a SummarizedExperiment object using the ComBat method.}
 \usage{
 SE_combat(SE, col_for_combat, col_for_compare = NULL)
 }
 \arguments{
-\item{SE}{A SummarizedExperiment object containing the assay data.}
+\item{SE}{A SummarizedExperiment object containing expression data.}
 
-\item{col_for_combat}{A character string specifying the column name of
-the batch variable in the sample data. This must be provided and valid.}
+\item{col_for_combat}{A string specifying the column name in the sample information that contains batch information.}
 
-\item{col_for_compare}{A character string specifying the column name of
-the condition variable in the sample data for controlling comparisons.  
-This can be NULL, in which case it will not be used.}
+\item{col_for_compare}{An optional string specifying the column name in the sample information that contains the condition for comparison.}
 }
 \value{
-A SummarizedExperiment object with the assay data corrected for   
-  batch effects.
+A SummarizedExperiment object with batch effects corrected.
 }
 \description{
-Batch Effect Correction for SummarizedExperiment Objects  
+Perform Batch Effect Correction using ComBat  
  
-This function applies the ComBat algorithm to correct batch effects in   
-a SummarizedExperiment object based on a specified batch variable and optional experimental design comparison.
+This function adjusts for batch effects in a SummarizedExperiment object using the ComBat method.
+}
+\examples{
+ 
+# Assuming 'se' is a SummarizedExperiment object  
+corrected_se <- SE_combat(se, col_for_combat = "batch", col_for_compare = "condition")  
+ 
 }
