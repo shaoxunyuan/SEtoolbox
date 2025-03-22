@@ -1,5 +1,6 @@
-#' Create a SummarizedExperiment object for COCONUT analysis  
+#' @title Create a SummarizedExperiment object for COCONUT analysis  
 #'  
+#' @description  
 #' This function processes a list of SummarizedExperiment objects, extracts  
 #' the assay data and corresponding sample information, and prepares a new  
 #' SummarizedExperiment object suitable for COCONUT analysis. It assigns a  
@@ -33,10 +34,7 @@
 #'  
 #' @export  
 SE_COCONUT = function(SElist, assayname = "TPM", group_col = "group", label_healthy = "HC") {  
-    if (!requireNamespace("COCONUT", quietly = TRUE)) {  
-		devtools::install_github("cran/COCONUT")  
-	}  
-	library(COCONUT)
+  
     create_COCOobj_type <- function(SEinput, assayname, group_col, label_healthy) {  
         expdata = as.data.frame(assay(SEinput, assayname))  
         sample_info = as.data.frame(colData(SEinput))  

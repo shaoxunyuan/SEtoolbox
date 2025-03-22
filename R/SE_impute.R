@@ -1,3 +1,6 @@
+#' @title SE_impute  
+#' 
+#' @description  
 #' Impute Missing Values in SummarizedExperiment  
 #'  
 #' This function imputes missing values in a SummarizedExperiment object using the k-nearest neighbor method.  
