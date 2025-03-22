@@ -2,12 +2,7 @@
 % Please edit documentation in R/SE_COCONUT.R
 \name{SE_COCONUT}
 \alias{SE_COCONUT}
-\title{Create a SummarizedExperiment object for COCONUT analysis  
- 
-This function processes a list of SummarizedExperiment objects, extracts  
-the assay data and corresponding sample information, and prepares a new  
-SummarizedExperiment object suitable for COCONUT analysis. It assigns a  
-binary label for healthy samples based on the specified group column.}
+\title{Create a SummarizedExperiment object for COCONUT analysis}
 \usage{
 SE_COCONUT(
   SElist,
@@ -34,8 +29,6 @@ A SummarizedExperiment object containing the combined assay data,
         feature information, and merged sample information.
 }
 \description{
-Create a SummarizedExperiment object for COCONUT analysis  
- 
 This function processes a list of SummarizedExperiment objects, extracts  
 the assay data and corresponding sample information, and prepares a new  
 SummarizedExperiment object suitable for COCONUT analysis. It assigns a  

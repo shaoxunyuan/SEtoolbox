@@ -1,9 +1,7 @@
 #' @title SE_impute  
 #' 
 #' @description  
-#' Impute Missing Values in SummarizedExperiment  
-#'  
-#' This function imputes missing values in a SummarizedExperiment object using the k-nearest neighbor method.  
+#' Impute Missing Values in SummarizedExperiment   
 #'  
 #' @param SE A SummarizedExperiment object with expression data.  
 #' @param assayname Name of the assay to use (default: "TPM").  

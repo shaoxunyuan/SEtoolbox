@@ -2,9 +2,7 @@
 % Please edit documentation in R/SE_impute.R
 \name{SE_impute}
 \alias{SE_impute}
-\title{Impute Missing Values in SummarizedExperiment  
- 
-This function imputes missing values in a SummarizedExperiment object using the k-nearest neighbor method.}
+\title{SE_impute}
 \usage{
 SE_impute(SE, assayname = "TPM", group = "group", method = "knn")
 }
