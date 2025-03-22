@@ -2,57 +2,26 @@
 % Please edit documentation in R/SE_impute.R
 \name{SE_impute}
 \alias{SE_impute}
-\title{Fill Missing Values in a SummarizedExperiment Object  
+\title{Impute Missing Values in SummarizedExperiment  
  
-This function imputes missing values (NA) in the provided SummarizedExperiment object using specified methods.  
-Various imputation techniques can be used to handle missing values, ensuring the robustness of subsequent analyses.}
+This function imputes missing values in a SummarizedExperiment object using the k-nearest neighbor method.}
 \usage{
-SE_impute(
-  SE,
-  assayname = "TPM",
-  group = "group",
-  ZerosAsNA = FALSE,
-  RemoveNA = TRUE,
-  cutoff = 20,
-  method = c("none", "LOD", "half_min", "median", "mean", "min", "knn", "rf",
-    "global_mean", "svd", "QRILC"),
-  LOD = NULL,
-  knum = 10
-)
+SE_impute(SE, assayname = "TPM", group = "group", method = "knn")
 }
 \arguments{
-\item{assayname}{The name of the assay in the SummarizedExperiment, specifying the type of data to be imputed.}
+\item{SE}{A SummarizedExperiment object with expression data.}
 
-\item{group}{A character string specifying the grouping variable in the sample data.}
+\item{assayname}{Name of the assay to use (default: "TPM").}
 
-\item{ZerosAsNA}{A logical value indicating whether to treat zeros as NA. Default is FALSE.}
+\item{group}{Grouping variable name (default: "group").}
 
-\item{RemoveNA}{A logical value indicating whether to remove samples with a high percentage of NA values based on the cutoff. Default is TRUE.}
-
-\item{cutoff}{A numeric value representing the percentage cutoff for NA samples. Default is 20.}
-
-\item{method}{A character string specifying the imputation method to use. Options include "none", "LOD", "half_min",
-"median", "mean", "min", "knn", "rf", "global_mean", "svd", and "QRILC". Default is "none".}
-
-\item{LOD}{A numeric value representing the limit of detection (used for the LOD imputation method). Default is NULL.}
-
-\item{knum}{An integer representing the number of neighbors in the KNN imputation method. Default is 10.}
-
-\item{object}{A SummarizedExperiment object containing the data to be imputed.}
+\item{method}{Imputation method (default: "knn").}
 }
 \value{
-A SummarizedExperiment object containing the imputed values.
+A SummarizedExperiment object with imputed data.
 }
 \description{
-Fill Missing Values in a SummarizedExperiment Object  
+Impute Missing Values in SummarizedExperiment  
  
-This function imputes missing values (NA) in the provided SummarizedExperiment object using specified methods.  
-Various imputation techniques can be used to handle missing values, ensuring the robustness of subsequent analyses.
-}
-\examples{
- 
-# Example usage  
-# Assuming `se` is a SummarizedExperiment object  
-se_imputed <- SE_impute(se, assayname = "TPM", group = "my_group_column", method = "median", ZerosAsNA = TRUE)  
- 
+This function imputes missing values in a SummarizedExperiment object using the k-nearest neighbor method.
 }
