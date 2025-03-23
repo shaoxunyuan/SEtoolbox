@@ -19,7 +19,5 @@ SE_impute(SE, assayname = "TPM", group = "group", method = "knn")
 A SummarizedExperiment object with imputed data.
 }
 \description{
-Impute Missing Values in SummarizedExperiment  
- 
-This function imputes missing values in a SummarizedExperiment object using the k-nearest neighbor method.
+Impute Missing Values in SummarizedExperiment
 }
