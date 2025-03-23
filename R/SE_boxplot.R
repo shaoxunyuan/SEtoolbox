@@ -13,7 +13,7 @@
 #'            information. Default is NULL.  
 #' @param normalization A string specifying the normalization method. Options include   
 #'            "none", "scale", or "log". Default is "none".  
-#' @import SummarizedExperiment tidyr tidyverse ggplot2 multcompView 
+#' @import SummarizedExperiment dplyr tidyr tidyverse ggplot2 multcompView tibble ggforce
 #' @return A ggplot object representing the violin and box plots with significance markers.  
 #'  
 #' @examples  
@@ -32,7 +32,7 @@
 SE_boxplot <- function(SE,   
                        feature_of_interest = c("AAGAB", "ABCA13", "ABCC4", "ABHD2"),   
                        assayname = "TPM",   
-                       group_colname = NULL,   
+                       group_colname = "group",   
                        normalization = "none") {  
   
     if (!inherits(SE, "SummarizedExperiment")) {  

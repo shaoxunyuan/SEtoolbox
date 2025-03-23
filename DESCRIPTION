@@ -8,8 +8,12 @@ License: GPL-3
 Encoding: UTF-8
 Imports: 
 	SummarizedExperiment,
-	plyr,
-    dplyr,
+	tidyr,
+	dplyr,
+	tidyverse,
+	tibble,
     ggplot2,
-	impute
+	ggforce,
+	impute,
+	multcompView
 RoxygenNote: 7.3.2
