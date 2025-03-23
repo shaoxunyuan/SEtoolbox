@@ -1,12 +1,14 @@
 Package: SEtoolbox
 Title: SEtoolbox for Analysis
 Version: 0.1.0
-Author: Your Name
-Maintainer: Your Name <your.email@example.com>
+Author: Shaoxun Yuan
+Maintainer: Your Name <yuanshaoxun@njucm.edu.cn>
 Description: A toolbox for specific analyses.
 License: GPL-3
 Encoding: UTF-8
 Imports: 
+	SummarizedExperiment,
+	plyr,
     dplyr,
     ggplot2
 RoxygenNote: 7.3.2
