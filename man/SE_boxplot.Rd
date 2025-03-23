@@ -8,7 +8,7 @@ SE_boxplot(
   SE,
   feature_of_interest = c("AAGAB", "ABCA13", "ABCC4", "ABHD2"),
   assayname = "TPM",
-  group_colname = NULL,
+  group_colname = "group",
   normalization = "none"
 )
 }

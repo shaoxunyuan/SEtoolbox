@@ -10,7 +10,7 @@
 #' @param assayname A string specifying the assay from which to extract data.   
 #'            Default is "TPM".  
 #' @param group_colname A string specifying the column name in colData for group   
-#'            information. Default is NULL.  
+#'            information. Default is "group".  
 #' @param normalization A string specifying the normalization method. Options include   
 #'            "none", "scale", or "log". Default is "none".  
 #' @import SummarizedExperiment dplyr tidyr tidyverse ggplot2 multcompView tibble ggforce
@@ -64,10 +64,7 @@ SE_boxplot <- function(SE,
     }  
 	})  
 	sample_info = as.data.frame(sample_info)
-	
-	
-	
-   
+	 
     exp_data_long <- as.data.frame(exp_data_subset) %>%   
                      rownames_to_column(var = "feature") %>%   
                      pivot_longer(cols = -feature, names_to = "sample", values_to = "express")  
