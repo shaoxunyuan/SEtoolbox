@@ -11,7 +11,6 @@
 #' @return A new SummarizedExperiment object with imputed expression data.
 #'
 #' @import SummarizedExperiment
-#' @import impute
 #'
 #' @examples
 #' # Assume se is a SummarizedExperiment object

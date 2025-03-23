@@ -12,9 +12,6 @@
 #'
 #' @return A new SummarizedExperiment object with batch - corrected expression data.
 #'
-#' @import SummarizedExperiment
-#' @importFrom some_package COCONUT # Replace some_package with the actual package name
-#'
 #' @examples
 #' # Assume selist is a list of SummarizedExperiment objects
 #' # SE_corrected <- SE_COCONUT(selist)
