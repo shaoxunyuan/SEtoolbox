@@ -9,8 +9,6 @@
 #' @param group_col The name of the column containing group information. Default is "group".  
 #' @return An updated SummarizedExperiment object with detection sample counts  
 #'   and ratios in rowData, along with a displayed histogram of detection ratios.  
-#' @import SummarizedExperiment  
-#' @import ggplot2  
 #' @export  
 SE_detectratio <- function(SE, assayname = "TPM", group_col = "group") {  
     

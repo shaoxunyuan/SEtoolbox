@@ -8,9 +8,6 @@
 #'  
 #' @return A SummarizedExperiment object with batch effects corrected.  
 #'   
-#' @import SummarizedExperiment  
-#' @import sva  
-#'   
 #' @examples  
 #' # Assuming 'se' is a SummarizedExperiment object  
 #' corrected_se <- SE_combat(se, col_for_combat = "batch", col_for_compare = "condition")  
