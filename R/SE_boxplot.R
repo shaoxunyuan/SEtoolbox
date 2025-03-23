@@ -55,7 +55,18 @@ SE_boxplot <- function(SE,
         exp_data_subset <- log2(exp_data_subset + 1)   
     }  
 
-    sample_info <- as.data.frame(colData(SE))
+    sample_info <- colData(SE)
+	sample_info[] <- lapply(sample_info, function(x) {  
+    if (inherits(x, "integer64")) {  
+        return(as.integer(x))  # integer64 to numeric
+    } else {  
+        return(x)  
+    }  
+	})  
+	sample_info = as.data.frame(sample_info)
+	
+	
+	
    
     exp_data_long <- as.data.frame(exp_data_subset) %>%   
                      rownames_to_column(var = "feature") %>%   

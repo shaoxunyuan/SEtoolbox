@@ -25,7 +25,7 @@ SE_detectratio <- function(SE, assayname = "TPM", group_col = "group") {
     sample_info <- colData(SE)
 	sample_info[] <- lapply(sample_info, function(x) {  
     if (inherits(x, "integer64")) {  
-        return(as.integer(x))  # 或者根据需要使用as.numeric(x)  
+        return(as.integer(x))  # integer64 to numeric
     } else {  
         return(x)  
     }  
