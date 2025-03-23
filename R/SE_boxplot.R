@@ -13,7 +13,7 @@
 #'            information. Default is NULL.  
 #' @param normalization A string specifying the normalization method. Options include   
 #'            "none", "scale", or "log". Default is "none".  
-#'  
+#' @import SummarizedExperiment tidyr tidyverse ggplot2 multcompView 
 #' @return A ggplot object representing the violin and box plots with significance markers.  
 #'  
 #' @examples  
@@ -55,7 +55,7 @@ SE_boxplot <- function(SE,
         exp_data_subset <- log2(exp_data_subset + 1)   
     }  
 
-    sample_info <- colData(SE)  
+    sample_info <- as.data.frame(colData(SE))
    
     exp_data_long <- as.data.frame(exp_data_subset) %>%   
                      rownames_to_column(var = "feature") %>%   
