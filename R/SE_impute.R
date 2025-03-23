@@ -10,8 +10,6 @@
 #'
 #' @return A new SummarizedExperiment object with imputed expression data.
 #'
-#' @import SummarizedExperiment
-#'
 #' @examples
 #' # Assume se is a SummarizedExperiment object
 #' # SEimpute <- SE_impute(se)
