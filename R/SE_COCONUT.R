@@ -1,40 +1,26 @@
-#' @title Create a SummarizedExperiment object for COCONUT analysis  
-#'  
-#' @description  
-#' This function processes a list of SummarizedExperiment objects, extracts  
-#' the assay data and corresponding sample information, and prepares a new  
-#' SummarizedExperiment object suitable for COCONUT analysis. It assigns a  
-#' binary label for healthy samples based on the specified group column.  
-#'  
-#' @param SElist A list of SummarizedExperiment objects. Each object should contain  
-#'               the assay data and the sample information needed for analysis.  
-#' @param assayname A string specifying the name of the assay to extract from the  
-#'                  SummarizedExperiment objects (default is "TPM").  
-#' @param group_col A string specifying the name of the column in the colData that   
-#'                  contains group information (default is "group").  
-#' @param label_healthy A string used to identify healthy samples in the group column   
-#'                      (default is "HC").  
-#'   
-#' @return A SummarizedExperiment object containing the combined assay data,  
-#'         feature information, and merged sample information.  
-#'  
-#' @examples  
-#' # Load required package  
-#' library(SummarizedExperiment)  
-#'   
-#' # Create a list of example SummarizedExperiment objects  
-#' SE1 <- SummarizedExperiment(assays = list(TPM = matrix(rnorm(100), nrow=10)),  
-#'                             colData = DataFrame(group = rep(c("HC", "disease"), each = 5)))  
-#' SE2 <- SummarizedExperiment(assays = list(TPM = matrix(rnorm(100), nrow=10)),  
-#'                             colData = DataFrame(group = rep(c("HC", "disease"), each = 5)))  
-#' SElist <- list(SE1, SE2)  
-#'   
-#' # Create the combined SummarizedExperiment object for COCONUT analysis  
-#' SE_COCONUT_result <- SE_COCONUT(SElist, assayname = "TPM", group_col = "group", label_healthy = "HC")  
-#'  
-#' @export  
+#' Apply COCONUT method for batch effect removal on SummarizedExperiment objects
+#'
+#' This function takes a list of SummarizedExperiment objects and applies the COCONUT method
+#' to remove batch effects. It creates COCO objects from the input SummarizedExperiment objects,
+#' processes them using COCONUT, and then combines the processed expression data to create a
+#' new SummarizedExperiment object with batch - corrected data.
+#'
+#' @param SElist A list of SummarizedExperiment objects that contain expression data and sample information.
+#' @param assayname The name of the assay in the SummarizedExperiment objects to be used for analysis. Default is "TPM".
+#' @param group_col The column name in the sample information that indicates the group of each sample. Default is "group".
+#' @param label_healthy The label in the `group_col` that represents the healthy samples. Default is "HC".
+#'
+#' @return A new SummarizedExperiment object with batch - corrected expression data.
+#'
+#' @import SummarizedExperiment
+#' @importFrom some_package COCONUT # Replace some_package with the actual package name
+#'
+#' @examples
+#' # Assume selist is a list of SummarizedExperiment objects
+#' # SE_corrected <- SE_COCONUT(selist)
+#'
+#' @export
 SE_COCONUT = function(SElist, assayname = "TPM", group_col = "group", label_healthy = "HC") {  
-  
     create_COCOobj_type <- function(SEinput, assayname, group_col, label_healthy) {  
         expdata = as.data.frame(assay(SEinput, assayname))  
         sample_info = as.data.frame(colData(SEinput))  
@@ -72,4 +58,4 @@ SE_COCONUT = function(SElist, assayname = "TPM", group_col = "group", label_heal
     
     SE <- SummarizedExperiment(assays = list(TPM = expdata_batch), rowData = feature_info, colData = sample_info_merge)  
     return(SE)  
-}
+} 
