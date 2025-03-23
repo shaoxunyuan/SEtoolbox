@@ -21,17 +21,10 @@
 #' @import ggplot2  
 #' @import multcompView  
 #' @import plyr  
-#' @importFrom stats aov TukeyHSD  
-#' @importFrom stats log  
 #'  
 #' @return A ggplot object representing the violin and box plots with significance markers.  
 #'  
 #' @examples  
-#' # Load necessary libraries  
-#' library(SummarizedExperiment)  
-#' library(ggplot2)  
-#' library(dplyr)  
-#'   
 #' # Create a dummy SummarizedExperiment object  
 #' data_matrix <- matrix(rnorm(1000), nrow = 100, ncol = 10)  
 #' rownames(data_matrix) <- paste0("Gene", 1:100)  
