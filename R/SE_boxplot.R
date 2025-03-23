@@ -33,7 +33,7 @@ SE_boxplot <- function(SE, feature_of_interest = c("AAGAB", "ABCA13", "ABCC4", "
     # 如果提供了分组且不是 NULL，则获取分组信息  
     if (!is.null(group_col) && group_col %in% names(colData(SE))) {  
         group_info <- colData(SE)[[group_col]]  
-        exp_data_melted <- melt(as.matrix(exp_data_subset))  
+        exp_data_melted <- reshape2::melt(as.matrix(exp_data_subset))  
         exp_data_melted$group <- rep(group_info, each = nrow(exp_data_subset))  
         
         # 绘制 boxplot（带分组）  

@@ -10,5 +10,6 @@ Imports:
 	SummarizedExperiment,
 	plyr,
     dplyr,
-    ggplot2
+    ggplot2,
+	impute
 RoxygenNote: 7.3.2
