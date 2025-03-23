@@ -16,9 +16,7 @@
 #' corrected_se <- SE_combat(se, col_for_combat = "batch", col_for_compare = "condition")  
 #'  
 #' @export
-SE_combat = function(SE, col_for_combat, col_for_compare = NULL) {  
-    library(SummarizedExperiment)  
-    library(sva)  
+SE_combat = function(SE, col_for_combat, col_for_compare = NULL) {  	 
     
     # Extract feature and sample information  
     feature_info = rowData(SE)  

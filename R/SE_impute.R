@@ -19,9 +19,11 @@
 #'
 #' @export
 SE_impute <- function(SE, assayname = "TPM", group = "group", method = "knn") {  
-    library(SummarizedExperiment)  
-    library(impute)  
-    
+
+        if (!inherits(SE, "SummarizedExperiment")) {  
+			stop("Input SE must be a SummarizedExperiment object.")  
+		}
+	
     # Retrieve feature and sample information  
     feature_info <- rowData(SE)  
     sample_info <- colData(SE)  

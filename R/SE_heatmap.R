@@ -25,11 +25,7 @@
 #' @importFrom grid rasterGrob  
 #' @export  
 SE_heatmap <- function(SE, assayname = "TPM", group_col = NULL, normalization = "none", genes_of_interest = NULL, use_raster = TRUE) {
-	#SE_heatmap(SE, assayname = "TPM", group_col = NULL, normalization = "scale", genes_of_interest = c("AAGAB","AARS"), use_raster = TRUE)  
-    library(SummarizedExperiment)  
-    library(ComplexHeatmap)  
-    library(circlize)  
-    library(RColorBrewer)  # 确保可以使用调色板  
+
     # 检查输入有效性  
     if (!inherits(SE, "SummarizedExperiment")) {  
         stop("Input SE must be a SummarizedExperiment object.")  

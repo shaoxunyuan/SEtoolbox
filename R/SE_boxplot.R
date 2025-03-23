@@ -7,10 +7,7 @@
 #' @param normalization Normalization method ("scale", "log", or "none").
 #' @export
 SE_boxplot <- function(SE, feature_of_interest = c("AAGAB", "ABCA13", "ABCC4", "ABHD2"), assayname = "TPM", group_col = NULL, normalization = "none") {  
-    library(SummarizedExperiment)  
-    library(reshape2)  
-    library(ggplot2)  
-    # 检查输入有效性  
+  
     if (!inherits(SE, "SummarizedExperiment")) {  
         stop("Input SE must be a SummarizedExperiment object.")  
     }  

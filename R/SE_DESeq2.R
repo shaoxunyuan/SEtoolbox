@@ -7,10 +7,6 @@
 #' @return A SummarizedExperiment object with DESeq2 results stored in its metadata.
 #' @export
 SE_DEseq2 <- function(SE, assayname = "Count", groupname = "group") {
-  suppressPackageStartupMessages({
-    library(DESeq2)
-    library(SummarizedExperiment)
-  })
     
   # 验证SE对象类型
   if (!is(SE, "SummarizedExperiment")) {

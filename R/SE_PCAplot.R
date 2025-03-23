@@ -11,11 +11,11 @@
 #' @return A list containing two ggplot objects: the original PCA plot and the filtered PCA plot.  
 #' @export  
 SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", outlier_threshold = 2, scale = TRUE, feature_of_interesting = NULL, show_caption = TRUE){  
-  library(ggplot2)  
-  library(plyr)  
-  library(patchwork)  
-  library(cluster)  
 
+    if (!inherits(SE, "SummarizedExperiment")) {  
+        stop("Input SE must be a SummarizedExperiment object.")  
+    }  
+	
   SCvalue = function(data){   
     num_clusters <- length(unique(data$group))  
     kmeans_result <- kmeans(data[, c("PC1", "PC2")], centers = num_clusters, nstart = 25)  
