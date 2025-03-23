@@ -22,7 +22,7 @@ c("AAGAB", "ABCA13", "ABCC4", "ABHD2").}
 Default is "TPM".}
 
 \item{group_colname}{A string specifying the column name in colData for group
-information. Default is NULL.}
+information. Default is "group".}
 
 \item{normalization}{A string specifying the normalization method. Options include
 "none", "scale", or "log". Default is "none".}

@@ -2,8 +2,8 @@ Package: SEtoolbox
 Title: SEtoolbox for Analysis
 Version: 0.1.0
 Author: Shaoxun Yuan
-Maintainer: Your Name <yuanshaoxun@njucm.edu.cn>
-Description: A toolbox for specific analyses.
+Maintainer: Yuan Shaoxun <yuanshaoxun@njucm.edu.cn>
+Description: A toolbox for SummarizedExperiment object.
 License: GPL-3
 Encoding: UTF-8
 Imports: 

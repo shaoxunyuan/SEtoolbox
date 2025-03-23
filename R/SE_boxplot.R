@@ -1,34 +1,39 @@
 #' @title SE_boxplot: Create Boxplots for SummarizedExperiment Object
-
-#' @description This function generates violin and box plots for specified genes from a SummarizedExperiment object. 
-#' It allows for visualization of expression levels across different groups, can perform normalization if specified, 
-#' and uses ANOVA with Tukey's post-hoc test to add significance markers on the plot.
-
-#' @param SE A SummarizedExperiment object containing gene expression data.  
-#' @param feature_of_interest A character vector of gene names to be plotted. Default is   
-#'            c("AAGAB", "ABCA13", "ABCC4", "ABHD2").  
-#' @param assayname A string specifying the assay from which to extract data.   
-#'            Default is "TPM".  
-#' @param group_colname A string specifying the column name in colData for group   
-#'            information. Default is "group".  
-#' @param normalization A string specifying the normalization method. Options include   
-#'            "none", "scale", or "log". Default is "none".  
-#' @import SummarizedExperiment dplyr tidyr tidyverse ggplot2 multcompView tibble ggforce
-#' @return A ggplot object representing the violin and box plots with significance markers.  
-#'  
-#' @examples  
-#' # Create a dummy SummarizedExperiment object  
-#' data_matrix <- matrix(rnorm(1000), nrow = 100, ncol = 10)  
-#' rownames(data_matrix) <- paste0("Gene", 1:100)  
-#' colnames(data_matrix) <- paste0("Sample", 1:10)  
-#' sample_info <- DataFrame(group = rep(c("A", "B"), each = 5))  
-#' SE <- SummarizedExperiment(assays = list(TPM = data_matrix), colData = sample_info)  
-#'  
-#' # Call the SE_boxplot function  
-#' plot <- SE_boxplot(SE, feature_of_interest = c("Gene1", "Gene2"), group_colname = "group", normalization = "log")  
-#' print(plot)  
-#'  
-#' @export  
+#' 
+#' @description 
+#' This function generates violin and box plots for specified genes within a 
+#' \code{SummarizedExperiment} object. It enables the visualization of gene 
+#' expression levels across different groups. Optionally, it can perform data 
+#' normalization and uses ANOVA with Tukey's post-hoc test to add significance 
+#' markers on the generated plot.
+#' 
+#' @param SE A \code{SummarizedExperiment} object that contains gene expression data.
+#' @param feature_of_interest A character vector specifying the gene names to be plotted. 
+#' Defaults to \code{c("AAGAB", "ABCA13", "ABCC4", "ABHD2")}.
+#' @param assayname A string indicating the assay from which to extract the data. 
+#' The default value is \code{"TPM"}.
+#' @param group_colname A string representing the column name in \code{colData} that 
+#' holds group information. Defaults to \code{"group"}.
+#' @param normalization A string specifying the normalization method. 
+#' Available options are \code{"none"}, \code{"scale"}, or \code{"log"}. Defaults to \code{"none"}.
+#' 
+#' @return 
+#' A \code{ggplot} object that represents the violin and box plots, including significance markers.
+#' 
+#' @examples 
+#' # Create a dummy SummarizedExperiment object
+#' data_matrix <- matrix(rnorm(1000), nrow = 100, ncol = 10)
+#' rownames(data_matrix) <- paste0("Gene", 1:100)
+#' colnames(data_matrix) <- paste0("Sample", 1:10)
+#' sample_info <- DataFrame(group = rep(c("A", "B"), each = 5))
+#' SE <- SummarizedExperiment(assays = list(TPM = data_matrix), colData = sample_info)
+#' 
+#' # Call the SE_boxplot function
+#' plot <- SE_boxplot(SE, feature_of_interest = c("Gene1", "Gene2"), 
+#'                    group_colname = "group", normalization = "log")
+#' print(plot)
+#' 
+#' @export
 SE_boxplot <- function(SE,   
                        feature_of_interest = c("AAGAB", "ABCA13", "ABCC4", "ABHD2"),   
                        assayname = "TPM",   
