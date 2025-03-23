@@ -1,10 +1,9 @@
-#' @title SE_boxplot: Create Boxplots for Gene Expression Data  
-#'  
-#' @description This function generates violin and box plots for specified genes from a   
-#' SummarizedExperiment object, allowing for visualization of expression levels   
-#' across different groups. It performs normalization if specified, and uses   
-#' ANOVA with Tukey's post-hoc test to add significance markers on the plot.  
-#'  
+#' @title SE_boxplot: Create Boxplots for SummarizedExperiment Object
+
+#' @description This function generates violin and box plots for specified genes from a SummarizedExperiment object. 
+#' It allows for visualization of expression levels across different groups, can perform normalization if specified, 
+#' and uses ANOVA with Tukey's post-hoc test to add significance markers on the plot.
+
 #' @param SE A SummarizedExperiment object containing gene expression data.  
 #' @param feature_of_interest A character vector of gene names to be plotted. Default is   
 #'            c("AAGAB", "ABCA13", "ABCC4", "ABHD2").  

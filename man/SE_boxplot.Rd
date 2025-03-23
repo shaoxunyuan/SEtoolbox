@@ -2,12 +2,7 @@
 % Please edit documentation in R/SE_boxplot.R
 \name{SE_boxplot}
 \alias{SE_boxplot}
-\title{SE_boxplot: Create Boxplots for Gene Expression Data  
- 
-This function generates violin and box plots for specified genes from a   
-SummarizedExperiment object, allowing for visualization of expression levels   
-across different groups. It performs normalization if specified, and uses   
-ANOVA with Tukey's post-hoc test to add significance markers on the plot.}
+\title{SE_boxplot: Create Boxplots for Gene Expression Data}
 \usage{
 SE_boxplot(
   SE,
@@ -36,8 +31,6 @@ information. Default is NULL.}
 A ggplot object representing the violin and box plots with significance markers.
 }
 \description{
-SE_boxplot: Create Boxplots for Gene Expression Data  
- 
 This function generates violin and box plots for specified genes from a   
 SummarizedExperiment object, allowing for visualization of expression levels   
 across different groups. It performs normalization if specified, and uses   
