@@ -13,10 +13,6 @@
 #' @import ggplot2  
 #' @export  
 SE_detectratio <- function(SE, assayname = "TPM", group_col = "group") {  
-    # Load necessary libraries  
-    options(warn = -1)  
-    library(SummarizedExperiment)  
-    library(ggplot2)  
     
     # Check input validity  
     if (!inherits(SE, "SummarizedExperiment")) {  

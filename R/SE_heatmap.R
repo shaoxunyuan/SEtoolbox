@@ -20,9 +20,6 @@
 #' @return A SummarizedExperiment object containing updated information on  
 #'   the detection proportions.  
 #'  
-#' @import SummarizedExperiment  
-#' @import ggplot2  
-#' @importFrom grid rasterGrob  
 #' @export  
 SE_heatmap <- function(SE, assayname = "TPM", group_col = NULL, normalization = "none", genes_of_interest = NULL, use_raster = TRUE) {
 
