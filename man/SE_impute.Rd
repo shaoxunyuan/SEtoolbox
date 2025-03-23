@@ -2,22 +2,41 @@
 % Please edit documentation in R/SE_impute.R
 \name{SE_impute}
 \alias{SE_impute}
-\title{SE_impute}
+\title{Impute Missing Values in SummarizedExperiment}
 \usage{
 SE_impute(SE, assayname = "TPM", group = "group", method = "knn")
 }
 \arguments{
-\item{SE}{A SummarizedExperiment object with expression data.}
+\item{SE}{A SummarizedExperiment object containing expression data.}
 
-\item{assayname}{Name of the assay to use (default: "TPM").}
+\item{assayname}{A string specifying the name of the assay to use (default is "TPM").
+This should match one of the assay names in the SE object.}
 
-\item{group}{Grouping variable name (default: "group").}
+\item{group}{A string specifying the grouping variable name for the samples (default is "group").}
 
-\item{method}{Imputation method (default: "knn").}
+\item{method}{A string specifying the imputation method to use. The default method is "knn".}
 }
 \value{
-A SummarizedExperiment object with imputed data.
+A SummarizedExperiment object with imputed expression data.
 }
 \description{
-Impute Missing Values in SummarizedExperiment
+This function imputes missing values in a SummarizedExperiment object  
+using the k-nearest neighbor method. The function replaces zeros in the   
+expression matrix with NA to prepare for imputation.
+}
+\examples{
+ 
+# Load necessary libraries  
+library(SummarizedExperiment)  
+library(impute)  
+ 
+# Create a simulated SummarizedExperiment object  
+set.seed(123)  # For reproducibility  
+example_data <- matrix(rnorm(100), nrow = 10)  
+example_data[sample(1:100, 20)] <- 0  # Introduce some zeros  
+example_se <- SummarizedExperiment(assays = list(TPM = example_data))  
+ 
+# Impute missing values  
+imputed_se <- SE_impute(example_se, assayname = "TPM", group = "group", method = "knn")  
+ 
 }
