@@ -2,27 +2,63 @@
 % Please edit documentation in R/SE_boxplot.R
 \name{SE_boxplot}
 \alias{SE_boxplot}
-\title{Generates a boxplot for specified features in a SummarizedExperiment object.}
+\title{SE_boxplot: Create Boxplots for Gene Expression Data  
+ 
+This function generates violin and box plots for specified genes from a   
+SummarizedExperiment object, allowing for visualization of expression levels   
+across different groups. It performs normalization if specified, and uses   
+ANOVA with Tukey's post-hoc test to add significance markers on the plot.}
 \usage{
 SE_boxplot(
   SE,
   feature_of_interest = c("AAGAB", "ABCA13", "ABCC4", "ABHD2"),
   assayname = "TPM",
-  group_col = NULL,
+  group_colname = NULL,
   normalization = "none"
 )
 }
 \arguments{
-\item{SE}{A SummarizedExperiment object.}
+\item{SE}{A SummarizedExperiment object containing gene expression data.}
 
-\item{feature_of_interest}{Character vector of gene identifiers.}
+\item{feature_of_interest}{A character vector of gene names to be plotted. Default is
+c("AAGAB", "ABCA13", "ABCC4", "ABHD2").}
 
-\item{assayname}{The assay name in the SummarizedExperiment object.}
+\item{assayname}{A string specifying the assay from which to extract data.
+Default is "TPM".}
 
-\item{group_col}{Column name in colData(SE) for grouping.}
+\item{group_colname}{A string specifying the column name in colData for group
+information. Default is NULL.}
 
-\item{normalization}{Normalization method ("scale", "log", or "none").}
+\item{normalization}{A string specifying the normalization method. Options include
+"none", "scale", or "log". Default is "none".}
+}
+\value{
+A ggplot object representing the violin and box plots with significance markers.
 }
 \description{
-Generates a boxplot for specified features in a SummarizedExperiment object.
+SE_boxplot: Create Boxplots for Gene Expression Data  
+ 
+This function generates violin and box plots for specified genes from a   
+SummarizedExperiment object, allowing for visualization of expression levels   
+across different groups. It performs normalization if specified, and uses   
+ANOVA with Tukey's post-hoc test to add significance markers on the plot.
+}
+\examples{
+ 
+# Load necessary libraries  
+library(SummarizedExperiment)  
+library(ggplot2)  
+library(dplyr)  
+  
+# Create a dummy SummarizedExperiment object  
+data_matrix <- matrix(rnorm(1000), nrow = 100, ncol = 10)  
+rownames(data_matrix) <- paste0("Gene", 1:100)  
+colnames(data_matrix) <- paste0("Sample", 1:10)  
+sample_info <- DataFrame(group = rep(c("A", "B"), each = 5))  
+SE <- SummarizedExperiment(assays = list(TPM = data_matrix), colData = sample_info)  
+ 
+# Call the SE_boxplot function  
+plot <- SE_boxplot(SE, feature_of_interest = c("Gene1", "Gene2"), group_colname = "group", normalization = "log")  
+print(plot)  
+ 
 }
