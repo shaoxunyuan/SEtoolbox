@@ -1,6 +1,6 @@
-#' SE_boxplot: Create Boxplots for Gene Expression Data  
+#' @title SE_boxplot: Create Boxplots for Gene Expression Data  
 #'  
-#' This function generates violin and box plots for specified genes from a   
+#' @description This function generates violin and box plots for specified genes from a   
 #' SummarizedExperiment object, allowing for visualization of expression levels   
 #' across different groups. It performs normalization if specified, and uses   
 #' ANOVA with Tukey's post-hoc test to add significance markers on the plot.  
@@ -14,12 +14,6 @@
 #'            information. Default is NULL.  
 #' @param normalization A string specifying the normalization method. Options include   
 #'            "none", "scale", or "log". Default is "none".  
-#'  
-#' @import SummarizedExperiment  
-#' @import dplyr  
-#' @import tidyr  
-#' @import ggplot2  
-#' @import multcompView    
 #'  
 #' @return A ggplot object representing the violin and box plots with significance markers.  
 #'  
@@ -45,7 +39,7 @@ SE_boxplot <- function(SE,
     if (!inherits(SE, "SummarizedExperiment")) {  
         stop("Input SE must be a SummarizedExperiment object.")  
     }  
-    
+
     exp_data_subset <- assay(SE, assayname)[feature_of_interest, , drop = FALSE]  
      
     missing_genes <- setdiff(feature_of_interest, rownames(exp_data_subset))  
@@ -55,7 +49,7 @@ SE_boxplot <- function(SE,
         feature_of_interest <- intersect(feature_of_interest, rownames(exp_data_subset))  
         exp_data_subset <- exp_data_subset[feature_of_interest, , drop = FALSE]  
     }  
-   
+
     if (normalization == "scale") {  
         exp_data_subset <- t(apply(exp_data_subset, 1, scale))   
     } else if (normalization == "log") {  
@@ -68,11 +62,14 @@ SE_boxplot <- function(SE,
                      rownames_to_column(var = "feature") %>%   
                      pivot_longer(cols = -feature, names_to = "sample", values_to = "express")  
 
-    exp_data_long$group <- plyr::mapvalues(exp_data_long$sample,   
-                                            from = rownames(sample_info),   
-                                            to = sample_info[[group_colname]],   
-                                            warn_missing = FALSE)   
-	  
+    if (!is.null(group_colname) && !(group_colname %in% colnames(sample_info))) {  
+        stop("Provided group_colname does not exist in colData of the SummarizedExperiment.")  
+    }  
+    
+    exp_data_long <- exp_data_long %>%  
+                     left_join(sample_info %>% rownames_to_column(var = "sample"), by = "sample") %>%  
+                     mutate(group = .data[[group_colname]])  
+
     MakeSigMarker <- function(onedata) {  
         if (n_distinct(onedata$group) < 2) {  
             warning("Only one group found. Skipping analysis.")  
@@ -80,10 +77,10 @@ SE_boxplot <- function(SE,
                               y_position = NA, feature = unique(onedata$feature)))  
         }  
         
-        formula_str <- as.formula(paste("express ~ group"))  
+        formula_str <- as.formula("express ~ group")  
         anova_result <- aov(formula_str, data = onedata)  
          
-		# Get pvalue   
+        # Get pvalue   
         tukey_result <- TukeyHSD(anova_result)  
         p_values <- tukey_result[[group_colname]][, "p adj"]  
         names(p_values) <- rownames(tukey_result[[group_colname]])  
