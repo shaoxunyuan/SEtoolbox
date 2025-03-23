@@ -19,8 +19,7 @@
 #' @import dplyr  
 #' @import tidyr  
 #' @import ggplot2  
-#' @import multcompView  
-#' @import plyr  
+#' @import multcompView    
 #'  
 #' @return A ggplot object representing the violin and box plots with significance markers.  
 #'  
