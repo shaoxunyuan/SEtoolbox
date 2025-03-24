@@ -11,9 +11,11 @@ Imports:
 	tidyr,
 	dplyr,
 	tidyverse,
+	S4Vectors,
 	tibble,
     ggplot2,
 	ggforce,
 	impute,
+	DESeq2,
 	multcompView
 RoxygenNote: 7.3.2

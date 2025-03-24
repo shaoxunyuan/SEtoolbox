@@ -2,28 +2,41 @@
 % Please edit documentation in R/SE_impute.R
 \name{SE_impute}
 \alias{SE_impute}
-\title{Impute missing values in a SummarizedExperiment object}
+\title{Impute Missing Values in SummarizedExperiment}
 \usage{
 SE_impute(SE, assayname = "TPM", group = "group", method = "knn")
 }
 \arguments{
 \item{SE}{A SummarizedExperiment object containing expression data.}
 
-\item{assayname}{The name of the expression data matrix to be imputed. Default is "TPM".}
+\item{assayname}{A string specifying the name of the assay to use (default is "TPM").
+This should match one of the assay names in the SE object.}
 
-\item{group}{The column name of sample grouping information. Currently not used in this function. Default is "group".}
+\item{group}{A string specifying the grouping variable name for the samples (default is "group").}
 
-\item{method}{The imputation method. Currently only "knn" is supported. Default is "knn".}
+\item{method}{A string specifying the imputation method to use. The default method is "knn".}
 }
 \value{
-A new SummarizedExperiment object with imputed expression data.
+A SummarizedExperiment object with imputed expression data.
 }
 \description{
-This function is used to impute missing values in the expression data of a SummarizedExperiment object.
-It replaces zero values in the expression data with NA and then performs imputation using the kNN method.
+This function imputes missing values in a SummarizedExperiment object  
+using the k-nearest neighbor method. The function replaces zeros in the   
+expression matrix with NA to prepare for imputation.
 }
 \examples{
-# Assume se is a SummarizedExperiment object
-# SEimpute <- SE_impute(se)
-
+ 
+# Load necessary libraries  
+library(SummarizedExperiment)  
+library(impute)  
+ 
+# Create a simulated SummarizedExperiment object  
+set.seed(123)  # For reproducibility  
+example_data <- matrix(rnorm(100), nrow = 10)  
+example_data[sample(1:100, 20)] <- 0  # Introduce some zeros  
+example_se <- SummarizedExperiment(assays = list(TPM = example_data))  
+ 
+# Impute missing values  
+imputed_se <- SE_impute(example_se, assayname = "TPM", group = "group", method = "knn")  
+ 
 }

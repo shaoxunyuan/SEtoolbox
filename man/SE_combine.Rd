@@ -2,30 +2,39 @@
 % Please edit documentation in R/SE_combine.R
 \name{SE_combine}
 \alias{SE_combine}
-\title{Combine Multiple SummarizedExperiment Objects  
- 
-This function merges multiple SummarizedExperiment objects based on the specified merge type (intersection or union) for all assays present in the input list.}
+\title{SE_combine: Combine Multiple SummarizedExperiment Objects}
 \usage{
 SE_combine(se_list, merge_type = "intersection")
 }
 \arguments{
-\item{se_list}{A list of SummarizedExperiment objects to be combined (se_list = list(SE1,SE2,SE3))}
+\item{se_list}{A list housing SummarizedExperiment objects earmarked for combination. 
+For instance, se_list = list(SE1, SE2, SE3).}
 
-\item{merge_type}{A character string specifying the type of merge to perform. Options are "intersection" (default) to keep only common features across all objects, or "union" to keep all features.}
+\item{merge_type}{A character string designating the merge approach. 
+Valid options are 'intersection' (the default), which keeps only the common features, 
+and 'union', which includes all features.}
 }
 \value{
-A SummarizedExperiment object containing the combined data for all assays.
+A SummarizedExperiment object that results from combining the data of all assays 
+        from the input SummarizedExperiment objects, following the chosen merge type.
 }
 \description{
-Combine Multiple SummarizedExperiment Objects  
- 
-This function merges multiple SummarizedExperiment objects based on the specified merge type (intersection or union) for all assays present in the input list.
+This function enables the merging of multiple SummarizedExperiment objects. 
+             It offers two merge strategies, 'intersection' and 'union', applicable to all assays within the input objects. 
+             The 'intersection' option retains only the features common across all input objects, while the 'union' option 
+             incorporates all features from all input objects.
 }
 \examples{
- 
-# Example usage  
-se1 <- SummarizedExperiment(assays = list(counts = matrix(rnorm(100), nrow = 10)), colData = DataFrame(sample = 1:10))  
-se2 <- SummarizedExperiment(assays = list(counts = matrix(rnorm(100), nrow = 10)), colData = DataFrame(sample = 11:20))  
-combined_se <- SE_combine(list(se1, se2), merge_type = "union")  
- 
+# Construct sample SummarizedExperiment objects
+se1 <- SummarizedExperiment(
+  assays = list(counts = matrix(rnorm(100), nrow = 10)),
+  colData = DataFrame(sample = 1:10)
+)
+se2 <- SummarizedExperiment(
+  assays = list(counts = matrix(rnorm(100), nrow = 10)),
+  colData = DataFrame(sample = 11:20)
+)
+
+# Merge the SummarizedExperiment objects using the 'union' strategy
+combined_se <- SE_combine(list(se1, se2), merge_type = "union")
 }
