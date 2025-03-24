@@ -22,32 +22,20 @@ devtools::install_github("shaoxunyuan/SEtoolbox", dependencies = TRUE)
 
 # Quick Start
 
-## Generate SE object
-To create the example `SummarizedExperiment` object, use the following command:  
+## Load example SE object
+To load the example `SummarizedExperiment` object, use the following command:  
 
 ```r
 library(SEtoolbox)  
 library(SummarizedExperiment)
 # Single SE object
-data_matrix <- matrix(rnorm(1000), nrow = 100, ncol = 10)
-rownames(data_matrix) <- paste0("Gene", 1:100)
-colnames(data_matrix) <- paste0("Sample", 1:10)
-sample_info <- data.frame(group = rep(c("A", "B"), each = 5))
-SE <- SummarizedExperiment(assays = list(TPM = data_matrix), colData = sample_info) 
+SE  = loadSE()
 
-# List of SE object
-SElist <- vector("list", 3)  
-for (i in 1:3) {  
-  data_matrix <- matrix(rnorm(1000), nrow = 100, ncol = 10)  
-  rownames(data_matrix) <- paste0("Gene", 1:100)  
-  colnames(data_matrix) <- paste0("Sample", 1:10) 
-  sample_info <- data.frame(group = rep(c("A", "B"), each = 5))  
-  SElist[[i]] <- SummarizedExperiment(assays = list(TPM = data_matrix), colData = sample_info)   
-  names(SElist)[i] <- paste0("SE", i)  
-}  
+# List of SE object. A list contain 3 SE object.
+SElist  = loadSElist()
 ```
 
-## Run functions using generated SE object
+## Run functions using example SE object
 Now you can use SE with all functions 
 
 Combine multiple SummarizedExperiment objects into one SummarizedExperiment object
