@@ -21,6 +21,6 @@ The example file should be located in the `extdata` directory of the package.
 \examples{
  
 library(SEtoolbox)  
-example_SE <- loadSE()  
-# Now you can analyze the example_SE object  
+SE <- loadSE()  
+# Now you can analyze the example SE object  
 }

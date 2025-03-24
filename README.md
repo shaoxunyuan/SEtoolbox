@@ -28,6 +28,7 @@ To load the example `SummarizedExperiment` object, use the following command:
 ```r
 library(SEtoolbox)  
 library(SummarizedExperiment)
+
 # Single SE object
 SE  = loadSE()
 
@@ -38,42 +39,48 @@ SElist  = loadSElist()
 ## Run functions using example SE object
 Now you can use SE with all functions 
 
+### SE_Combine
 Combine multiple SummarizedExperiment objects into one SummarizedExperiment object
 
 ```r
-SE_Combine(list(SE1,SE2,SE3))  
+SE_Combine(SElist,merge_type = "intersection")  # Keep intersect features across SE objects
+
+SE_Combine(SElist,merge_type = "union")  # Keep union features across SE objects
 ```
 
+### SE_detectratio
 Calculate the number of non-zero samples for each feature and update the results in rowData  
 
 ```r
 SE_detectratio(SE)  
 ```
-
+### SE_impute
 Imputes missing values (NA) in the given SummarizedExperiment object using specified methods.
 
 ```r
 SE_impute(SE)  
 ```
 
+### SE_DEseq2
 Use the count matrix to calculate differential results, with results updated in rowData  
 
 ```r
 SE_DEseq2(SE)  
 ```
-
+### SE_distribution
 Distribution plot of missing value
 
 ```r
 SE_distribution(SE)  
 ```
+### SE_PCAplot
 
 Select specific features for PCA plot  
 
 ```r
 SE_PCAplot(SE)  
 ```
-
+### SE_heatmap
 Select specific features for heatmap 
 
 ```r

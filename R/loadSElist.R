@@ -1,10 +1,10 @@
-#' Load Example SummarizedExperiment Object  
+#' Load Example SummarizedExperiment Object List
 #'  
-#' This function loads the example SummarizedExperiment object from the package.  
+#' This function loads the example SummarizedExperiment object list from the package.  
 #' The example file should be located in the `extdata` directory of the package.  
 #'  
 #' @name loadSElist  
-#' @return A SummarizedExperiment object containing example data.  
+#' @return A SummarizedExperiment object list containing example data.  
 #' @export  
 #'   
 #' @examples  
@@ -20,15 +20,8 @@ loadSElist <- function() {
   # 检查文件是否存在  
   if (file.exists(file_path)) {  
     # 读取 RDS 文件  
-    example_SE <- readRDS(file_path)  
-    
-    # 检查是否为 SummarizedExperiment 对象  
-    if (!is(example_SE, "SummarizedExperiment")) {  
-      stop("The loaded file is not a SummarizedExperiment object.")  
-    }  
-    
-    # 返回 SummarizedExperiment 对象  
-    return(example_SE)  
+    example_SElist <- readRDS(file_path)   
+    return(example_SElist)  
   } else {  
     stop("Example file not found.")  
   }  
