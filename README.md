@@ -39,13 +39,13 @@ SElist  = loadSElist()
 ## Run functions using example SE object
 Now you can use SE with all functions 
 
-### SE_Combine
+### SE_combine
 Combine multiple SummarizedExperiment objects into one SummarizedExperiment object
 
 ```r
-SE_Combine(SElist,merge_type = "intersection")  # Keep intersect features across SE objects
+SE_combine(SElist,merge_type = "intersection")  # Keep intersect features across SE objects
 
-SE_Combine(SElist,merge_type = "union")  # Keep union features across SE objects
+SE_combine(SElist,merge_type = "union")  # Keep union features across SE objects
 ```
 
 ### SE_detectratio
