@@ -23,6 +23,7 @@ devtools::install_github("shaoxunyuan/SEtoolbox", dependencies = TRUE)
 # Quick Start
 
 ## Load example SE object
+
 To load the example `SummarizedExperiment` object, use the following command:  
 
 ```r
@@ -37,9 +38,11 @@ SElist  = loadSElist()
 ```
 
 ## Run functions using example SE object
+
 Now you can use SE with all functions 
 
 ### SE_combine
+
 Combine multiple SummarizedExperiment objects into one SummarizedExperiment object
 
 ```r
@@ -49,30 +52,49 @@ SE_combine(SElist,merge_type = "union")  # Keep union features across SE objects
 ```
 
 ### SE_detectratio
+
 Calculate the number of non-zero samples for each feature and update the results in rowData  
 
 ```r
 SE_detectratio(SE)  
 ```
+
 ### SE_impute
+
 Imputes missing values (NA) in the given SummarizedExperiment object using specified methods.
 
 ```r
 SE_impute(SE)  
 ```
 
+### SE_COCONUT
+
+Combat using COCONUT method.
+
+```r
+library(SEtoolbox)
+
+SElist = loadSElist()
+
+SElistbatch = SE_COCONUT(SElist,assayname = "TPM",group_col = "group",label_healthy = "HC")
+```
+
 ### SE_DEseq2
+
 Use the count matrix to calculate differential results, with results updated in rowData  
 
 ```r
 SE_DEseq2(SE)  
 ```
+
 ### SE_distribution
+
 Distribution plot of missing value
 
 ```r
 SE_distribution(SE)  
 ```
+
 ### SE_PCAplot
 
 Select specific features for PCA plot  
@@ -80,7 +102,9 @@ Select specific features for PCA plot
 ```r
 SE_PCAplot(SE)  
 ```
+
 ### SE_heatmap
+
 Select specific features for heatmap 
 
 ```r
@@ -104,3 +128,5 @@ feel free to report them at our
 
 For additional inquiries, contact us at: 
 Email: shaoxunyuan@njucm.edu.cn
+
+
