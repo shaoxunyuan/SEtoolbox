@@ -75,8 +75,11 @@ Combat using COCONUT method.
 library(SEtoolbox)
 
 #A list contains multiple SE objects. All SE objects should have same group column name (para: group_col) and health control label (para: label_healthy).
+
 SElist = loadSElist()
+
 # Return a list contains multiple SE objects after combat. Retain the original row and column information.
+
 SElistbatch = SE_COCONUT(SElist, assayname = "TPM", group_col = "group", label_healthy = "HC")
 ```
 
