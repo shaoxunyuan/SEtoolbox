@@ -32,7 +32,8 @@
 #'  
 #' @export  
 SE_impute <- function(SE, assayname = "TPM", group = "group", method = "knn") {  
-    library(SummarizedExperiment)  
+    options(warn = -1)
+	library(SummarizedExperiment)  
     library(impute)  
     
     # Retrieve feature and sample information  

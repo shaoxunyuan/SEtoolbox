@@ -9,6 +9,7 @@ Encoding: UTF-8
 Imports: 
 	SummarizedExperiment,
 	tidyr,
+	plyr,
 	dplyr,
 	tidyverse,
 	S4Vectors,
@@ -17,5 +18,6 @@ Imports:
 	ggforce,
 	impute,
 	DESeq2,
-	multcompView
+	multcompView,
+	COCONUT
 RoxygenNote: 7.3.2

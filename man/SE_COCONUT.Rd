@@ -2,35 +2,60 @@
 % Please edit documentation in R/SE_COCONUT.R
 \name{SE_COCONUT}
 \alias{SE_COCONUT}
-\title{Apply COCONUT method for batch effect removal on SummarizedExperiment objects}
+\title{Apply COCONUT to SummarizedExperiment List  
+ 
+This function applies the COCONUT (COmbat CO-Normalization Using conTrols)   
+algorithm to a list of SummarizedExperiment objects to remove batch effects  
+while preserving biological signals.}
 \usage{
-SE_COCONUT(
-  SElist,
-  assayname = "TPM",
-  group_col = "group",
-  label_healthy = "HC"
-)
+SE_COCONUT(SElist, assayname = NULL, group_col = "group", label_healthy = "HC")
 }
 \arguments{
-\item{SElist}{A list of SummarizedExperiment objects that contain expression data and sample information.}
+\item{SElist}{A list of SummarizedExperiment objects to be batch-corrected.}
 
-\item{assayname}{The name of the assay in the SummarizedExperiment objects to be used for analysis. Default is "TPM".}
+\item{assayname}{Character string specifying which assay in the SummarizedExperiment
+objects to use for batch correction. This must be an existing assay in all   
+SummarizedExperiment objects.}
 
-\item{group_col}{The column name in the sample information that indicates the group of each sample. Default is "group".}
+\item{group_col}{Character string specifying the column name in colData that
+contains group information (e.g., disease status).}
 
-\item{label_healthy}{The label in the `group_col` that represents the healthy samples. Default is "HC".}
+\item{label_healthy}{Character string specifying the value in the group_col
+that represents healthy controls (e.g., "HC").}
 }
 \value{
-A new SummarizedExperiment object with batch - corrected expression data.
+A list of SummarizedExperiment objects with batch-corrected data.
 }
 \description{
-This function takes a list of SummarizedExperiment objects and applies the COCONUT method
-to remove batch effects. It creates COCO objects from the input SummarizedExperiment objects,
-processes them using COCONUT, and then combines the processed expression data to create a
-new SummarizedExperiment object with batch - corrected data.
+Apply COCONUT to SummarizedExperiment List  
+ 
+This function applies the COCONUT (COmbat CO-Normalization Using conTrols)   
+algorithm to a list of SummarizedExperiment objects to remove batch effects  
+while preserving biological signals.
+}
+\details{
+The function uses COCONUT to perform batch correction on expression   
+  data from multiple sources. It requires a column in colData to distinguish   
+  between disease and healthy samples. The algorithm uses healthy controls to   
+  learn batch effects and applies the correction to all samples.  
+  
+  Note that the expression matrices must not contain zeros, as this can cause  
+  numerical issues in the COCONUT algorithm. Please impute zeros before using  
+  this function.
 }
 \examples{
-# Assume selist is a list of SummarizedExperiment objects
-# SE_corrected <- SE_COCONUT(selist)
-
+ 
+\dontrun{  
+# Create a list of SummarizedExperiment objects  
+data_list <- list(SE_batch1, SE_batch2, SE_batch3)  
+  
+# Apply COCONUT correction  
+corrected_data <- SE_COCONUT(  
+  SElist = data_list,  
+  assayname = "counts",  
+  group_col = "condition",  
+  label_healthy = "control"  
+)  
+}  
+ 
 }

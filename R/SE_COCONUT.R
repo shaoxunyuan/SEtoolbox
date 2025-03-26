@@ -1,58 +1,133 @@
-#' Apply COCONUT method for batch effect removal on SummarizedExperiment objects
-#'
-#' This function takes a list of SummarizedExperiment objects and applies the COCONUT method
-#' to remove batch effects. It creates COCO objects from the input SummarizedExperiment objects,
-#' processes them using COCONUT, and then combines the processed expression data to create a
-#' new SummarizedExperiment object with batch - corrected data.
-#'
-#' @param SElist A list of SummarizedExperiment objects that contain expression data and sample information.
-#' @param assayname The name of the assay in the SummarizedExperiment objects to be used for analysis. Default is "TPM".
-#' @param group_col The column name in the sample information that indicates the group of each sample. Default is "group".
-#' @param label_healthy The label in the `group_col` that represents the healthy samples. Default is "HC".
-#'
-#' @return A new SummarizedExperiment object with batch - corrected expression data.
-#'
-#' @examples
-#' # Assume selist is a list of SummarizedExperiment objects
-#' # SE_corrected <- SE_COCONUT(selist)
-#'
-#' @export
-SE_COCONUT = function(SElist, assayname = "TPM", group_col = "group", label_healthy = "HC") {  
+#' Apply COCONUT to SummarizedExperiment List  
+#'  
+#' This function applies the COCONUT (COmbat CO-Normalization Using conTrols)   
+#' algorithm to a list of SummarizedExperiment objects to remove batch effects  
+#' while preserving biological signals.  
+#'  
+#' @param SElist A list of SummarizedExperiment objects to be batch-corrected.  
+#' @param assayname Character string specifying which assay in the SummarizedExperiment   
+#'   objects to use for batch correction. This must be an existing assay in all   
+#'   SummarizedExperiment objects.  
+#' @param group_col Character string specifying the column name in colData that   
+#'   contains group information (e.g., disease status).  
+#' @param label_healthy Character string specifying the value in the group_col   
+#'   that represents healthy controls (e.g., "HC").  
+#'  
+#' @return A list of SummarizedExperiment objects with batch-corrected data.  
+#'  
+#' @details The function uses COCONUT to perform batch correction on expression   
+#'   data from multiple sources. It requires a column in colData to distinguish   
+#'   between disease and healthy samples. The algorithm uses healthy controls to   
+#'   learn batch effects and applies the correction to all samples.  
+#'   
+#'   Note that the expression matrices must not contain zeros, as this can cause  
+#'   numerical issues in the COCONUT algorithm. Please impute zeros before using  
+#'   this function.  
+#'  
+#' @examples  
+#' \dontrun{  
+#' # Create a list of SummarizedExperiment objects  
+#' data_list <- list(SE_batch1, SE_batch2, SE_batch3)  
+#'   
+#' # Apply COCONUT correction  
+#' corrected_data <- SE_COCONUT(  
+#'   SElist = data_list,  
+#'   assayname = "counts",  
+#'   group_col = "condition",  
+#'   label_healthy = "control"  
+#' )  
+#' }  
+#'  
+#' @import SummarizedExperiment 
+#' @import COCONUT 
+#' @export  
+SE_COCONUT = function(SElist, assayname = NULL, group_col = "group", label_healthy = "HC") {  
+	options(warn = -1) 
+	install.packages("COCONUT")
+    # Check if assayname is provided  
+    if (is.null(assayname)) {  
+        stop("assayname must exist in the original data and must be specified")  
+    }  
+    
+    # Check if assayname exists in all SummarizedExperiment objects  
+    for (i in seq_along(SElist)) {  
+        if (!assayname %in% assayNames(SElist[[i]])) {  
+            stop(paste0("assayname '", assayname, "' does not exist in dataset ", i,   
+                        ". Please specify an assay that exists in all datasets."))  
+        }  
+        
+        # Check if expression matrix contains zeros  
+        expr_data <- assay(SElist[[i]], assayname)  
+        if (any(expr_data == 0, na.rm = TRUE)) {  
+            stop("Expression matrix contains zeros. Please impute zeros before using this function.")  
+        }  
+    }  
+  
     create_COCOobj_type <- function(SEinput, assayname, group_col, label_healthy) {  
         expdata = as.data.frame(assay(SEinput, assayname))  
-        sample_info = as.data.frame(colData(SEinput))  
-        sample_info[sample_info[[group_col]] == label_healthy, "Healthy0"] <- 0  
-        sample_info[sample_info[[group_col]] != label_healthy, "Healthy0"] <- 1  
+		sample_info = colData(SEinput)
+		sample_info[] <- lapply(sample_info, function(x) {  
+		if (inherits(x, "integer64")) {  
+			return(as.integer(x))  # integer64 to numeric
+		} else {  
+			return(x)  
+		}  
+		sample_info = as.data.frame(sample_info)
+	}) 
+        sample_info[sample_info[,group_col] != label_healthy,]$group = 1   
+        sample_info[sample_info[,group_col] == label_healthy,]$group = 0  
         return(list(pheno = sample_info, genes = expdata))  
     }  
     
     COCOobjs = list()  
     for (i in seq_along(SElist)) {  
-        COCOobjs[[i]] <- create_COCOobj_type(SElist[[i]], assayname = assayname, group_col = group_col, label_healthy = label_healthy)  
+        COCOobjs[[i]] <- create_COCOobj_type(SElist[[i]], assayname = assayname,   
+                                             group_col = group_col, label_healthy = label_healthy)  
     }  
     
-    GSEs.COCONUT <- COCONUT(GSEs = COCOobjs, control.0.col = "Healthy0", byPlatform = FALSE)  
+    GSEs.COCONUT <- COCONUT(GSEs = COCOobjs, control.0.col = group_col, byPlatform = FALSE)  
     
-    expdata_batch.list = list()  
+    expdata_list = list()  
+    feature_list = list()  
+    sample_list = list()  
+    
     for (j in seq_along(SElist)) {  
-        expdata_batch = GSEs.COCONUT[["COCONUTList"]][[j]][["genes"]]  
-        expdata_batch.list[[j]] = expdata_batch  
+        expdata_batch1 = GSEs.COCONUT[["COCONUTList"]][[j]][["genes"]]  
+        expdata_batch0 = GSEs.COCONUT$controlList$GSEs[[j]]$genes  
+        expdata_batch = cbind(expdata_batch0, expdata_batch1)  
+        
+        # Ensure correct ordering  
+        expdata_list[[j]] = expdata_batch  
+        
+        # Extract feature info and match with expression data rows  
+        feature_info = rowData(SElist[[j]])  
+        feature_info = feature_info[rownames(feature_info) %in% rownames(expdata_batch),]  
+        # Ensure feature_info rows are in the same order as expdata_batch rows  
+        feature_info = feature_info[match(rownames(expdata_batch), rownames(feature_info)),]  
+        feature_list[[j]] = feature_info  
+        
+        # Extract sample info and match with expression data columns  
+        sample_info = colData(SElist[[j]])  
+        sample_info = sample_info[rownames(sample_info) %in% colnames(expdata_batch),]  
+        # Ensure sample_info rows are in the same order as expdata_batch columns  
+        sample_info = sample_info[match(colnames(expdata_batch), rownames(sample_info)),]  
+        sample_list[[j]] = sample_info  
     }  
-    expdata_batch = do.call(cbind, expdata_batch.list)  
     
-    feature_info = data.frame(feature = rownames(expdata_batch))  
-    rownames(feature_info) = feature_info$feature  
-    
-    sample_info_merge <- data.frame()  
-    for (k in seq_along(SElist)) {  
-        sample_info = as.data.frame(colData(SElist[[k]]))  
-        sample_info = sample_info[, group_col, drop = FALSE]  # Only extract group column  
-        sample_info_merge = rbind(sample_info_merge, sample_info)  
-    }  
-    colnames(sample_info_merge) = group_col  
-    
-    sample_info_merge = sample_info_merge[rownames(sample_info_merge) %in% colnames(expdata_batch), , drop = FALSE]  
-    
-    SE <- SummarizedExperiment(assays = list(TPM = expdata_batch), rowData = feature_info, colData = sample_info_merge)  
-    return(SE)  
-} 
+    SElist_batch = list()  
+    for(k in seq_along(SElist)){  
+        # Create SummarizedExperiment with named assay  
+        assays_list <- list()  
+        assays_list[[assayname]] <- as.matrix(expdata_list[[k]])  
+        
+        SEbatch <- SummarizedExperiment(  
+            assays = assays_list,  
+            rowData = feature_list[[k]],  
+            colData = sample_list[[k]]  
+        )  
+        
+        SElist_batch[[k]] = SEbatch  
+    }   
+		names(SElist_batch) = names(SElist)
+    return(SElist_batch)  
+}
