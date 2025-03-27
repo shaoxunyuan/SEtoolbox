@@ -5,9 +5,7 @@
 #' using the k-nearest neighbor method. The function replaces zeros in the   
 #' expression matrix with NA to prepare for imputation.  
 #'  
-#' @param SE A SummarizedExperiment object containing expression data.  
-#' @param assayname A string specifying the name of the assay to use (default is "TPM").   
-#'                  This should match one of the assay names in the SE object.  
+#' @param SE A SummarizedExperiment object containing expression data.   
 #' @param group A string specifying the grouping variable name for the samples (default is "group").  
 #' @param method A string specifying the imputation method to use. The default method is "knn".  
 #'  
@@ -28,28 +26,32 @@
 #' example_se <- SummarizedExperiment(assays = list(TPM = example_data))  
 #'  
 #' # Impute missing values  
-#' imputed_se <- SE_impute(example_se, assayname = "TPM", group = "group", method = "knn")  
+#' imputed_se <- SE_impute(example_se, group = "group", method = "knn")  
 #'  
 #' @export  
-SE_impute <- function(SE, assayname = "TPM", group = "group", method = "knn") {  
-    options(warn = -1)
-	library(SummarizedExperiment)  
-    library(impute)  
+SE_impute <- function(SE, group = "group", method = "knn") {  
+    options(warn = -1)  
     
     # Retrieve feature and sample information  
     feature_info <- rowData(SE)  
     sample_info <- colData(SE)  
     mdata <- if (length(SE@metadata) == 0) { NULL } else { SE@metadata }   
     
-    # Prepare expression data  
-    expdata <- assay(SE, assayname)  
-    expdata[expdata == 0] <- NA  # Replace zeros with NA for imputation  
+    expdata.list = list()  
     
-    # Impute missing values using kNN method  
-    expdata_impute <- impute.knn(expdata, k = 10, rowmax = 0.5, colmax = 1, maxp = 1500, rng.seed = 123)  
+    for (assayname in assayNames(SE)){  
+        # Prepare expression data  
+        expdata <- assay(SE, assayname)  
+        expdata[expdata == 0] <- NA  # Replace zeros with NA for imputation  
+        
+        # Impute missing values using kNN method  
+        expdata_impute <- impute.knn(expdata, k = 10, rowmax = 0.5, colmax = 1, maxp = 1500, rng.seed = 123)  
+        
+        expdata.list[[assayname]] = expdata_impute[["data"]]  
+    }  
     
     # Create a new SummarizedExperiment object with imputed data  
-    SEimpute <- SummarizedExperiment(assays = expdata_impute[["data"]], rowData = feature_info, colData = sample_info, metadata = mdata)  
+    SEimpute <- SummarizedExperiment(assays = expdata.list, rowData = feature_info, colData = sample_info, metadata = mdata)  
     
     return(SEimpute)  
 }
