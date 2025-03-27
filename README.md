@@ -61,7 +61,7 @@ SE_detectratio(SE)
 
 ### SE_impute
 
-Imputes missing values (NA) in the given SummarizedExperiment object using specified methods.
+Imputes missing values in the given SummarizedExperiment object using specified methods.
 
 ```r
 library(SEtoolbox)
