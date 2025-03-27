@@ -6,7 +6,7 @@
 #' expression matrix with NA to prepare for imputation.  
 #'  
 #' @param SE A SummarizedExperiment object containing expression data.   
-#' @param group A string specifying the grouping variable name for the samples (default is "group").  
+#' @param group_colname A string specifying the grouping variable name for the samples (default is "group").  
 #' @param method A string specifying the imputation method to use. The default method is "knn".  
 #'  
 #' @return A SummarizedExperiment object with imputed expression data.  
@@ -26,10 +26,10 @@
 #' example_se <- SummarizedExperiment(assays = list(TPM = example_data))  
 #'  
 #' # Impute missing values  
-#' imputed_se <- SE_impute(example_se, group = "group", method = "knn")  
+#' imputed_se <- SE_impute(example_se, group_colname = "group", method = "knn")  
 #'  
 #' @export  
-SE_impute <- function(SE, group = "group", method = "knn") {  
+SE_impute <- function(SE, group_colname = "group", method = "knn") {  
     options(warn = -1)  
     
     # Retrieve feature and sample information  

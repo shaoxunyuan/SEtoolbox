@@ -4,15 +4,12 @@
 \alias{SE_impute}
 \title{Impute Missing Values in SummarizedExperiment}
 \usage{
-SE_impute(SE, assayname = "TPM", group = "group", method = "knn")
+SE_impute(SE, group_colname = "group", method = "knn")
 }
 \arguments{
 \item{SE}{A SummarizedExperiment object containing expression data.}
 
-\item{assayname}{A string specifying the name of the assay to use (default is "TPM").
-This should match one of the assay names in the SE object.}
-
-\item{group}{A string specifying the grouping variable name for the samples (default is "group").}
+\item{group_colname}{A string specifying the grouping variable name for the samples (default is "group").}
 
 \item{method}{A string specifying the imputation method to use. The default method is "knn".}
 }
@@ -37,6 +34,6 @@ example_data[sample(1:100, 20)] <- 0  # Introduce some zeros
 example_se <- SummarizedExperiment(assays = list(TPM = example_data))  
  
 # Impute missing values  
-imputed_se <- SE_impute(example_se, assayname = "TPM", group = "group", method = "knn")  
+imputed_se <- SE_impute(example_se, group_colname = "group", method = "knn")  
  
 }

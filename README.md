@@ -64,7 +64,11 @@ SE_detectratio(SE)
 Imputes missing values (NA) in the given SummarizedExperiment object using specified methods.
 
 ```r
-SE_impute(SE)  
+library(SEtoolbox)
+
+SE= loadSE()
+
+SE_impute(SE, group_colname = "group", method = "knn")  
 ```
 
 ### SE_COCONUT
