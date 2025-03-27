@@ -60,7 +60,14 @@ SE_combine(SElist,merge_type = "union")  # Keep union features across SE objects
 Calculate the number of non-zero samples for each feature and update the results in rowData  
 
 ```r
-SE_detectratio(SE)  
+library(SEtoolbox)
+
+SE = loadSE()
+
+# Output a list contain a SE object and detectio ratio density plot 
+SE_detectratio(SE, assayname = "TPM", group_col = "group")  
+
+
 ```
 
 ### SE_impute
