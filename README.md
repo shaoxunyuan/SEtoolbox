@@ -17,6 +17,7 @@ https://shaoxunyuan.github.io/SEtoolbox/
 
 ```r
 # install.packages("devtools")
+
 devtools::install_github("shaoxunyuan/SEtoolbox", dependencies = TRUE)
 ```
 
@@ -65,9 +66,8 @@ library(SEtoolbox)
 SE = loadSE()
 
 # Output a list contain a SE object and detectio ratio density plot 
+
 SE_detectratio(SE, assayname = "TPM", group_col = "group")  
-
-
 ```
 
 ### SE_impute

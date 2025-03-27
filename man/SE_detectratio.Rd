@@ -4,7 +4,7 @@
 \alias{SE_detectratio}
 \title{SE_detectratio: Calculate Detection Ratio for SummarizedExperiment Object}
 \usage{
-SE_detectratio(SE, assayname = "TPM", group_col = "group")
+SE_detectratio(SE, assayname = "TPM", group_col = NULL)
 }
 \arguments{
 \item{SE}{A \code{SummarizedExperiment} object containing gene expression data.}
