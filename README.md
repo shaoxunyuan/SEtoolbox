@@ -46,6 +46,10 @@ Now you can use SE with all functions
 Combine multiple SummarizedExperiment objects into one SummarizedExperiment object
 
 ```r
+#A list contains multiple SE objects. All SE objects should have same group column name (para: group_col) and health control label (para: label_healthy).
+
+SElist = loadSElist()
+
 SE_combine(SElist,merge_type = "intersection")  # Keep intersect features across SE objects
 
 SE_combine(SElist,merge_type = "union")  # Keep union features across SE objects
@@ -66,7 +70,7 @@ Imputes missing values in the given SummarizedExperiment object using specified 
 ```r
 library(SEtoolbox)
 
-SE= loadSE()
+SE = loadSE()
 
 SE_impute(SE, group_colname = "group", method = "knn")  
 ```

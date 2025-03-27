@@ -1,15 +1,37 @@
-#' Calculate Detection Ratio and Update SummarizedExperiment Object's rowData  
-#'  
-#' This function computes the detection ratio of expression data and updates  
-#' the rowData of the provided SummarizedExperiment object with detection sample counts  
-#' and ratios. It also generates a histogram of detection ratios.  
-#'  
-#' @param SE A SummarizedExperiment object containing expression data.  
-#' @param assayname The name of the assay to be used for calculations. Default is "TPM".  
-#' @param group_col The name of the column containing group information. Default is "group".  
-#' @return An updated SummarizedExperiment object with detection sample counts  
-#'   and ratios in rowData, along with a displayed histogram of detection ratios.  
-#' @export  
+#' @title SE_detectratio: Calculate Detection Ratio for SummarizedExperiment Object  
+#'   
+#' @description   
+#' This function computes the detection ratio of expression data in a   
+#' \code{SummarizedExperiment} object and updates its \code{rowData} with detection   
+#' sample counts and ratios. It also generates a histogram of detection ratios to   
+#' visualize the distribution. Detection ratios are calculated based on the number   
+#' of non-zero samples for each feature across provided groups.  
+#'   
+#' @param SE A \code{SummarizedExperiment} object containing gene expression data.  
+#' @param assayname A string indicating which assay to use for calculations.   
+#' The default value is \code{"TPM"}.  
+#' @param group_col A string representing the column name in \code{colData} that   
+#' contains group information. The default value is \code{"group"}.  
+#'   
+#' @return   
+#' A list containing:  
+#' \item{SE}{An updated \code{SummarizedExperiment} object with detection sample counts  
+#' and ratios added to \code{rowData}.}  
+#' \item{plot}{A \code{ggplot} object representing the histogram of detection ratios.}  
+#'   
+#' @examples   
+#' # Create a dummy SummarizedExperiment object  
+#' data_matrix <- matrix(rnorm(1000), nrow = 100, ncol = 10)  
+#' rownames(data_matrix) <- paste0("Gene", 1:100)  
+#' colnames(data_matrix) <- paste0("Sample", 1:10)  
+#' sample_info <- DataFrame(group = rep(c("A", "B"), each = 5))  
+#' SE <- SummarizedExperiment(assays = list(TPM = data_matrix), colData = sample_info)  
+#'   
+#' # Call the SE_detectratio function  
+#' result <- SE_detectratio(SE, assayname = "TPM", group_col = "group")  
+#' print(result$plot)  # Display the histogram  
+#'   
+#' @export 
 SE_detectratio <- function(SE, assayname = "TPM", group_col = "group") {  
     
     # Check input validity  
