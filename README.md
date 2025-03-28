@@ -103,7 +103,13 @@ SElistbatch = SE_COCONUT(SElist, assayname = "TPM", group_col = "group", label_h
 Use the count matrix to calculate differential results, with results updated in rowData  
 
 ```r
-SE_DEseq2(SE)  
+
+SE = loadSE()
+
+#Return a SummarizedExperiment  object contain different express results in metadata
+
+SE_DEseq2(SE, assayname = "Count", group_colname = "group")  
+
 ```
 
 ### SE_distribution
