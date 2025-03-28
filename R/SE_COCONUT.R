@@ -59,7 +59,7 @@ SE_COCONUT = function(SElist, assayname = NULL, group_col = "group", label_healt
         expr_data <- assay(SElist[[i]], assayname)  
         if (any(expr_data == 0, na.rm = TRUE)) {  
         #    stop("Expression matrix contains zeros. Please impute zeros before using this function.")  
-		    message("Zero detected. Add 0.0001 to all express matrix!")
+		    message(paste0("Zero detected. Add 0.0001 to", names(SElist)[i], "express matrix!"))
 			expr_data <- expr_data + 0.0001  
 			assay(SElist[[i]], assayname) <- expr_data  # Update the assay with adjusted values 
         }  	
