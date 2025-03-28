@@ -104,9 +104,11 @@ Use the count matrix to calculate differential results, with results updated in 
 
 ```r
 
+library(SEtoolbox)
+
 SE = loadSE()
 
-#Return a SummarizedExperiment  object contain different express results in metadata
+#Return a SummarizedExperiment object contain different express results in metadata
 
 SE_DEseq2(SE, assayname = "Count", group_colname = "group")  
 
