@@ -43,7 +43,6 @@
 #' @export  
 SE_COCONUT = function(SElist, assayname = NULL, group_col = "group", label_healthy = "HC") {  
 	options(warn = -1) 
-	install.packages("COCONUT")
     # Check if assayname is provided  
     if (is.null(assayname)) {  
         stop("assayname must exist in the original data and must be specified")  
@@ -59,8 +58,11 @@ SE_COCONUT = function(SElist, assayname = NULL, group_col = "group", label_healt
         # Check if expression matrix contains zeros  
         expr_data <- assay(SElist[[i]], assayname)  
         if (any(expr_data == 0, na.rm = TRUE)) {  
-            stop("Expression matrix contains zeros. Please impute zeros before using this function.")  
-        }  
+        #    stop("Expression matrix contains zeros. Please impute zeros before using this function.")  
+		    message("Zero detected. Add 0.0001 to all express matrix!")
+			expr_data <- expr_data + 0.0001  
+			assay(SElist[[i]], assayname) <- expr_data  # Update the assay with adjusted values 
+        }  	
     }  
   
     create_COCOobj_type <- function(SEinput, assayname, group_col, label_healthy) {  
