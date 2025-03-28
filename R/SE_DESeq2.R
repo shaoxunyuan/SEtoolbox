@@ -1,84 +1,101 @@
+#' Perform differential expression analysis using DESeq2  
+#'  
+#' This function conducts differential expression analysis on a given SummarizedExperiment object  
+#' using the DESeq2 package. It takes count data from the specified assay and performs  
+#' two-group comparisons based on the grouping factor provided in the colData.  
+#'  
+#' @importFrom DESeq2 DESeqDataSetFromMatrix  
+#' @importFrom DESeq2 DESeq  
+#' @importFrom DESeq2 results  
+#' @importFrom SummarizedExperiment assay  
+#' @importFrom SummarizedExperiment assayNames  
+#' @importFrom SummarizedExperiment colData  
+#' @param SE A SummarizedExperiment object containing count data.  
+#' @param assayname The name of the assay to use for the analysis. Default is "Count".  
+#' @param group_colname The name of the column in colData(SE) that contains the factor for grouping samples. Default is "group".  
+#' @return A SummarizedExperiment object with DESeq2 results stored in its metadata.  
+#' @examples  
+#' # Load necessary libraries  
+#' library(SummarizedExperiment)  
+#' library(DESeq2)  
+#'  
+#' # Construct sample SummarizedExperiment object  
+#' se <- SummarizedExperiment(  
+#'   assays = list(Count = matrix(rnorm(100), nrow = 10)),  
+#'   colData = DataFrame(group = factor(rep(c("A", "B"), each = 5)))  
+#' )  
+#'  
+#' # Perform differential expression analysis  
+#' results_se <- SE_DEseq2(SE = se)  
+#'  
+#' @export  
+SE_DEseq2 <- function(SE, assayname = "Count", group_colname = "group") {  
 
-#' Perform differential expression analysis using DESeq2
-#'
-#' @param SE A SummarizedExperiment object containing count data.
-#' @param assayname The name of the assay to use for the analysis. Default is "Count".
-#' @param groupname The name of the column in colData(SE) that contains the factor for grouping samples. Default is "group".
-#' @return A SummarizedExperiment object with DESeq2 results stored in its metadata.
-#' @export
-SE_DEseq2 <- function(SE, assayname = "Count", groupname = "group") {
-  suppressPackageStartupMessages({
-    library(DESeq2)
-    library(SummarizedExperiment)
-  })
-    
-  # 验证SE对象类型
-  if (!is(SE, "SummarizedExperiment")) {
-    stop("输入对象必须是SummarizedExperiment类型")
-  }
+  # Validate that SE is of type SummarizedExperiment  
+  if (!is(SE, "SummarizedExperiment")) {  
+    stop("The input object must be of SummarizedExperiment type.")  
+  }  
   
-  # 验证assay是否存在
-  if (!assayname %in% assayNames(SE)) {
-    stop("指定的assay不存在: ", assayname)
-  }
+  # Validate that the specified assay exists  
+  if (!assayname %in% assayNames(SE)) {  
+    stop("The specified assay does not exist: ", assayname)  
+  }  
   
-  # 验证分组列是否存在
-  if (!groupname %in% colnames(colData(SE))) {
-    stop("分组列不存在于colData中: ", groupname)
-  }
+  # Validate that the grouping column exists  
+  if (!group_colname %in% colnames(colData(SE))) {  
+    stop("The grouping column does not exist in colData: ", group_colname)  
+  }  
 
-  # 提取Count矩阵并强制转为整数 (DESeq2要求整数)
-  countData <- assay(SE, assayname)
-  if (!all(countData == floor(countData))) {
-    message("检测到非整数值，执行ceiling转换...")
-    countData <- ceiling(countData)
-  }
+  # Extract count matrix and force to integer (DESeq2 requires integers)  
+  countData <- assay(SE, assayname)  
+  if (!all(countData == floor(countData))) {  
+    message("Non-integer values detected, applying ceiling transformation...")  
+    countData <- ceiling(countData) + 1  
+  }  
 
-  # 提取样本信息并动态构建分组公式
-  sample_info <- colData(SE)
-  design_formula <- reformulate(groupname)  # 动态适配分组列名
+  # Extract sample information and dynamically construct the design formula  
+  sample_info <- colData(SE)  
+  design_formula <- reformulate(group_colname)  # Dynamically adapt to the grouping column name  
     
-  # --------------------------
-  # DESeq2差异分析
-  # --------------------------
-  # 创建DESeq2对象
-  dds <- DESeqDataSetFromMatrix(countData = countData,colData = sample_info,design = design_formula)
+  # --------------------------  
+  # DESeq2 differential analysis  
+  # --------------------------  
+  # Create DESeq2 object  
+  dds <- DESeqDataSetFromMatrix(countData = countData, colData = sample_info, design = design_formula)  
   
-  # 运行分析并抑制冗余信息
-  suppressMessages({dds <- DESeq(dds, quiet = TRUE)})
+  # Run the analysis and suppress redundant information  
+  suppressMessages({dds <- DESeq(dds, quiet = TRUE)})  
   
-  # --------------------------
-  # 结果处理
-  # --------------------------
-  # 获取分组信息并校验
-    groups <- unique(sample_info$group)
-    
-    num_groups <- length(groups)
-    
-    # 存储所有差异分析结果的列表
-    all_results <- list()
-    # 进行所有可能的两两比较
-    for (i in 1:(num_groups - 1)) {
-      for (j in (i + 1):num_groups) {
-        contrast <- c("group", groups[i], groups[j])
-        res <- results(dds, contrast = contrast)
-        # 找出log2FoldChange为NA的行索引
-        na_rows <- which(is.na(res$pvalue))
-        # 将这些行的指定列值进行修改
-        res[na_rows, "log2FoldChange"] <- 0
-        res[na_rows, "lfcSE"] <- 0
-        res[na_rows, "stat"] <- 0
-        res[na_rows, "pvalue"] <- 1
-        res[na_rows, "padj"] <- 1
-        res = res[order(res$pvalue,decreasing = F),]
-        comparison_name <- paste0(groups[i], "_vs_", groups[j])
-        all_results[[comparison_name]] <- res
-      }
-    }
- 
-# 添加差异分析结果到新对象的metadata中
-metadata(SE)$DEresults <- all_results
- 
-# 返回新对象（原SE保持不变）
-return(SE)
+  # --------------------------  
+  # Results processing  
+  # --------------------------  
+  # Get grouping information and validate  
+  groups <- unique(sample_info[[group_colname]])  
+  
+  num_groups <- length(groups)  
+  
+  # Store all differential analysis results in a list  
+  all_results <- list()  
+  # Perform all possible pairwise comparisons  
+  for (i in 1:(num_groups - 1)) {  
+    for (j in (i + 1):num_groups) {  
+      contrast <- c(group_colname, groups[i], groups[j])  
+      res <- results(dds, contrast = contrast)  
+      # Identify rows with NA in log2FoldChange  
+      na_rows <- which(is.na(res$pvalue))  
+      # Modify specified column values for these rows  
+      res[na_rows, c("log2FoldChange", "lfcSE", "stat", "pvalue", "padj")] <- 0  
+      res[na_rows, "pvalue"] <- 1  
+      res[na_rows, "padj"] <- 1  
+      res <- res[order(res$pvalue, decreasing = FALSE),]  
+      comparison_name <- paste0(groups[i], "_vs_", groups[j])  
+      all_results[[comparison_name]] <- res  
+    }  
+  }  
+
+  # Add differential analysis results to the metadata of the new object  
+  metadata(SE)$DEresults <- all_results  
+
+  # Return the new object (original SE remains unchanged)  
+  return(SE)  
 }
