@@ -1,5 +1,6 @@
-#' Perform differential expression analysis using DESeq2  
+#' @title Perform differential expression analysis using DESeq2  
 #'  
+#' @description  
 #' This function conducts differential expression analysis on a given SummarizedExperiment object  
 #' using the DESeq2 package. It takes count data from the specified assay and performs  
 #' two-group comparisons based on the grouping factor provided in the colData.  
@@ -7,9 +8,7 @@
 #' @importFrom DESeq2 DESeqDataSetFromMatrix  
 #' @importFrom DESeq2 DESeq  
 #' @importFrom DESeq2 results  
-#' @importFrom SummarizedExperiment assay  
-#' @importFrom SummarizedExperiment assayNames  
-#' @importFrom SummarizedExperiment colData  
+#' @import SummarizedExperiment  
 #' @param SE A SummarizedExperiment object containing count data.  
 #' @param assayname The name of the assay to use for the analysis. Default is "Count".  
 #' @param group_colname The name of the column in colData(SE) that contains the factor for grouping samples. Default is "group".  
@@ -19,14 +18,11 @@
 #' library(SummarizedExperiment)  
 #' library(DESeq2)  
 #'  
-#' # Construct sample SummarizedExperiment object  
-#' se <- SummarizedExperiment(  
-#'   assays = list(Count = matrix(rnorm(100), nrow = 10)),  
-#'   colData = DataFrame(group = factor(rep(c("A", "B"), each = 5)))  
-#' )  
+#' # Load example SummarizedExperiment object  
+#' SE = loadSE() 
 #'  
 #' # Perform differential expression analysis  
-#' results_se <- SE_DEseq2(SE = se)  
+#' results_se <- SE_DEseq2(SE = SE, assayname = "Count", group_colname = "group")  
 #'  
 #' @export  
 SE_DEseq2 <- function(SE, assayname = "Count", group_colname = "group") {  

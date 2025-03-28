@@ -2,11 +2,7 @@
 % Please edit documentation in R/SE_DESeq2.R
 \name{SE_DEseq2}
 \alias{SE_DEseq2}
-\title{Perform differential expression analysis using DESeq2  
- 
-This function conducts differential expression analysis on a given SummarizedExperiment object  
-using the DESeq2 package. It takes count data from the specified assay and performs  
-two-group comparisons based on the grouping factor provided in the colData.}
+\title{Perform differential expression analysis using DESeq2}
 \usage{
 SE_DEseq2(SE, assayname = "Count", group_colname = "group")
 }
@@ -21,8 +17,6 @@ SE_DEseq2(SE, assayname = "Count", group_colname = "group")
 A SummarizedExperiment object with DESeq2 results stored in its metadata.
 }
 \description{
-Perform differential expression analysis using DESeq2  
- 
 This function conducts differential expression analysis on a given SummarizedExperiment object  
 using the DESeq2 package. It takes count data from the specified assay and performs  
 two-group comparisons based on the grouping factor provided in the colData.
@@ -33,13 +27,10 @@ two-group comparisons based on the grouping factor provided in the colData.
 library(SummarizedExperiment)  
 library(DESeq2)  
  
-# Construct sample SummarizedExperiment object  
-se <- SummarizedExperiment(  
-  assays = list(Count = matrix(rnorm(100), nrow = 10)),  
-  colData = DataFrame(group = factor(rep(c("A", "B"), each = 5)))  
-)  
+# Load example SummarizedExperiment object  
+SE = loadSE() 
  
 # Perform differential expression analysis  
-results_se <- SE_DEseq2(SE = se)  
+results_se <- SE_DEseq2(SE = SE, assayname = "Count", group_colname = "group")  
  
 }
