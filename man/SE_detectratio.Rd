@@ -4,41 +4,53 @@
 \alias{SE_detectratio}
 \title{SE_detectratio: Calculate Detection Ratio for SummarizedExperiment Object}
 \usage{
-SE_detectratio(SE, assayname = "TPM", group_col = NULL)
+SE_detectratio(SE, assayname = "TPM", group_colname = NULL)
 }
 \arguments{
-\item{SE}{A \code{SummarizedExperiment} object containing gene expression data.}
+\item{SE}{A \code{SummarizedExperiment} object containing gene expression data. This
+should include the assay for which detection ratios will be calculated.}
 
 \item{assayname}{A string indicating which assay to use for calculations.
-The default value is \code{"TPM"}.}
+The default value is \code{"TPM"}. The assay must exist in the \code{SummarizedExperiment} object.}
 
-\item{group_col}{A string representing the column name in \code{colData} that
-contains group information. The default value is \code{"group"}.}
+\item{group_colname}{A string representing the column name in \code{colData} that
+contains group information. The default value is \code{"group"}. This is optional; if not provided,   
+the function will calculate overall detection ratios only.}
 }
 \value{
 A list containing:  
 \item{SE}{An updated \code{SummarizedExperiment} object with detection sample counts  
-and ratios added to \code{rowData}.}  
-\item{plot}{A \code{ggplot} object representing the histogram of detection ratios.}
+and ratios added to \code{rowData}. The detection sample counts are added to the   
+\code{"detectsample"} and corresponding ratios to the \code{"detectratio"} columns.}  
+\item{plot_feature}{A \code{ggplot} object representing the histogram of detection ratios   
+for features. This visualizes the distribution of detection ratios across all features   
+and groups if applicable.}  
+\item{plot_sample}{A \code{ggplot} object representing the bar plot of detection ratios   
+for samples. The Y-axis displays the expression fraction formatted as a percentage,   
+and the samples are displayed on the X-axis.}
 }
 \description{
 This function computes the detection ratio of expression data in a   
 \code{SummarizedExperiment} object and updates its \code{rowData} with detection   
 sample counts and ratios. It also generates a histogram of detection ratios to   
 visualize the distribution. Detection ratios are calculated based on the number   
-of non-zero samples for each feature across provided groups.
+of non-zero samples for each feature across provided groups. The function can also   
+calculate detection ratios per group if specified.
 }
 \examples{
   
-# Create a dummy SummarizedExperiment object  
-data_matrix <- matrix(rnorm(1000), nrow = 100, ncol = 10)  
-rownames(data_matrix) <- paste0("Gene", 1:100)  
-colnames(data_matrix) <- paste0("Sample", 1:10)  
-sample_info <- DataFrame(group = rep(c("A", "B"), each = 5))  
-SE <- SummarizedExperiment(assays = list(TPM = data_matrix), colData = sample_info)  
-  
-# Call the SE_detectratio function  
-result <- SE_detectratio(SE, assayname = "TPM", group_col = "group")  
-print(result$plot)  # Display the histogram  
-  
+# Load example SummarizedExperiment object 
+
+SE <- loadSE()   
+
+# Call the SE_detectratio function
+ 
+result <- SE_detectratio(SE, assayname = "TPM", group_colname = "group")   
+
+SEdectectratio <-  result$SE # Return an SummarizedExperiment object after detectratio calculate 
+ 
+print(result$plot_sample)  # Display the sample histogram  
+
+print(result$plot_feature)  # Display the sample histogram
+ 
 }

@@ -5,35 +5,55 @@
 #' \code{SummarizedExperiment} object and updates its \code{rowData} with detection   
 #' sample counts and ratios. It also generates a histogram of detection ratios to   
 #' visualize the distribution. Detection ratios are calculated based on the number   
-#' of non-zero samples for each feature across provided groups.  
+#' of non-zero samples for each feature across provided groups. The function can also   
+#' calculate detection ratios per group if specified.  
 #'   
-#' @param SE A \code{SummarizedExperiment} object containing gene expression data.  
+#' @param SE A \code{SummarizedExperiment} object containing gene expression data. This   
+#' should include the assay for which detection ratios will be calculated.  
 #' @param assayname A string indicating which assay to use for calculations.   
-#' The default value is \code{"TPM"}.  
-#' @param group_col A string representing the column name in \code{colData} that   
-#' contains group information. The default value is \code{"group"}.  
+#' The default value is \code{"TPM"}. The assay must exist in the \code{SummarizedExperiment} object.  
+#' @param group_colname A string representing the column name in \code{colData} that   
+#' contains group information. The default value is \code{"group"}. This is optional; if not provided,   
+#' the function will calculate overall detection ratios only.  
 #'   
 #' @return   
 #' A list containing:  
 #' \item{SE}{An updated \code{SummarizedExperiment} object with detection sample counts  
-#' and ratios added to \code{rowData}.}  
-#' \item{plot}{A \code{ggplot} object representing the histogram of detection ratios.}  
-#'   
+#' and ratios added to \code{rowData}. The detection sample counts are added to the   
+#' \code{"detectsample"} and corresponding ratios to the \code{"detectratio"} columns.}  
+#' \item{plot_feature}{A \code{ggplot} object representing the histogram of detection ratios   
+#' for features. This visualizes the distribution of detection ratios across all features   
+#' and groups if applicable.}  
+#' \item{plot_sample}{A \code{ggplot} object representing the bar plot of detection ratios   
+#' for samples. The Y-axis displays the expression fraction formatted as a percentage,   
+#' and the samples are displayed on the X-axis.}  
+#'
+#' @import SummarizedExperiment  
+#' @import dplyr  
+#' @import ggplot2  
+#' @import tidyr  
+#' @import cowplot  
+#' @import RColorBrewer  
+#' @import scales   
+#' 
 #' @examples   
-#' # Create a dummy SummarizedExperiment object  
-#' data_matrix <- matrix(rnorm(1000), nrow = 100, ncol = 10)  
-#' rownames(data_matrix) <- paste0("Gene", 1:100)  
-#' colnames(data_matrix) <- paste0("Sample", 1:10)  
-#' sample_info <- DataFrame(group = rep(c("A", "B"), each = 5))  
-#' SE <- SummarizedExperiment(assays = list(TPM = data_matrix), colData = sample_info)  
-#'   
-#' # Call the SE_detectratio function  
-#' result <- SE_detectratio(SE, assayname = "TPM", group_col = "group")  
-#' print(result$plot)  # Display the histogram  
-#'   
-#' @export   
-SE_detectratio <- function(SE, assayname = "TPM", group_col = NULL) {  
-    
+#' # Load example SummarizedExperiment object 
+#' 
+#' SE <- loadSE()   
+#'
+#' # Call the SE_detectratio function
+#'  
+#' result <- SE_detectratio(SE, assayname = "TPM", group_colname = "group")   
+#'
+#' SEdectectratio <-  result$SE # Return an SummarizedExperiment object after detectratio calculate 
+#'  
+#' print(result$plot_sample)  # Display the sample histogram  
+#'
+#' print(result$plot_feature)  # Display the sample histogram
+#'  
+#' @export  
+
+SE_detectratio <- function(SE, assayname = "TPM", group_colname = NULL) {  
     # Check input validity  
     if (!inherits(SE, "SummarizedExperiment")) {  
         stop("Input SE must be a SummarizedExperiment object.")  
@@ -42,65 +62,74 @@ SE_detectratio <- function(SE, assayname = "TPM", group_col = NULL) {
         stop(paste("Assay", assayname, "not found in SE."))  
     }  
     
-    # Get feature/sample information and expression matrix  
     feature_info <- as.data.frame(rowData(SE))  
-    sample_info <- colData(SE)  
-    sample_info[] <- lapply(sample_info, function(x) {  
-        if (inherits(x, "integer64")) {  
-            return(as.integer(x))  # integer64 to numeric  
-        } else {  
-            return(x)  
-        }  
-    })  
-    sample_info = as.data.frame(sample_info)  
+    sample_info <- as.data.frame(colData(SE))  
     expdata <- as.data.frame(assay(SE, assayname))  
     
     # Calculate detection samples and ratios  
     detect_samples <- rowSums(expdata != 0)  
     total_samples <- ncol(expdata)  
-    
-    # Update feature_info with detection sample counts and ratios  
     feature_info[,"detectsample"] <- detect_samples  
     feature_info[,"detectratio"] <- round(detect_samples / total_samples, 4)  
-
-    # If group_col is not NULL, calculate detection ratios for each group  
-    if (!is.null(group_col) && group_col %in% colnames(colData(SE))) {  
-        group_info <- unique(colData(SE)[[group_col]])  
-        
-        split_matrices = list()  
+    
+    # Group calculations  
+    if (!is.null(group_colname) && group_colname %in% colnames(sample_info)) {  
+        group_info <- unique(sample_info[[group_colname]])  
         for(selectgroup in group_info) {  
-            expdata_sub = expdata[, colnames(expdata) %in% rownames(sample_info[sample_info[, group_col] == selectgroup,])]  
-            split_matrices[[selectgroup]] = expdata_sub  
-        }  
-        
-        # Function to calculate detection samples and ratios per group  
-        Detect_sampleandratio <- function(data, selectgroup) {  
-            detect_samples <- rowSums(data != 0)  
-            total_samples <- ncol(data)  
-            
+            expdata_sub <- expdata[, sample_info[, group_colname] == selectgroup, drop = FALSE]  
+            detect_samples <- rowSums(expdata_sub != 0)  
+            total_samples <- ncol(expdata_sub)  
             feature_info[, paste0("detectsample_", selectgroup)] <- detect_samples  
             feature_info[, paste0("detectratio_", selectgroup)] <- round(detect_samples / total_samples, 4)  
-            
-            return(feature_info)  
-        }  
-
-        # Calculate detection ratios for each group  
-        for(selectgroup in group_info) {  
-            feature_info <- Detect_sampleandratio(split_matrices[[selectgroup]], selectgroup)  
         }  
     }  
     
-    # Update SE's rowData with the updated feature_info  
     rowData(SE) <- feature_info   
     
-    # Plot histogram of detection ratios  
-    plot <- ggplot(as.data.frame(rowData(SE)), aes(x = detectratio)) +  
+    express_counts <- colSums(expdata != 0)  
+    express_counts_df <- data.frame(ExpressCount = express_counts, ExpreeFraction = round(express_counts / nrow(expdata), 4))  
+    
+    sample_info$ExpressCount = plyr::mapvalues(rownames(sample_info),rownames(express_counts_df),express_counts_df$ExpressCount,warn_missing = F)
+	
+	sample_info$ExpreeFraction = plyr::mapvalues(rownames(sample_info),rownames(express_counts_df),express_counts_df$ExpreeFraction,warn_missing = F)
+	
+	sample_info$ExpressCount = as.numeric(sample_info$ExpressCount)
+	
+	sample_info$ExpreeFraction = as.numeric(sample_info$ExpreeFraction)
+	
+    colData(SE) <- S4Vectors::DataFrame(sample_info)   
+    
+    # Histogram of detection ratios  
+    detectratio_long <- feature_info %>% select(starts_with("detectratio")) %>% pivot_longer(everything(), names_to = "Group", values_to = "value")  
+    
+    total <- detectratio_long[detectratio_long$Group == "detectratio", ]  
+    plot1 <- ggplot(total, aes(x = value)) +  
         geom_histogram(binwidth = 0.1, fill = "steelblue", color = "black", alpha = 0.7) +  
-        geom_density(aes(y = ..count.. * 0.1), color = "salmon", size = 1) +  
-        labs(title = "", x = "Detection Ratio", y = "Count") +  
-        scale_x_continuous(breaks = seq(0, 1, by = 0.1)) +  # 添加简单的刻度  
+        geom_density(aes(y = after_stat(count) * 0.1), color = "salmon", size = 1) +  
+        labs(title = "Detection Ratio Histogram", x = "Detection Ratio", y = "Count") +  
+        theme_minimal()  
+  
+    # Group comparisons  
+    group <- detectratio_long[!detectratio_long$Group == "detectratio", ]  
+    if (nrow(group) > 0) {  
+        plot2 = ggplot(group, aes(x = value, fill = Group)) +  
+            geom_histogram(aes(y = after_stat(count)), position = "identity", binwidth = 0.1, color = "black", alpha = 0.5) +  
+            geom_density(aes(y = after_stat(count) * 0.1), color = "black", size = 1, alpha = 0.5) +   
+            labs(title = "", x = "Detection Ratio", y = "Count") +  
+            scale_fill_manual(values = brewer.pal(8, "Set2")) +   
+            theme_minimal()  
+		plot_feature = plot_grid(plot1,plot2,nrow = 1)
+    } else {  
+        plot_feature = plot1  
+    }  
+    
+    # Sample expression plot  
+    plot_sample <- ggplot(sample_info, aes(x = reorder(BioSample, ExpreeFraction), y = ExpreeFraction)) +  
+        geom_bar(stat = "identity", fill = "steelblue", color = "black") +  
+        labs(title = "", x = "", y = "") +  
+        scale_y_continuous(labels = scales::percent_format()) +  
         theme_minimal() +  
-        theme(panel.grid = element_blank())  
-
-    return(list(SE = SE, plot = plot))  
+        coord_flip()   
+    
+    return(list(SE = SE, plot_feature = plot_feature, plot_sample = plot_sample))  
 }
