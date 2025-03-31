@@ -5,7 +5,7 @@
 #' @param SE A SummarizedExperiment object containing expression data.  
 #' @param col_for_combat A string specifying the column name in the sample information that contains batch information.  
 #' @param col_for_compare An optional string specifying the column name in the sample information that contains the condition for comparison.  
-#'  
+#' import sva
 #' @return A SummarizedExperiment object with batch effects corrected.  
 #'   
 #' @examples  

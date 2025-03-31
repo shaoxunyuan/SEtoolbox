@@ -106,7 +106,7 @@ SE_detectratio <- function(SE, assayname = "TPM", group_colname = NULL) {
     plot1 <- ggplot(total, aes(x = value)) +  
         geom_histogram(binwidth = 0.1, fill = "steelblue", color = "black", alpha = 0.7) +  
         geom_density(aes(y = after_stat(count) * 0.1), color = "salmon", size = 1) +  
-        labs(title = "Detection Ratio Histogram", x = "Detection Ratio", y = "Count") +  
+        labs(title = "", x = "Detection Ratio", y = "Count") +  
         theme_minimal()  
   
     # Group comparisons  
@@ -114,22 +114,29 @@ SE_detectratio <- function(SE, assayname = "TPM", group_colname = NULL) {
     if (nrow(group) > 0) {  
         plot2 = ggplot(group, aes(x = value, fill = Group)) +  
             geom_histogram(aes(y = after_stat(count)), position = "identity", binwidth = 0.1, color = "black", alpha = 0.5) +  
-            geom_density(aes(y = after_stat(count) * 0.1), color = "black", size = 1, alpha = 0.5) +   
+            geom_density(aes(y = after_stat(count) * 0.1, color = Group), size = 0.5, alpha = 0.5) +  
             labs(title = "", x = "Detection Ratio", y = "Count") +  
             scale_fill_manual(values = brewer.pal(8, "Set2")) +   
+            scale_color_manual(values = brewer.pal(8, "Set2")) + 
             theme_minimal()  
-		plot_feature = plot_grid(plot1,plot2,nrow = 1)
+		plot_feature = plot_grid(plot1,plot2,nrow = 1, align = "h")
     } else {  
         plot_feature = plot1  
     }  
     
     # Sample expression plot  
     plot_sample <- ggplot(sample_info, aes(x = reorder(BioSample, ExpreeFraction), y = ExpreeFraction)) +  
-        geom_bar(stat = "identity", fill = "steelblue", color = "black") +  
-        labs(title = "", x = "", y = "") +  
-        scale_y_continuous(labels = scales::percent_format()) +  
-        theme_minimal() +  
-        coord_flip()   
-    
+        geom_point(size = 1, color = "steelblue", shape = 21, fill = "white") +  
+        geom_smooth(method = "loess", color = "black", size = 1.2) +  # 
+        labs(title = "", x = "Sample", y = "Expression Fraction") +  
+        scale_y_continuous(labels = scales::percent_format(accuracy = 1), breaks = seq(0, 1, by = 0.05)) + 
+        theme_minimal() +   
+        theme(axis.text.x = element_blank(),          
+              axis.text.y = element_text(size = 10),                                  
+              plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+              panel.grid.major = element_blank(),                                 
+              panel.grid.minor = element_blank(),
+              panel.border = element_rect(color = "gray", fill = NA, size = 0.5))  
+			  
     return(list(SE = SE, plot_feature = plot_feature, plot_sample = plot_sample))  
 }

@@ -104,7 +104,7 @@ SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", outlier_thresh
         return(p)  
     }  
 
-    pca_plot1 <- plot_pca(pca_data, "PCAplot", caption_text1, show_legend = FALSE)     # Do not show legend  
+    pca_plot1 <- plot_pca(pca_data, "PCAplot", caption_text1, show_legend = TRUE)     # Do not show legend  
     pca_plot2 <- plot_pca(pca_data_filter, "PCAplot Filtered", caption_text2, show_legend = TRUE)  # Show legend on the right  
 
     return(plot_grid(pca_plot1,pca_plot2,nrow = 1,align = "hv", labels = "AUTO")) 

@@ -13,7 +13,8 @@ SE_combat(SE, col_for_combat, col_for_compare = NULL)
 
 \item{col_for_combat}{A string specifying the column name in the sample information that contains batch information.}
 
-\item{col_for_compare}{An optional string specifying the column name in the sample information that contains the condition for comparison.}
+\item{col_for_compare}{An optional string specifying the column name in the sample information that contains the condition for comparison.
+import sva}
 }
 \value{
 A SummarizedExperiment object with batch effects corrected.
