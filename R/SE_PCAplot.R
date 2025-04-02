@@ -21,7 +21,9 @@
 #' @import ggplot2  
 #' @importFrom cowplot plot_grid  
 #' @export  
-SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", outlier_threshold = 2, scale = TRUE, feature_of_interesting = NULL, show_caption = TRUE){  
+SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", 
+					 outlier_threshold = 2, scale = TRUE, feature_of_interesting = NULL, 
+					 show_caption = TRUE, show_legend = TRUE){  
 
     if (!inherits(SE, "SummarizedExperiment")) {  
         stop("Input SE must be a SummarizedExperiment object.")  
@@ -55,7 +57,8 @@ SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", outlier_thresh
     }  
     num_feature <- nrow(expdata)   
 
-    sample_info = colData(SE)  
+	sample_info = colData(SE)   
+	sample_info = as.data.frame(sample_info)  	
     pca_result <- prcomp(as.data.frame(t(expdata)), scale. = scale)   
     pca_data <- as.data.frame(pca_result$x)  
 
@@ -73,7 +76,13 @@ SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", outlier_thresh
     sd_pc2 <- sd(pca_data$PC2)  
     pca_data_filter <- pca_data[(pca_data$PC1 > (mean_pc1 - outlier_threshold * sd_pc1)) & (pca_data$PC1 < (mean_pc1 + outlier_threshold * sd_pc1)) &  
                                   (pca_data$PC2 > (mean_pc2 - outlier_threshold * sd_pc2)) & (pca_data$PC2 < (mean_pc2 + outlier_threshold * sd_pc2)),]  
-
+	
+	#return SE
+	sample_info <- sample_info %>%  
+			mutate(outlier = "1") %>%  
+			mutate(outlier = ifelse(rownames(sample_info) %in% rownames(pca_data_filter), "0", outlier))  
+	colData(SE) = DataFrame(sample_info)
+	
     group_counts <- table(pca_data$group)  
     caption_text1 <- paste("feature:", num_feature, ";", "sample:", paste(names(group_counts), ":", group_counts, collapse = ", "))  
 
@@ -104,8 +113,9 @@ SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", outlier_thresh
         return(p)  
     }  
 
-    pca_plot1 <- plot_pca(pca_data, "PCAplot", caption_text1, show_legend = TRUE)     # Do not show legend  
-    pca_plot2 <- plot_pca(pca_data_filter, "PCAplot Filtered", caption_text2, show_legend = TRUE)  # Show legend on the right  
+    pca_plot1 <- plot_pca(pca_data, "PCAplot", caption_text1, show_legend = show_legend)     # Do not show legend  
+    pca_plot2 <- plot_pca(pca_data_filter, "PCAplot Filtered", caption_text2, show_legend = show_legend)  # Show legend on the right  
 
-    return(plot_grid(pca_plot1,pca_plot2,nrow = 1,align = "hv", labels = "AUTO")) 
+    plot = plot_grid(pca_plot1,pca_plot2,nrow = 1,align = "hv", labels = "AUTO")
+	return(list(SE = SE, plotraw = plot))
 }

@@ -103,7 +103,7 @@ SE_detectratio <- function(SE, assayname = "TPM", group_colname = NULL) {
     detectratio_long <- feature_info %>% select(starts_with("detectratio")) %>% pivot_longer(everything(), names_to = "Group", values_to = "value")  
     
     total <- detectratio_long[detectratio_long$Group == "detectratio", ]  
-    plot1 <- ggplot(total, aes(x = value)) +  
+    plot_feature <- ggplot(total, aes(x = value)) +  
         geom_histogram(binwidth = 0.1, fill = "steelblue", color = "black", alpha = 0.7) +  
         geom_density(aes(y = after_stat(count) * 0.1), color = "salmon", size = 1) +  
         labs(title = "", x = "Detection Ratio", y = "Count") +  
@@ -112,31 +112,33 @@ SE_detectratio <- function(SE, assayname = "TPM", group_colname = NULL) {
     # Group comparisons  
     group <- detectratio_long[!detectratio_long$Group == "detectratio", ]  
     if (nrow(group) > 0) {  
-        plot2 = ggplot(group, aes(x = value, fill = Group)) +  
+        plot_feature_group = ggplot(group, aes(x = value, fill = Group)) +  
             geom_histogram(aes(y = after_stat(count)), position = "identity", binwidth = 0.1, color = "black", alpha = 0.5) +  
             geom_density(aes(y = after_stat(count) * 0.1, color = Group), size = 0.5, alpha = 0.5) +  
             labs(title = "", x = "Detection Ratio", y = "Count") +  
             scale_fill_manual(values = brewer.pal(8, "Set2")) +   
             scale_color_manual(values = brewer.pal(8, "Set2")) + 
             theme_minimal()  
-		plot_feature = plot_grid(plot1,plot2,nrow = 1, align = "h")
-    } else {  
-        plot_feature = plot1  
-    }  
+	} 
     
     # Sample expression plot  
-    plot_sample <- ggplot(sample_info, aes(x = reorder(BioSample, ExpreeFraction), y = ExpreeFraction)) +  
-        geom_point(size = 1, color = "steelblue", shape = 21, fill = "white") +  
-        geom_smooth(method = "loess", color = "black", size = 1.2) +  # 
-        labs(title = "", x = "Sample", y = "Expression Fraction") +  
-        scale_y_continuous(labels = scales::percent_format(accuracy = 1), breaks = seq(0, 1, by = 0.05)) + 
-        theme_minimal() +   
-        theme(axis.text.x = element_blank(),          
-              axis.text.y = element_text(size = 10),                                  
-              plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
-              panel.grid.major = element_blank(),                                 
-              panel.grid.minor = element_blank(),
-              panel.border = element_rect(color = "gray", fill = NA, size = 0.5))  
-			  
-    return(list(SE = SE, plot_feature = plot_feature, plot_sample = plot_sample))  
+    plot_sample <- ggplot(sample_info, aes(x = reorder(BioSample, ExpreeFraction), y = ExpreeFraction, color = group)) +  
+				geom_point(size = 1, shape = 21, fill = "white") +  
+				geom_smooth(method = "loess", color = "black", size = 1.2) + 
+				labs(title = "", x = "Sample", y = "Expression Fraction") +  
+				scale_y_continuous(labels = scales::percent_format(accuracy = 1), breaks = seq(0, 1, by = 0.05)) + 
+				theme_minimal() +   
+				theme(axis.text.x = element_blank(),          
+						axis.text.y = element_text(size = 10),                                  
+						plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+						panel.grid.major = element_blank(),                                 
+						panel.grid.minor = element_blank(),
+						panel.border = element_rect(color = "gray", fill = NA, size = 0.5),
+						legend.position = c(0.95, 0.05), 
+						legend.justification = c(1, 0)) 
+	if (nrow(group) > 0) {  		  
+		return(list(SE = SE, plot_feature = plot_feature, plot_feature_group = plot_feature_group, plot_sample = plot_sample))  
+	}else{
+		return(list(SE = SE, plot_feature = plot_feature, plot_sample = plot_sample))  
+	}
 }

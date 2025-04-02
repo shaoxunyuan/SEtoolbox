@@ -42,40 +42,43 @@
 #' @import COCONUT 
 #' @export  
 SE_COCONUT = function(SElist, assayname = NULL, group_col = "group", label_healthy = "HC") {  
-	options(warn = -1) 
+    options(warn = -1)   
+    message("Starting SE_COCONUT function...")  
+    
     # Check if assayname is provided  
     if (is.null(assayname)) {  
         stop("assayname must exist in the original data and must be specified")  
     }  
+    message("Assay name provided: ", assayname)  
     
     # Check if assayname exists in all SummarizedExperiment objects  
     for (i in seq_along(SElist)) {  
         if (!assayname %in% assayNames(SElist[[i]])) {  
             stop(paste0("assayname '", assayname, "' does not exist in dataset ", i,   
-                        ". Please specify an assay that exists in all datasets."))  
+                         ". Please specify an assay that exists in all datasets."))  
         }  
+        message("Assay name found in dataset ", i)  
         
         # Check if expression matrix contains zeros  
         expr_data <- assay(SElist[[i]], assayname)  
         if (any(expr_data == 0, na.rm = TRUE)) {  
-        #    stop("Expression matrix contains zeros. Please impute zeros before using this function.")  
-		    message(paste0("Zero detected. Add 0.0001 to", names(SElist)[i], "express matrix!"))
-			expr_data <- expr_data + 0.0001  
-			assay(SElist[[i]], assayname) <- expr_data  # Update the assay with adjusted values 
-        }  	
+            message("Zero detected in dataset ", names(SElist)[i], ". Adding 0.0001 to expression matrix.")  
+            expr_data <- expr_data + 0.0001  
+            assay(SElist[[i]], assayname) <- expr_data  # Update the assay with adjusted values   
+        }  	  
     }  
   
     create_COCOobj_type <- function(SEinput, assayname, group_col, label_healthy) {  
         expdata = as.data.frame(assay(SEinput, assayname))  
-		sample_info = colData(SEinput)
+		sample_info = colData(SEinput)  
 		sample_info[] <- lapply(sample_info, function(x) {  
 		if (inherits(x, "integer64")) {  
-			return(as.integer(x))  # integer64 to numeric
+			return(as.integer(x))  # integer64 to numeric  
 		} else {  
 			return(x)  
 		}  
-		sample_info = as.data.frame(sample_info)
-	}) 
+		sample_info = as.data.frame(sample_info)  
+	})   
         sample_info[sample_info[,group_col] != label_healthy,]$group = 1   
         sample_info[sample_info[,group_col] == label_healthy,]$group = 0  
         return(list(pheno = sample_info, genes = expdata))  
@@ -85,9 +88,11 @@ SE_COCONUT = function(SElist, assayname = NULL, group_col = "group", label_healt
     for (i in seq_along(SElist)) {  
         COCOobjs[[i]] <- create_COCOobj_type(SElist[[i]], assayname = assayname,   
                                              group_col = group_col, label_healthy = label_healthy)  
+        message("Created COCO object for dataset ", i)  
     }  
     
     GSEs.COCONUT <- COCONUT(GSEs = COCOobjs, control.0.col = group_col, byPlatform = FALSE)  
+    message("COCONUT correction applied.")  
     
     expdata_list = list()  
     feature_list = list()  
@@ -104,21 +109,18 @@ SE_COCONUT = function(SElist, assayname = NULL, group_col = "group", label_healt
         # Extract feature info and match with expression data rows  
         feature_info = rowData(SElist[[j]])  
         feature_info = feature_info[rownames(feature_info) %in% rownames(expdata_batch),]  
-        # Ensure feature_info rows are in the same order as expdata_batch rows  
         feature_info = feature_info[match(rownames(expdata_batch), rownames(feature_info)),]  
         feature_list[[j]] = feature_info  
         
         # Extract sample info and match with expression data columns  
         sample_info = colData(SElist[[j]])  
         sample_info = sample_info[rownames(sample_info) %in% colnames(expdata_batch),]  
-        # Ensure sample_info rows are in the same order as expdata_batch columns  
         sample_info = sample_info[match(colnames(expdata_batch), rownames(sample_info)),]  
         sample_list[[j]] = sample_info  
     }  
     
     SElist_batch = list()  
     for(k in seq_along(SElist)){  
-        # Create SummarizedExperiment with named assay  
         assays_list <- list()  
         assays_list[[assayname]] <- as.matrix(expdata_list[[k]])  
         
@@ -129,7 +131,10 @@ SE_COCONUT = function(SElist, assayname = NULL, group_col = "group", label_healt
         )  
         
         SElist_batch[[k]] = SEbatch  
+        message("Created SummarizedExperiment object for dataset ", k)  
     }   
-		names(SElist_batch) = names(SElist)
+    names(SElist_batch) = names(SElist)  
+    message("Completed SE_COCONUT function.")  
+    
     return(SElist_batch)  
 }

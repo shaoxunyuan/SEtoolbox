@@ -13,7 +13,8 @@ SE_PCAplot(
   outlier_threshold = 2,
   scale = TRUE,
   feature_of_interesting = NULL,
-  show_caption = TRUE
+  show_caption = TRUE,
+  show_legend = TRUE
 )
 }
 \arguments{
