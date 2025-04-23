@@ -2,9 +2,7 @@
 % Please edit documentation in R/SE_PCAplot.R
 \name{SE_PCAplot}
 \alias{SE_PCAplot}
-\title{Generate PCA plots  
- 
-This function takes a SummarizedExperiment object, computes PCA, and visualizes the results.}
+\title{Generate PCA plots}
 \usage{
 SE_PCAplot(
   SE,
@@ -35,7 +33,5 @@ SE_PCAplot(
 A list containing two ggplot objects: the original PCA plot and the filtered PCA plot.
 }
 \description{
-Generate PCA plots  
- 
 This function takes a SummarizedExperiment object, computes PCA, and visualizes the results.
 }

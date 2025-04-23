@@ -1,6 +1,8 @@
-#' Generate PCA plots  
+#' @title Generate PCA plots  
 #'  
+#' @description  
 #' This function takes a SummarizedExperiment object, computes PCA, and visualizes the results.  
+#' 
 #' @param SE SummarizedExperiment object containing gene expression data.  
 #' @param assayname Name of the expression data, default is "TPM".  
 #' @param groupname Name of the grouping column, default is "group".  
