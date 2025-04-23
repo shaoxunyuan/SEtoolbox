@@ -127,7 +127,14 @@ SE_distribution(SE)
 Select specific features for PCA plot  
 
 ```r
-SE_PCAplot(SE)  
+
+library(SEtoolbox)
+
+SE = loadSE()
+
+SE_PCAplot(SE,assayname = "TPM", outlier_threshold = 2, scale = TRUE)  
+
+
 ```
 
 ### SE_heatmap
