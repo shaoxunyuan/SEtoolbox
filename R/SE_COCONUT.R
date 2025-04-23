@@ -12,7 +12,7 @@
 #'   contains group information (e.g., disease status).  
 #' @param label_healthy Character string specifying the value in the group_col   
 #'   that represents healthy controls (e.g., "HC").  
-#'  
+#' @param itConv Allows user to change threshold for iterative solver. For advanced users only.
 #' @return A list of SummarizedExperiment objects with batch-corrected data.  
 #'  
 #' @details The function uses COCONUT to perform batch correction on expression   
@@ -41,7 +41,7 @@
 #' @import SummarizedExperiment 
 #' @import COCONUT 
 #' @export  
-SE_COCONUT = function(SElist, assayname = NULL, group_col = "group", label_healthy = "HC") {  
+SE_COCONUT = function(SElist, assayname = NULL, group_col = "group", label_healthy = "HC", itConv = 1e-04) {  
     options(warn = -1)   
     message("Starting SE_COCONUT function...")  
     
@@ -69,20 +69,25 @@ SE_COCONUT = function(SElist, assayname = NULL, group_col = "group", label_healt
     }  
   
     create_COCOobj_type <- function(SEinput, assayname, group_col, label_healthy) {  
-        expdata = as.data.frame(assay(SEinput, assayname))  
-		sample_info = colData(SEinput)  
-		sample_info[] <- lapply(sample_info, function(x) {  
-		if (inherits(x, "integer64")) {  
-			return(as.integer(x))  # integer64 to numeric  
-		} else {  
-			return(x)  
-		}  
-		sample_info = as.data.frame(sample_info)  
-	})   
-        sample_info[sample_info[,group_col] != label_healthy,]$group = 1   
-        sample_info[sample_info[,group_col] == label_healthy,]$group = 0  
-        return(list(pheno = sample_info, genes = expdata))  
-    }  
+    #
+    expdata <- as.data.frame(assay(SEinput, assayname))  
+    sample_info <- colData(SEinput)   
+    # 
+    sample_info[] <- lapply(sample_info, function(x) {  
+        if (inherits(x, "integer64")) {  
+            return(as.integer(x))  # integer64 to numeric 
+        } else {  
+            return(x)  
+        }  
+    })   
+    #
+    sample_info <- as.data.frame(sample_info)   
+    #   
+    sample_info$group[which(sample_info[, group_col] != label_healthy)] <- 1  
+    sample_info$group[which(sample_info[, group_col] == label_healthy)] <- 0  
+    # 
+    return(list(pheno = sample_info, genes = expdata))  
+	}  
     
     COCOobjs = list()  
     for (i in seq_along(SElist)) {  
@@ -91,7 +96,7 @@ SE_COCONUT = function(SElist, assayname = NULL, group_col = "group", label_healt
         message("Created COCO object for dataset ", i)  
     }  
     
-    GSEs.COCONUT <- COCONUT(GSEs = COCOobjs, control.0.col = group_col, byPlatform = FALSE)  
+    GSEs.COCONUT <- COCONUT(GSEs = COCOobjs, control.0.col = group_col, itConv=itConv, byPlatform = FALSE)  
     message("COCONUT correction applied.")  
     
     expdata_list = list()  

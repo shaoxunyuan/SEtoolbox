@@ -87,15 +87,15 @@ SE_detectratio <- function(SE, assayname = "TPM", group_colname = NULL) {
     rowData(SE) <- feature_info   
     
     express_counts <- colSums(expdata != 0)  
-    express_counts_df <- data.frame(ExpressCount = express_counts, ExpreeFraction = round(express_counts / nrow(expdata), 4))  
+    express_counts_df <- data.frame(ExpressCount = express_counts, ExpressFraction = round(express_counts / nrow(expdata), 4))  
     
     sample_info$ExpressCount = plyr::mapvalues(rownames(sample_info),rownames(express_counts_df),express_counts_df$ExpressCount,warn_missing = F)
 	
-	sample_info$ExpreeFraction = plyr::mapvalues(rownames(sample_info),rownames(express_counts_df),express_counts_df$ExpreeFraction,warn_missing = F)
+	sample_info$ExpressFraction = plyr::mapvalues(rownames(sample_info),rownames(express_counts_df),express_counts_df$ExpressFraction,warn_missing = F)
 	
 	sample_info$ExpressCount = as.numeric(sample_info$ExpressCount)
 	
-	sample_info$ExpreeFraction = as.numeric(sample_info$ExpreeFraction)
+	sample_info$ExpressFraction = as.numeric(sample_info$ExpressFraction)
 	
     colData(SE) <- S4Vectors::DataFrame(sample_info)   
     
@@ -122,11 +122,12 @@ SE_detectratio <- function(SE, assayname = "TPM", group_colname = NULL) {
 	} 
     
     # Sample expression plot  
-    plot_sample <- ggplot(sample_info, aes(x = reorder(BioSample, ExpreeFraction), y = ExpreeFraction, color = group)) +  
+    plot_sample <- ggplot(sample_info, aes(x = reorder(BioSample, ExpressCount), y = ExpressCount, color = group)) +  
 				geom_point(size = 1, shape = 21, fill = "white") +  
 				geom_smooth(method = "loess", color = "black", size = 1.2) + 
-				labs(title = "", x = "Sample", y = "Expression Fraction") +  
-				scale_y_continuous(labels = scales::percent_format(accuracy = 1), breaks = seq(0, 1, by = 0.05)) + 
+				labs(title = "", x = "Sample", y = "Expression Count") +  
+				scale_y_continuous(breaks = pretty(range(sample_info$ExpressCount), n = 10)) +
+				geom_hline(yintercept = c(200, 500), linetype = "dashed", color = "gray", size = 0.75) + 
 				theme_minimal() +   
 				theme(axis.text.x = element_blank(),          
 						axis.text.y = element_text(size = 10),                                  

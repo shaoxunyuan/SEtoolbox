@@ -4,7 +4,12 @@
 \alias{SE_DEseq2}
 \title{Perform differential expression analysis using DESeq2}
 \usage{
-SE_DEseq2(SE, assayname = "Count", group_colname = "group")
+SE_DEseq2(
+  SE,
+  assayname = "Count",
+  group_colname = "group",
+  set_compare = c("hc", "patient")
+)
 }
 \arguments{
 \item{SE}{A SummarizedExperiment object containing count data.}
@@ -12,6 +17,8 @@ SE_DEseq2(SE, assayname = "Count", group_colname = "group")
 \item{assayname}{The name of the assay to use for the analysis. Default is "Count".}
 
 \item{group_colname}{The name of the column in colData(SE) that contains the factor for grouping samples. Default is "group".}
+
+\item{set_compare}{A character vector specifying the groups to compare. It should contain valid group names present in colData.}
 }
 \value{
 A SummarizedExperiment object with DESeq2 results stored in its metadata.
@@ -24,13 +31,11 @@ two-group comparisons based on the grouping factor provided in the colData.
 \examples{
  
 # Load necessary libraries  
-library(SummarizedExperiment)  
-library(DESeq2)  
  
 # Load example SummarizedExperiment object  
-SE = loadSE() 
+SE = loadSE()   
  
 # Perform differential expression analysis  
-results_se <- SE_DEseq2(SE = SE, assayname = "Count", group_colname = "group")  
+results_se <- SE_DEseq2(SE = SE, assayname = "Count", group_colname = "group", set_compare = c("hc", "patient"))  
  
 }

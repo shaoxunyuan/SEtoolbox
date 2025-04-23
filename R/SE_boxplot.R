@@ -33,51 +33,61 @@
 #'                    group_colname = "group", normalization = "log")
 #' print(plot)
 #' 
+#' @import ggforce
+#' @import multcompView
 #' @export
 SE_boxplot <- function(SE,   
                        feature_of_interest = c("AAGAB", "ABCA13", "ABCC4", "ABHD2"),   
                        assayname = "TPM",   
                        group_colname = "group",   
                        normalization = "none") {  
-  
+
     if (!inherits(SE, "SummarizedExperiment")) {  
         stop("Input SE must be a SummarizedExperiment object.")  
     }  
 
-    exp_data_subset <- assay(SE, assayname)[feature_of_interest, , drop = FALSE]  
-     
-    missing_genes <- setdiff(feature_of_interest, rownames(exp_data_subset))  
+    expdata = as.data.frame(assay(SE, assayname))  
+    expdata_subset <- expdata[rownames(expdata) %in% feature_of_interest, , drop = FALSE]    
+
+    missing_genes <- setdiff(feature_of_interest, rownames(expdata_subset))  
     if (length(missing_genes) > 0) {  
         warning(paste("The following genes are not found in the dataset:",   
                       paste(missing_genes, collapse = ", ")))  
-        feature_of_interest <- intersect(feature_of_interest, rownames(exp_data_subset))  
-        exp_data_subset <- exp_data_subset[feature_of_interest, , drop = FALSE]  
+        feature_of_interest <- intersect(feature_of_interest, rownames(expdata_subset))  
+        expdata_subset <- expdata_subset[feature_of_interest, , drop = FALSE]  
+
+        # 检查是否仍然有有效基因  
+        if (length(feature_of_interest) == 0) {  
+            stop("None of the input genes are found in the dataset.")  # 弹出消息并停止执行  
+        }  
     }  
 
     if (normalization == "scale") {  
-        exp_data_subset <- t(apply(exp_data_subset, 1, scale))   
+        samplename = colnames(expdata_subset)  
+        expdata_subset <- as.data.frame(t(apply(expdata_subset, 1, scale)))  
+        colnames(expdata_subset) = samplename  
     } else if (normalization == "log") {  
-        exp_data_subset <- log2(exp_data_subset + 1)   
+        expdata_subset <- log2(expdata_subset + 1)   
     }  
 
-    sample_info <- colData(SE)
-	sample_info[] <- lapply(sample_info, function(x) {  
-    if (inherits(x, "integer64")) {  
-        return(as.integer(x))  # integer64 to numeric
-    } else {  
-        return(x)  
-    }  
-	})  
-	sample_info = as.data.frame(sample_info)
-	 
-    exp_data_long <- as.data.frame(exp_data_subset) %>%   
+    sample_info <- colData(SE)  
+    sample_info[] <- lapply(sample_info, function(x) {  
+        if (inherits(x, "integer64")) {  
+            return(as.integer(x))  # integer64 to numeric  
+        } else {  
+            return(x)  
+        }  
+    })  
+    sample_info = as.data.frame(sample_info)  
+
+    exp_data_long <- as.data.frame(expdata_subset) %>%   
                      rownames_to_column(var = "feature") %>%   
                      pivot_longer(cols = -feature, names_to = "sample", values_to = "express")  
 
     if (!is.null(group_colname) && !(group_colname %in% colnames(sample_info))) {  
         stop("Provided group_colname does not exist in colData of the SummarizedExperiment.")  
     }  
-    
+
     exp_data_long <- exp_data_long %>%  
                      left_join(sample_info %>% rownames_to_column(var = "sample"), by = "sample") %>%  
                      mutate(group = .data[[group_colname]])  
@@ -140,3 +150,5 @@ SE_boxplot <- function(SE,
 
     return(plot)  
 }
+library(ggforce)
+library(multcompView)

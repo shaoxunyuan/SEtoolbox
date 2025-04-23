@@ -8,7 +8,13 @@ This function applies the COCONUT (COmbat CO-Normalization Using conTrols)
 algorithm to a list of SummarizedExperiment objects to remove batch effects  
 while preserving biological signals.}
 \usage{
-SE_COCONUT(SElist, assayname = NULL, group_col = "group", label_healthy = "HC")
+SE_COCONUT(
+  SElist,
+  assayname = NULL,
+  group_col = "group",
+  label_healthy = "HC",
+  itConv = 1e-04
+)
 }
 \arguments{
 \item{SElist}{A list of SummarizedExperiment objects to be batch-corrected.}
@@ -22,6 +28,8 @@ contains group information (e.g., disease status).}
 
 \item{label_healthy}{Character string specifying the value in the group_col
 that represents healthy controls (e.g., "HC").}
+
+\item{itConv}{Allows user to change threshold for iterative solver. For advanced users only.}
 }
 \value{
 A list of SummarizedExperiment objects with batch-corrected data.
