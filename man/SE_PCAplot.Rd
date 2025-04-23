@@ -13,8 +13,7 @@ SE_PCAplot(
   outlier_threshold = 2,
   scale = TRUE,
   feature_of_interesting = NULL,
-  show_caption = TRUE,
-  show_legend = TRUE
+  show_legend = FALSE
 )
 }
 \arguments{
@@ -30,7 +29,7 @@ SE_PCAplot(
 
 \item{feature_of_interesting}{Vector of specific feature names; if NULL, all features are used, default is NULL.}
 
-\item{show_caption}{Logical value indicating whether to display caption, default is TRUE.}
+\item{show_legend}{Logical value indicating whether to display legend, default is FALSE.}
 }
 \value{
 A list containing two ggplot objects: the original PCA plot and the filtered PCA plot.
