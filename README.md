@@ -124,7 +124,7 @@ SE_distribution(SE)
 
 ### SE_PCAplot
 
-Select specific features for PCA plot  
+PCA plot and an SummarizedExperiment object with outlier label in colData (colnames: coloutlier)
 
 ```r
 
@@ -132,8 +132,11 @@ library(SEtoolbox)
 
 SE = loadSE()
 
-SE_PCAplot(SE,assayname = "TPM", outlier_threshold = 2, scale = TRUE)  
+results = SE_PCAplot(SE,assayname = "TPM", outlier_threshold = 2, scale = TRUE)  
 
+results$plot
+
+results$SE
 
 ```
 
