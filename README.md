@@ -132,6 +132,8 @@ library(SEtoolbox)
 
 SE = loadSE()
 
+# Return a list containing PCA plots for original and filtered data 
+
 results = SE_PCAplot(SE,assayname = "TPM", outlier_threshold = 2, scale = TRUE)  
 
 results$plot
