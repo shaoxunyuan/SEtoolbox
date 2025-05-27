@@ -91,6 +91,10 @@ SE_circTest <- function(SEcirc, SElinear, assayname = "Count", group_colname = "
   
   group <- factor(sample_metadata[[group_colname]])
   
+  circ_counts = circ_counts[,colnames(circ_counts) %in% rownames(sample_metadata)]
+  
+  linear_counts = linear_counts[,colnames(linear_counts) %in% rownames(sample_metadata)]
+  
   # Validate data dimensions
   if (nrow(circ_counts) != nrow(linear_counts) || ncol(circ_counts) != ncol(linear_counts)) {
     stop("circ_counts and linear_counts must have matching dimensions")
