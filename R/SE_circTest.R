@@ -24,7 +24,7 @@
 #' differences in these ratios between groups. Finally, it adjusts the p - values for multiple testing
 #' using the Benjamini - Hochberg method and sorts the results by raw p - values.
 #'
-#' @importFrom stats anova p.adjust
+#' @importFrom stats p.adjust
 #' @importFrom SummarizedExperiment assay colData
 #' @import aod
 #'
@@ -137,7 +137,7 @@ SE_circTest <- function(SEcirc, SElinear, assayname = "Count", group_colname = "
     tryCatch({
       null_model <- aod::betabin(cbind(circ, total - circ) ~ 1, ~1, data = model_data)
       alt_model <- aod::betabin(cbind(circ, total - circ) ~ group, ~1, data = model_data, control = list(maxit = 100))
-      lr_test <- anova(null_model, alt_model)
+      lr_test <- aod::anova(null_model, alt_model)
       # 这里获取p值的方式更明确一些
       p_value <- lr_test@anova.table[["Pr(>Chisq)"]][2]
     }, error = function(e) {
