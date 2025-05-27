@@ -1,8 +1,6 @@
 #' @title Circular RNA Differential Expression Test Using Beta - Binomial Model
 #'
-#' @description This function conducts differential expression analysis for circular RNAs (circRNAs).
-#' It compares the expression ratios of circRNAs among different groups by utilizing a beta - binomial model.
-#' The function also addresses overdispersion in count data and provides adjusted p - values for multiple testing.
+#' @description By integrating the proportion of circRNA junction reads to the sum of junction and non-junction reads, this function further models the probability distribution #' of the junction reads ratio to detect differential circRNA expression across conditions.
 #'
 #' @param SEcirc A SummarizedExperiment object that holds circular RNA count data.
 #' @param SElinear A SummarizedExperiment object that holds linear RNA count data.
