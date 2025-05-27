@@ -1,18 +1,28 @@
-#' @title Circular RNA Differential Expression Test Using Beta-Binomial Model
+#' @title Circular RNA Differential Expression Test Using Beta - Binomial Model
 #'
-#' @description This function conducts differential expression analysis for circular RNAs (circRNAs)
-#' by comparing expression ratios among different groups using a beta-binomial model.
+#' @description This function conducts differential expression analysis for circular RNAs (circRNAs).
+#' It compares the expression ratios of circRNAs among different groups by utilizing a beta - binomial model.
+#' The function also addresses overdispersion in count data and provides adjusted p - values for multiple testing.
 #'
-#' @param SECirc A SummarizedExperiment object containing circRNA count data.
-#' @param SELinear A SummarizedExperiment object containing linear RNA count data.
-#' @param assayname Character string specifying the assay name with count data (default: "Count").
-#' @param group_colname Character string for the group column in colData(SECirc) (default: "group").
-#' @param select_group Character vector of groups to include; NULL includes all groups (default: NULL).
+#' @param SEcirc A SummarizedExperiment object that holds circular RNA count data.
+#' @param SElinear A SummarizedExperiment object that holds linear RNA count data.
+#' @param assayname Character string specifying the name of the assay containing count data. Defaults to "Count".
+#' @param group_colname Character string indicating the name of the column in \code{colData(SECirc)}
+#' that provides group - related information. Defaults to "group".
+#' @param select_group Character vector of groups to include, eg c("control","case"); NULL includes all groups (default: NULL).
 #'
-#' @return Data frame with circRNA names as row names, containing:
-#'         - Mean expression ratios per group
-#'         - Raw p-values from likelihood ratio tests
-#'         - FDR-adjusted p-values (Benjamini-Hochberg method)
+#' @return A data frame with circRNA names as row names. It contains columns for:
+#'         - Mean expression ratios in each group.
+#'         - Raw p - values obtained from likelihood ratio tests.
+#'         - Adjusted p - values using the Benjamini - Hochberg method.
+#'         - The data frame is sorted by raw p - values in ascending order.
+#'
+#' @details
+#' The function first extracts common features and samples between circular and linear RNA data.
+#' Then, it calculates the ratio of circular RNA expression to the total (circular + linear) RNA expression
+#' for each circRNA. After that, it fits null and alternative beta - binomial models to test for significant
+#' differences in these ratios between groups. Finally, it adjusts the p - values for multiple testing
+#' using the Benjamini - Hochberg method and sorts the results by raw p - values.
 #'
 #' @importFrom stats anova p.adjust
 #' @importFrom SummarizedExperiment assay colData
@@ -20,12 +30,13 @@
 #'
 #' @examples
 #' \dontrun{
-#' results <- SE_circTest(SECirc = SEcirc, SELinear = SElinear, 
-#'                       group_colname = "treatment_group",select_group=NULL)
+#' # Example usage
+#' results <- SE_circTest(SEcirc = SEcirc, SElinear = SElinear, 
+#'                        group_colname = "group", select_group = c("control", "case"))
 #' }
 #'
 #' @export
-SE_circTest <- function(SECirc, SELinear, assayname = "Count", group_colname = "group", select_group = NULL) {
+SE_circTest <- function(SEcirc, SElinear, assayname = "Count", group_colname = "group", select_group = NULL) {
   
   # Package dependency checks
   if (!requireNamespace("SummarizedExperiment", quietly = TRUE)) {
@@ -36,11 +47,11 @@ SE_circTest <- function(SECirc, SELinear, assayname = "Count", group_colname = "
   }
   
   # Object type checks
-  if (!is(SECirc, "SummarizedExperiment")) {
-    stop("SECirc must be a SummarizedExperiment object")
+  if (!is(SEcirc, "SummarizedExperiment")) {
+    stop("SEcirc must be a SummarizedExperiment object")
   }
-  if (!is(SELinear, "SummarizedExperiment")) {
-    stop("SELinear must be a SummarizedExperiment object")
+  if (!is(SElinear, "SummarizedExperiment")) {
+    stop("SElinear must be a SummarizedExperiment object")
   }
   
   # Parameter validity checks
@@ -52,18 +63,18 @@ SE_circTest <- function(SECirc, SELinear, assayname = "Count", group_colname = "
   }
   
   # Feature and sample intersection
-  common_features <- intersect(rownames(SECirc), rownames(SELinear))
-  common_samples <- intersect(colnames(SECirc), colnames(SELinear))
+  common_features <- intersect(rownames(SEcirc), rownames(SElinear))
+  common_samples <- intersect(colnames(SEcirc), colnames(SElinear))
   message(sprintf("Processing %d features for %d samples!", length(common_features), length(common_samples)))
   
   # Subset data to common features and samples
-  SECirc <- SECirc[rownames(SECirc) %in% common_features, colnames(SECirc) %in% common_samples]
-  SELinear <- SELinear[rownames(SELinear) %in% common_features, colnames(SELinear) %in% common_samples]
+  SEcirc <- SEcirc[rownames(SEcirc) %in% common_features, colnames(SEcirc) %in% common_samples]
+  SElinear <- SElinear[rownames(SElinear) %in% common_features, colnames(SElinear) %in% common_samples]
   
   # Extract count data and group information
-  circ_counts <- as.data.frame(assay(SECirc, assayname))
-  linear_counts <- as.data.frame(assay(SELinear, assayname))
-  sample_metadata <- as.data.frame(colData(SECirc))
+  circ_counts <- ceiling(as.data.frame(assay(SEcirc, assayname)))
+  linear_counts <- ceiling(as.data.frame(assay(SElinear, assayname)))
+  sample_metadata <- as.data.frame(colData(SEcirc))
   sample_metadata <- sample_metadata[rownames(sample_metadata) %in% common_samples, ]
   
   # Handle group selection
@@ -108,7 +119,7 @@ SE_circTest <- function(SECirc, SELinear, assayname = "Count", group_colname = "
     total <- circ + linear
     total[total == 0] <- 1  # Avoid division by zero
     
-    # Prepare data for beta-binomial model
+    # Prepare data for beta - binomial model
     model_data <- data.frame(
       circ = circ,
       total = total,
@@ -121,12 +132,13 @@ SE_circTest <- function(SECirc, SELinear, assayname = "Count", group_colname = "
       results[feature, paste0("RatioMean_", g)] <- mean(circ[group_indices] / total[group_indices], na.rm = TRUE)
     }
     
-    # Fit beta-binomial models with error handling
+    # Fit beta - binomial models with error handling
     p_value <- NA
     tryCatch({
       null_model <- aod::betabin(cbind(circ, total - circ) ~ 1, ~1, data = model_data)
       alt_model <- aod::betabin(cbind(circ, total - circ) ~ group, ~1, data = model_data, control = list(maxit = 100))
       lr_test <- anova(null_model, alt_model)
+      # 这里获取p值的方式更明确一些
       p_value <- lr_test@anova.table[["Pr(>Chisq)"]][2]
     }, error = function(e) {
       message(sprintf("Model fitting failed for feature %s: %s", feature, e$message))
@@ -140,8 +152,11 @@ SE_circTest <- function(SECirc, SELinear, assayname = "Count", group_colname = "
     }
   }
   
-  # Adjust p-values
+  # Adjust p - values
   results$p.adj <- p.adjust(results$p.value, method = "BH", n = sum(!is.na(results$p.value)))
+  
+  # Sort results by raw p - values in ascending order
+  results <- results[order(results$p.value, decreasing = FALSE), ]
   
   return(results)
 }
