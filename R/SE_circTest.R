@@ -139,7 +139,7 @@ SE_circTest <- function(SEcirc, SElinear, assayname = "Count", group_colname = "
       alt_model <- aod::betabin(cbind(circ, total - circ) ~ group, ~1, data = model_data, control = list(maxit = 100))
       lr_test <- aod::anova(null_model, alt_model)
       # 这里获取p值的方式更明确一些
-      p_value <- lr_test@anova.table[["Pr(>Chisq)"]][2]
+      p_value <- lr_test@anova.table[,11][2]
     }, error = function(e) {
       message(sprintf("Model fitting failed for feature %s: %s", feature, e$message))
     })
