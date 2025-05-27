@@ -2,41 +2,41 @@
 % Please edit documentation in R/SE_circTest.R
 \name{SE_circTest}
 \alias{SE_circTest}
-\title{Circular RNA Differential Expression Test Using Beta - Binomial Model}
+\title{Circular RNA Differential Expression Test Using Beta-Binomial Model}
 \usage{
-SE_circTest(SECirc, SELinear, assayname = "Count", group_colname = "group")
+SE_circTest(
+  SECirc,
+  SELinear,
+  assayname = "Count",
+  group_colname = "group",
+  select_group = NULL
+)
 }
 \arguments{
-\item{SECirc}{A SummarizedExperiment object that holds circular RNA count data.}
+\item{SECirc}{A SummarizedExperiment object containing circRNA count data.}
 
-\item{SELinear}{A SummarizedExperiment object that holds linear RNA count data.}
+\item{SELinear}{A SummarizedExperiment object containing linear RNA count data.}
 
-\item{assayname}{Character string specifying the name of the assay containing count data. Defaults to "Count".}
+\item{assayname}{Character string specifying the assay name with count data (default: "Count").}
 
-\item{group_colname}{Character string indicating the name of the column in \code{colData(SECirc)}
-that provides group - related information. Defaults to "group".}
+\item{group_colname}{Character string for the group column in colData(SECirc) (default: "group").}
+
+\item{select_group}{Character vector of groups to include; NULL includes all groups (default: NULL).}
 }
 \value{
-A data frame with circRNA names as row names. It contains columns for:
-        - Mean expression ratios in each group.
-        - Raw p - values obtained from likelihood ratio tests.
-        - Adjusted p - values using the Benjamini - Hochberg method.
+Data frame with circRNA names as row names, containing:
+        - Mean expression ratios per group
+        - Raw p-values from likelihood ratio tests
+        - FDR-adjusted p-values (Benjamini-Hochberg method)
 }
 \description{
-This function conducts differential expression analysis for circular RNAs (circRNAs).
-It compares the expression ratios of circRNAs among different groups by utilizing a beta - binomial model.
-}
-\details{
-The function first extracts common features and samples between circular and linear RNA data.
-Then, it calculates the ratio of circular RNA expression to the total (circular + linear) RNA expression
-for each circRNA. After that, it fits null and alternative beta - binomial models to test for significant
-differences in these ratios between groups, addressing overdispersion in count data.
+This function conducts differential expression analysis for circular RNAs (circRNAs)
+by comparing expression ratios among different groups using a beta-binomial model.
 }
 \examples{
 \dontrun{
-# Example usage
-results <- SE_circTest(SECirc = myCircSE, SELinear = myLinearSE, 
-                       group_colname = "treatment_group")
+results <- SE_circTest(SECirc = SEcirc, SELinear = SElinear, 
+                      group_colname = "treatment_group",select_group=NULL)
 }
 
 }
