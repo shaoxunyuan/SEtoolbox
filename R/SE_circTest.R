@@ -147,7 +147,7 @@ SE_circTest <- function(SEcirc, SElinear, assayname = "Count", group_colname = "
     results[feature, "p.value"] <- p_value
     
     # Progress update
-    if (progress_counter %% 20 == 0) {
+    if (progress_counter %% 100 == 0) {
       message(sprintf("%d/%d features processed", progress_counter, total_features))
     }
   }
