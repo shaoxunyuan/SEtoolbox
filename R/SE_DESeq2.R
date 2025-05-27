@@ -15,7 +15,6 @@
 #' @param set_compare A character vector specifying the groups to compare. It should contain valid group names present in colData.  
 #' @return A SummarizedExperiment object with DESeq2 results stored in its metadata.  
 #' @examples  
-#' # Load necessary libraries  
 #'  
 #' # Load example SummarizedExperiment object  
 #' SE = loadSE()   

@@ -66,6 +66,21 @@ SE_detectratio <- function(SE, assayname = "TPM", group_colname = NULL) {
     sample_info <- as.data.frame(colData(SE))  
     expdata <- as.data.frame(assay(SE, assayname))  
     
+	# zero express plot
+	zero_counts <- rowSums(expdata == 0)  
+	zero_counts_df <- data.frame(Column = names(zero_counts), Zero_Counts = zero_counts)
+	zero_counts_df <- zero_counts_df[order(zero_counts_df$Zero_Counts), ]
+	zero_counts_df$Column <- factor(zero_counts_df$Column,   
+									 levels = zero_counts_df$Column[order(zero_counts_df$Zero_Counts,decreasing = T)])  
+	plot_feature_distribution = ggplot(zero_counts_df, aes(x = Column, y = Zero_Counts)) +  
+	  geom_bar(stat = "identity") +  
+	  labs(title = paste0("Zero express counts (",ncol(expdata)," samples,",nrow(expdata)," features)"),  
+		   x = "Genes",  
+		   y = "Zero express counts") +  
+	  theme(axis.text.x = element_blank(),
+			axis.text.y = element_text(size=12),
+			axis.ticks.x = element_blank(), 
+			axis.line.x = element_blank()) 
     # Calculate detection samples and ratios  
     detect_samples <- rowSums(expdata != 0)  
     total_samples <- ncol(expdata)  
@@ -103,31 +118,30 @@ SE_detectratio <- function(SE, assayname = "TPM", group_colname = NULL) {
     detectratio_long <- feature_info %>% select(starts_with("detectratio")) %>% pivot_longer(everything(), names_to = "Group", values_to = "value")  
     
     total <- detectratio_long[detectratio_long$Group == "detectratio", ]  
-    plot_feature <- ggplot(total, aes(x = value)) +  
+    plot_feature_fraction <- ggplot(total, aes(x = value)) +  
         geom_histogram(binwidth = 0.1, fill = "steelblue", color = "black", alpha = 0.7) +  
         geom_density(aes(y = after_stat(count) * 0.1), color = "salmon", size = 1) +  
         labs(title = "", x = "Detection Ratio", y = "Count") +  
         theme_minimal()  
   
     # Group comparisons  
-    group <- detectratio_long[!detectratio_long$Group == "detectratio", ]  
-    if (nrow(group) > 0) {  
-        plot_feature_group = ggplot(group, aes(x = value, fill = Group)) +  
-            geom_histogram(aes(y = after_stat(count)), position = "identity", binwidth = 0.1, color = "black", alpha = 0.5) +  
-            geom_density(aes(y = after_stat(count) * 0.1, color = Group), size = 0.5, alpha = 0.5) +  
-            labs(title = "", x = "Detection Ratio", y = "Count") +  
-            scale_fill_manual(values = brewer.pal(8, "Set2")) +   
-            scale_color_manual(values = brewer.pal(8, "Set2")) + 
-            theme_minimal()  
-	} 
+    #group <- detectratio_long[!detectratio_long$Group == "detectratio", ]  
+    #if (nrow(group) > 0) {  
+    #    plot_feature_group = ggplot(group, aes(x = value, fill = Group)) +  
+    #        geom_histogram(aes(y = after_stat(count)), position = "identity", binwidth = 0.1, color = "black", alpha = 0.5) +  
+    #        geom_density(aes(y = after_stat(count) * 0.1, color = Group), size = 0.5, alpha = 0.5) +  
+    #        labs(title = "", x = "Detection Ratio", y = "Count") +  
+    #        scale_fill_manual(values = brewer.pal(8, "Set2")) +   
+    #        scale_color_manual(values = brewer.pal(8, "Set2")) + 
+    #        theme_minimal()  
+	#} 
     
     # Sample expression plot  
     plot_sample <- ggplot(sample_info, aes(x = reorder(BioSample, ExpressCount), y = ExpressCount, color = group)) +  
 				geom_point(size = 1, shape = 21, fill = "white") +  
 				geom_smooth(method = "loess", color = "black", size = 1.2) + 
 				labs(title = "", x = "Sample", y = "Expression Count") +  
-				scale_y_continuous(breaks = pretty(range(sample_info$ExpressCount), n = 10)) +
-				geom_hline(yintercept = c(200, 500), linetype = "dashed", color = "gray", size = 0.75) + 
+				scale_y_continuous(breaks = pretty(range(sample_info$ExpressCount), n = 10)) + 
 				theme_minimal() +   
 				theme(axis.text.x = element_blank(),          
 						axis.text.y = element_text(size = 10),                                  
@@ -137,9 +151,10 @@ SE_detectratio <- function(SE, assayname = "TPM", group_colname = NULL) {
 						panel.border = element_rect(color = "gray", fill = NA, size = 0.5),
 						legend.position = c(0.95, 0.05), 
 						legend.justification = c(1, 0)) 
-	if (nrow(group) > 0) {  		  
-		return(list(SE = SE, plot_feature = plot_feature, plot_feature_group = plot_feature_group, plot_sample = plot_sample))  
-	}else{
-		return(list(SE = SE, plot_feature = plot_feature, plot_sample = plot_sample))  
-	}
+
+
+		return(list(SE = SE, 
+		plot_feature_fraction = plot_feature_fraction, 
+		plot_feature_distribution = plot_feature_distribution, data_feature_distribution = zero_counts_df,
+		plot_sample = plot_sample))  
 }

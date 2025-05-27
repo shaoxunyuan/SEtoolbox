@@ -30,7 +30,6 @@ two-group comparisons based on the grouping factor provided in the colData.
 }
 \examples{
  
-# Load necessary libraries  
  
 # Load example SummarizedExperiment object  
 SE = loadSE()   
