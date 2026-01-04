@@ -12,17 +12,12 @@
 #' @param show_legend Logical value indicating whether to display legend, default is FALSE.  
 #' @return A list containing two ggplot objects: the original PCA plot and the filtered PCA plot.  
 #'   
-#' @importFrom plyr mapvalues  
-#' @importFrom cluster silhouette   
-#' @importFrom dplyr filter  
-#' @importFrom dplyr select  
-#' @importFrom dplyr mutate  
-#' @importFrom dplyr arrange  
-#' @importFrom dplyr summarise  
-#' @importFrom dplyr group_by  
-#' @import ggplot2  
-#' @import ggpubr  
-#' @importFrom cowplot plot_grid  
+#' @import ggplot2
+#' @importFrom plyr mapvalues
+#' @importFrom cluster silhouette
+#' @importFrom dplyr filter select mutate arrange summarise group_by
+#' @importFrom ggpubr ggtexttable ttheme
+#' @importFrom cowplot plot_grid
 #' @export  
 SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", outlier_threshold = 2, scale = TRUE, feature_of_interesting = NULL, show_legend = FALSE){  
 
