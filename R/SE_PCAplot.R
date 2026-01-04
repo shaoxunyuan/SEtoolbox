@@ -21,7 +21,7 @@
 #' @importFrom dplyr summarise  
 #' @importFrom dplyr group_by  
 #' @import ggplot2  
-#' @importFrom ggpubr ggtexttable 
+#' @import ggpubr  
 #' @importFrom cowplot plot_grid  
 #' @export  
 SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", outlier_threshold = 2, scale = TRUE, feature_of_interesting = NULL, show_legend = FALSE){  
@@ -118,7 +118,7 @@ SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", outlier_thresh
 
 	sampletable <- colData(SE)
 	df_outlier <- data.frame(sampletable[sampletable$outlier == "delete", ])
-	plot_delete = ggpubr::ggtexttable(df_outlier, rows = NULL, theme = ttheme("classic")) 
+	plot_delete = ggtexttable(df_outlier, rows = NULL, theme = ttheme("classic")) 
 	
 	return(list(SE = SE, plot = plot, plot_delete = plot_delete))
 }
