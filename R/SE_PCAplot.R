@@ -113,7 +113,7 @@ SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", outlier_thresh
 
 	sampletable <- colData(SE)
 	df_outlier <- data.frame(sampletable[sampletable$outlier == "delete", ])
-	plot_delete = ggtexttable(df_outlier, rows = NULL, theme = ttheme("classic")) 
+	plot_delete = ggpubr::ggtexttable(df_outlier, rows = NULL, theme = ggpubr::ttheme("classic")) 
 	
 	return(list(SE = SE, plot = plot, plot_delete = plot_delete))
 }
