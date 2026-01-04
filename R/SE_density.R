@@ -16,6 +16,7 @@
 #' @import dplyr  
 #' @import reshape2  
 #' @import tibble  
+#' @import scale  
 #'  
 #' @details The expression values are transformed to a log2 scale before   
 #' plotting. Density plots can be generated for individual groups if a   
@@ -41,6 +42,23 @@
 #' @export  
 SE_density <- function(SE, assayname = "TPM", group_colname = NULL) {  
     expdata = as.data.frame(assay(SE, assayname))  
+
+	low1_count <- colSums(expdata < 1, na.rm = TRUE)
+    zero_count <- colSums(expdata == 0, na.rm = TRUE)
+    n_gene <- nrow(expdata)
+    df_low <- data.frame(Sample = colnames(expdata),LowExprFraction = low1_count / n_gene,ZeroExprFraction = zero_count / n_gene)
+    df_low$Sample <- factor(df_low$Sample, levels = df_low$Sample[order(df_low$ZeroExprFraction)])
+    plot_fraction <- ggplot(df_low, aes(x = Sample, group = 1)) +
+		  geom_line(aes(y = LowExprFraction, color = "express < 1"), linewidth = 0.6) +
+		  geom_point(aes(y = LowExprFraction, color = "express < 1"), size = 1.5) +
+		  geom_line(aes(y = ZeroExprFraction, color = "express = 0"), linewidth = 0.6, linetype = "dashed") +
+		  geom_point(aes(y = ZeroExprFraction, color = "express = 0"), size = 1.5) +
+		  scale_y_continuous(limits = c(0, 1), labels = percent_format(accuracy = 1)) +
+		  scale_color_manual(values = c("express < 1" = "#4DBBD5", "express = 0" = "#E64B35")) +
+		  labs(x = "Samples (ordered by fraction of express = 0)", y = "Fraction of genes", title = "") +
+		  theme_bw() +
+		  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), legend.position = "top")
+	
     sample_info <- as.data.frame(colData(SE))   
     expdata = tibble::rownames_to_column(expdata, var = "feature")  
     expdata_long <- reshape2::melt(expdata, id.vars = "feature", variable.name = "sample", value.name = "express")  
@@ -76,5 +94,6 @@ SE_density <- function(SE, assayname = "TPM", group_colname = NULL) {
         labs(title = "", x = "Samples", y = "Log2Expression") +  
         theme(axis.text.x = element_blank(),axis.text.y = element_text(size=12))  
 
-    return(list(plot_boxplot = plot_boxplot, plot_density = plot_density))  
+    return(list(plot_fraction = plot_fraction, plot_boxplot = plot_boxplot, plot_density = plot_density))  
+
 }
