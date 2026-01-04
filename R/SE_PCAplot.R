@@ -21,6 +21,7 @@
 #' @importFrom dplyr summarise  
 #' @importFrom dplyr group_by  
 #' @import ggplot2  
+#' @import ggpubr  
 #' @importFrom cowplot plot_grid  
 #' @export  
 SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", outlier_threshold = 2, scale = TRUE, feature_of_interesting = NULL, show_legend = FALSE){  
@@ -114,5 +115,10 @@ SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", outlier_thresh
     pca_plot2 <- plot_pca(pca_data_filter, "PCAplot Filtered", show_legend = show_legend)  # Show legend on the right  
 
     plot = plot_grid(pca_plot1,pca_plot2,nrow = 1,align = "hv", labels = "AUTO")
-	return(list(SE = SE, plot = plot))
+
+	sampletable <- colData(SE)
+	df_outlier <- data.frame(sampletable[sampletable$outlier == "delete", ])
+	plot_delete = ggtexttable(df_outlier, rows = NULL, theme = ttheme("classic")) 
+	
+	return(list(SE = SE, plot = plot, plot_delete = plot_delete))
 }
