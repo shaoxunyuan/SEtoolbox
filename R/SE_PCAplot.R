@@ -21,7 +21,7 @@
 #' @importFrom dplyr summarise  
 #' @importFrom dplyr group_by  
 #' @import ggplot2  
-#' @import ggpubr  
+#' @importFrom ggpubr ggtexttable 
 #' @importFrom cowplot plot_grid  
 #' @export  
 SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", outlier_threshold = 2, scale = TRUE, feature_of_interesting = NULL, show_legend = FALSE){  
