@@ -1,119 +1,128 @@
-#' @title Generate PCA plots  
-#'  
-#' @description  
-#' This function takes a SummarizedExperiment object, computes PCA, and visualizes the results.  
-#' 
-#' @param SE SummarizedExperiment object containing gene expression data.  
-#' @param assayname Name of the expression data, default is "TPM".  
-#' @param groupname Name of the grouping column, default is "group".  
-#' @param outlier_threshold Outlier filtering threshold, default is 2.  
-#' @param scale Whether to standardize the data, default is TRUE.  
-#' @param feature_of_interesting Vector of specific feature names; if NULL, all features are used, default is NULL.  
-#' @param show_legend Logical value indicating whether to display legend, default is FALSE.  
-#' @return A list containing two ggplot objects: the original PCA plot and the filtered PCA plot.  
-#'   
-#' @import ggplot2
-#' @importFrom plyr mapvalues
-#' @importFrom cluster silhouette
-#' @importFrom dplyr filter select mutate arrange summarise group_by
-#' @importFrom ggpubr ggtexttable ttheme
-#' @importFrom cowplot plot_grid
-#' @export  
-SE_PCAplot = function(SE, assayname = "TPM", groupname = "group", outlier_threshold = 2, scale = TRUE, feature_of_interesting = NULL, show_legend = FALSE){  
+#' @title Generate PCA plots
+#'
+#' @export
+SE_PCAplot <- function(SE,assayname = "TPM",groupname = "group",outlier_threshold = 2,scale = TRUE,feature_of_interesting = NULL,show_legend = FALSE) {
 
-    if (!inherits(SE, "SummarizedExperiment")) {  
-        stop("Input SE must be a SummarizedExperiment object.")  
-    }  
+  stopifnot(inherits(SE, "SummarizedExperiment"))
 
-    SCvalue = function(data){   
-        num_clusters <- length(unique(data$group))  
-        kmeans_result <- kmeans(data[, c("PC1", "PC2")], centers = num_clusters, nstart = 25)  
-        data$cluster <- as.factor(kmeans_result$cluster)  
-        distance_matrix <- dist(data[, c("PC1", "PC2")])  
-        silhouette_result <- silhouette(as.numeric(data$cluster), distance_matrix)  
-        mean_silhouette_width <- round(mean(silhouette_result[, "sil_width"]), 3)  
-        mean_silhouette_width  
-    }  
+  ## ---------- 数据准备 ----------
+  expdata <- SummarizedExperiment::assay(SE, assayname)
+  sample_info <- as.data.frame(SummarizedExperiment::colData(SE))
 
-    expdata = assay(SE, assayname)   
+  if (!is.null(feature_of_interesting)) {
+    expdata <- expdata[rownames(expdata) %in% feature_of_interesting, , drop = FALSE]
+  }
 
-    # Select specific features if provided  
-    if (!is.null(feature_of_interesting)) {  
-        expdata <- expdata[rownames(expdata) %in% feature_of_interesting, ]  
-    }  
+  row_var <- apply(expdata, 1, var, na.rm = TRUE)
+  expdata <- expdata[row_var > 0, , drop = FALSE]
+  num_feature <- nrow(expdata)
 
-    row_variances <- apply(expdata, 1, var, na.rm = TRUE)  
-    constant_rows <- which(row_variances == 0)  
+  if (num_feature < 2)
+    stop("Not enough variable features for PCA.")
 
-    if (length(constant_rows) > 0) {  
-        print(paste0("Delete ", length(constant_rows), " common express features"))  
-        expdata <- expdata[-constant_rows, ]  
-    } else {  
-        print("No common express features to delete.")  
-    }  
-    num_feature <- nrow(expdata)   
+  ## ---------- PCA ----------
+  pca_result <- prcomp(t(expdata), scale. = scale)
+  pca_data <- as.data.frame(pca_result$x)
 
-	sample_info = colData(SE)   
-	sample_info = as.data.frame(sample_info)  	
-    pca_result <- prcomp(as.data.frame(t(expdata)), scale. = scale)   
-    pca_data <- as.data.frame(pca_result$x)  
+  ## ---------- group ----------
+  if (is.null(groupname) || !(groupname %in% colnames(sample_info))) {
+    pca_data$group <- "n/a"
+  } else {
+    pca_data$group <- plyr::mapvalues(
+      rownames(pca_data),
+      rownames(sample_info),
+      sample_info[[groupname]],
+      warn_missing = FALSE
+    )
+  }
+  pca_data$group <- as.factor(pca_data$group)
 
-    missing_samples <- setdiff(rownames(pca_data), rownames(sample_info))  
-    if (length(missing_samples) > 0) {  
-        print(paste("Warning: Missing sample information for:", paste(missing_samples, collapse = ", ")))  
-        pca_data <- pca_data[!(rownames(pca_data) %in% missing_samples), ]  
-    }  
+  ## ---------- PCA variance ----------
+  pca_var <- pca_result$sdev^2
+  pca_var_percent <- round(100 * pca_var / sum(pca_var), 2)
 
-    if (is.null(groupname)) {  
-		pca_data$group <- "n/a"  
-		warning("No group name provided; all samples will be labeled as 'n/a'.")  
-	} else {  
-		pca_data$group <- mapvalues(rownames(pca_data), rownames(sample_info), sample_info[, groupname], warn_missing = FALSE)  
-	}  
+  ## ---------- outlier filtering ----------
+  mean_pc1 <- mean(pca_data$PC1)
+  sd_pc1 <- sd(pca_data$PC1)
+  mean_pc2 <- mean(pca_data$PC2)
+  sd_pc2 <- sd(pca_data$PC2)
 
-    mean_pc1 <- mean(pca_data$PC1)  
-    sd_pc1 <- sd(pca_data$PC1)  
-    mean_pc2 <- mean(pca_data$PC2)  
-    sd_pc2 <- sd(pca_data$PC2)  
-    pca_data_filter <- pca_data[(pca_data$PC1 > (mean_pc1 - outlier_threshold * sd_pc1)) & (pca_data$PC1 < (mean_pc1 + outlier_threshold * sd_pc1)) &  
-                                  (pca_data$PC2 > (mean_pc2 - outlier_threshold * sd_pc2)) & (pca_data$PC2 < (mean_pc2 + outlier_threshold * sd_pc2)),]  
-	
-	#return SE
-	sample_info <- sample_info %>%  
-			mutate(outlier = "delete") %>%  
-			mutate(outlier = ifelse(rownames(sample_info) %in% rownames(pca_data_filter), "keep", outlier))  
-	colData(SE) = DataFrame(sample_info)
-	 
-    plot_pca <- function(data, title, show_legend = FALSE) {  
-		pca_var <- data$sdev^2  # 获取标准差平方  
-		pca_var_percent <- round(100 * pca_var / sum(pca_var), 2) 			
-        p <- ggplot(data, aes(x = PC1, y = PC2, color = group)) +  
-            geom_point(size = 3) +  
-            labs(title = "", x = "PCA1", y = "PCA2") +  
-            theme_minimal() +  
-            stat_ellipse(type = "norm", level = 0.95, linetype = 2) +  
-            theme(axis.title.x = element_text(size = 12),  
-                  axis.title.y = element_text(size = 12),  
-                  axis.text = element_text(size = 12),  
-                  plot.title = element_text(size = 12),  
-                  panel.grid.major = element_blank(),  
-                  panel.grid.minor = element_blank(),  
-                  strip.text = element_text(size = 12),  
-                  panel.border = element_rect(color = "gray", fill = NA, size = 1),  
-                  legend.position = ifelse(show_legend, "right", "none"),  
-                  legend.text = element_text(size = 12),  
-                  legend.title = element_text(size = 12))  
-        return(p)  
-    }  
+  keep_idx <- (pca_data$PC1 > mean_pc1 - outlier_threshold * sd_pc1) &
+              (pca_data$PC1 < mean_pc1 + outlier_threshold * sd_pc1) &
+              (pca_data$PC2 > mean_pc2 - outlier_threshold * sd_pc2) &
+              (pca_data$PC2 < mean_pc2 + outlier_threshold * sd_pc2)
 
-    pca_plot1 <- plot_pca(pca_data, "PCAplot", show_legend = show_legend)     # Do not show legend  
-    pca_plot2 <- plot_pca(pca_data_filter, "PCAplot Filtered", show_legend = show_legend)  # Show legend on the right  
+  pca_data_filter <- pca_data[keep_idx, , drop = FALSE]
 
-    plot = plot_grid(pca_plot1,pca_plot2,nrow = 1,align = "hv", labels = "AUTO")
+  ## ---------- 写回 SE ----------
+  sample_info$outlier <- ifelse(
+    rownames(sample_info) %in% rownames(pca_data_filter),
+    "keep", "delete"
+  )
+  SummarizedExperiment::colData(SE) <- S4Vectors::DataFrame(sample_info)
 
-	sampletable <- colData(SE)
-	df_outlier <- data.frame(sampletable[sampletable$outlier == "delete", ])
-	plot_delete = ggpubr::ggtexttable(df_outlier, rows = NULL, theme = ggpubr::ttheme("classic")) 
-	
-	return(list(SE = SE, plot = plot, plot_delete = plot_delete))
+  ## ---------- silhouette ----------
+  SCvalue <- function(df) {
+    if (length(unique(df$group)) < 2) return(NA)
+    k <- length(unique(df$group))
+    km <- kmeans(df[, c("PC1", "PC2")], centers = k, nstart = 20)
+    sil <- cluster::silhouette(km$cluster, dist(df[, c("PC1", "PC2")]))
+    round(mean(sil[, "sil_width"]), 3)
+  }
+
+  sc_raw <- SCvalue(pca_data)
+  sc_filter <- SCvalue(pca_data_filter)
+
+  ## ---------- 绘图函数 ----------
+  plot_pca <- function(df, title, show_legend) {
+    ggplot(df, aes(PC1, PC2, color = group)) +
+      geom_point(size = 3, alpha = 0.8) +
+      stat_ellipse(type = "norm", level = 0.95, linetype = 2) +
+      theme_bw() +
+      labs(
+        title = title,
+        x = paste0("PC1 (", pca_var_percent[1], "%)"),
+        y = paste0("PC2 (", pca_var_percent[2], "%)")
+      ) +
+      theme(
+        legend.position = ifelse(show_legend, "right", "none"),
+        legend.title = element_blank(),
+        axis.text = element_text(size = 12),
+        axis.title = element_text(size = 12),
+        plot.title = element_text(size = 13, hjust = 0.5)
+      )
+  }
+
+  pca_plot1 <- plot_pca(
+    pca_data,
+    paste0("PCA (all) | features=", num_feature,
+           " | SC=", sc_raw),
+    show_legend
+  )
+
+  pca_plot2 <- plot_pca(
+    pca_data_filter,
+    paste0("PCA (filtered) | kept=", nrow(pca_data_filter),
+           " | SC=", sc_filter),
+    show_legend
+  )
+
+  plot <- cowplot::plot_grid(
+    pca_plot1,
+    pca_plot2,
+    nrow = 1,
+    align = "hv",
+    labels = c("A", "B")
+  )
+
+  ## ---------- 删除样本表 ----------
+  sample_outlier <- data.frame(sample_info[sample_info$outlier == "delete", ])
+
+  return(list(
+    SE = SE,
+    plot = plot,
+    sample_outlier = sample_outlier,
+    silhouette_raw = sc_raw,
+    silhouette_filtered = sc_filter
+  ))
 }
