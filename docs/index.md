@@ -1350,9 +1350,3 @@ The author would like to thank Deepseek.
     [51] xtable_1.8-4                httpuv_1.6.15
     [53] munsell_0.5.1               RCurl_1.98-1.16
     [55] cachem_1.1.0
-
-## 8. References
-
-Will update soon
-
-Last updated: 2026-01-28
