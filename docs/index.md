@@ -7,74 +7,83 @@
 
 # Table of Contents  
 
-1. [Introduction](#1-introduction)  
-2. [Installation](#2-installation)  
-3. [Load packages required for this tutorial](#3-load-packages-required-for-this-tutorial)  
-4. [Input data](#4-input-data)  
-5. [Functions](#5-functions)  
-   1. [SE_combine](#51-se_combine)  
-   2. [SE_combat](#52-se_combat)  
-   3. [SE_impute](#53-se_impute)  
-   4. [SE_detectratio](#54-se_detectratio)  
-   5. [SE_DEseq2](#55-se_deseq2)  
-   6. [SE_distribution](#56-se_distribution)  
-   7. [SE_boxplot](#57-se_boxplot)  
-   8. [SE_PCAplot](#58-se_pcaplot)  
-   9. [SE_filter](#59-se_filter)  
-   10. [SE_subset](#510-se_subset)  
-   11. [SE_normalize](#511-se_normalize)  
-   12. [SE_limma](#512-se_limma)  
-   13. [SE_edgeR](#513-se-edger)  
-   14. [SE_HVG](#514-se-hvg)  
-   15. [SE_GSEA](#515-se-gsea)  
-   16. [SE_GO](#516-se-go)  
-   17. [SE_KEGG](#517-se-kegg)  
-   18. [SE_enrichplot](#518-se-enrichplot)  
-   19. [SE_hierarchical](#519-se-hierarchical)  
-   20. [SE_kmeans](#520-se-kmeans)  
-   21. [SE_clusterplot](#521-se-clusterplot)  
-   22. [SE_tSNE](#522-se-tsne)  
-   23. [SE_UMAP](#523-se-umap)  
-   24. [SE_MDS](#524-se-mds)  
-   25. [SE_heatmap](#525-se-heatmap)  
-   26. [SE_correlation](#526-se-correlation)  
-   27. [SE_WGCNA](#527-se-wgcna)  
-   28. [SE_networkplot](#528-se-networkplot)  
-   29. [SE_randomforest](#529-se-randomforest)  
-   30. [SE_SVM](#530-se-svm)  
-   31. [SE_crossvalidation](#531-se-crossvalidation)  
-   32. [SE_AUCcalc](#532-se-auccalc)  
-   33. [SE_sampleQC](#533-se-sampleqc)  
-   34. [SE_featureQC](#534-se-featureqc)  
-   35. [SE_QCreport](#535-se-qcreport)  
-   36. [SE_export](#536-se-export)  
-   37. [SE_metadata](#537-se-metadata)  
-   38. [SE_rename](#538-se-rename)  
-   39. [SE_convert](#539-se-convert)  
-   40. [SE_merge](#540-se-merge)  
-   41. [SE_summary](#541-se-summary)  
-   42. [SE_volcano](#542-se-volcano)  
-   43. [SE_MAplot](#543-se-maplot)  
-   44. [SE_density](#544-se-density)  
-   45. [SE_trend](#545-se-trend)  
-   46. [SE_timeseries](#546-se-timeseries)  
-   47. [SE_transform](#547-se-transform)  
-   48. [SE_batchdetect](#548-se-batchdetect)  
-   49. [SE_silhouette](#549-se-silhouette)  
-   50. [SE_featureselection](#550-se-featureselection)  
-   51. [SE_circTest](#551-se-circtest)  
-   52. [SE_COCONUT](#552-se-coconut)  
-   53. [loadSE](#553-loadse)  
-   54. [loadSElist](#554-loadselist)  
-6. [Acknowledgements](#6-acknowledgements)  
-7. [Session Info](#7-session-info)  
-8. [References](#8-references)
+1. [Introduction](#introduction)  
+2. [Installation](#installation)  
+3. [Load packages required for this tutorial](#load-packages-required-for-this-tutorial)  
+4. [Input data](#input-data)  
+5. [Functions](#functions)  
+   1. [Data Management and Preprocessing](#data-management-and-preprocessing)  
+      - [SE_combine](#se-combine)  
+      - [SE_subset](#se-subset)  
+      - [SE_normalize](#se-normalize)  
+      - [SE_transform](#se-transform)  
+      - [SE_impute](#se-impute)  
+      - [SE_filter](#se-filter)  
+      - [SE_batchdetect](#se-batchdetect)  
+      - [SE_merge](#se-merge)  
+      - [SE_convert](#se-convert)  
+      - [SE_rename](#se-rename)  
+      - [SE_metadata](#se-metadata)  
+   2. [Differential Expression Analysis](#differential-expression-analysis)  
+      - [SE_DEseq2](#se-deseq2)  
+      - [SE_limma](#se-limma)  
+      - [SE_edgeR](#se-edger)  
+      - [SE_volcano](#se-volcano)  
+      - [SE_MAplot](#se-maplot)  
+      - [SE_HVG](#se-hvg)  
+   3. [Functional Enrichment Analysis](#functional-enrichment-analysis)  
+      - [SE_GSEA](#se-gsea)  
+      - [SE_GO](#se-go)  
+      - [SE_KEGG](#se-kegg)  
+      - [SE_enrichplot](#se-enrichplot)  
+      - [SE_circTest](#se-circtest)  
+      - [SE_COCONUT](#se-coconut)  
+   4. [Clustering and Dimensionality Reduction](#clustering-and-dimensionality-reduction)  
+      - [SE_hierarchical](#se-hierarchical)  
+      - [SE_kmeans](#se-kmeans)  
+      - [SE_clusterplot](#se-clusterplot)  
+      - [SE_silhouette](#se-silhouette)  
+      - [SE_PCAplot](#se-pcaplot)  
+      - [SE_tSNE](#se-tsne)  
+      - [SE_UMAP](#se-umap)  
+      - [SE_MDS](#se-mds)  
+   5. [Visualization](#visualization)  
+      - [SE_boxplot](#se-boxplot)  
+      - [SE_heatmap](#se-heatmap)  
+      - [SE_correlation](#se-correlation)  
+      - [SE_density](#se-density)  
+      - [SE_distribution](#se-distribution)  
+      - [SE_trend](#se-trend)  
+   6. [Network Analysis](#network-analysis)  
+      - [SE_WGCNA](#se-wgcna)  
+      - [SE_networkplot](#se-networkplot)  
+   7. [Machine Learning](#machine-learning)  
+      - [SE_randomforest](#se-randomforest)  
+      - [SE_SVM](#se-svm)  
+      - [SE_crossvalidation](#se-crossvalidation)  
+      - [SE_AUCcalc](#se-auccalc)  
+      - [SE_featureselection](#se-featureselection)  
+   8. [Quality Control](#quality-control)  
+      - [SE_sampleQC](#se-sampleqc)  
+      - [SE_featureQC](#se-featureqc)  
+      - [SE_QCreport](#se-qcreport)  
+      - [SE_detectratio](#se-detectratio)  
+      - [SE_combat](#se-combat)  
+   9. [Data Export and Summary](#data-export-and-summary)  
+      - [SE_export](#se-export)  
+      - [SE_summary](#se-summary)  
+   10. [Example Data](#example-data)  
+      - [loadSE](#loadse)  
+      - [loadSElist](#loadselist)  
+6. [Acknowledgements](#acknowledgements)  
+7. [Session Info](#session-info)  
+8. [References](#references)
 
-## 1. Introduction
+## Introduction
 
 SEtoolbox is an R package that operates, analyzes and visualizes SummarizedExperiment objects.
 
-## 2. Installation
+## Installation
 
 To install the SEtoolbox package, you first need to install the `devtools` package. 
 
@@ -85,7 +94,7 @@ install.packages("devtools")
 devtools::install_github("shaoxunyuan/SEtoolbox")
 ```
 
-## 3. Load packages required for this tutorial
+## Load packages required for this tutorial
 
 During this tutorial, we might need to use a few additional packages.
 
@@ -107,11 +116,11 @@ library(reshape2)
 library(DESeq2)
 ```
 
-## 4. Input data
+## Input data
 
 For this tutorial, SEtoolbox will be working with a [`SummarizedExperiment`](https://www.bioconductor.org/packages/devel/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html) object.
 
-## 5. Functions
+## Functions
 
 Functions in SEtoolbox can be obtain using 
 
@@ -119,7 +128,9 @@ Functions in SEtoolbox can be obtain using
 help(package="SEtoolbox")
 ```
 
-### 5.1. SE_combine
+### Data Management and Preprocessing
+
+#### SE_combine
 
 Combine multiple `SummarizedExperiment` objects.
 
