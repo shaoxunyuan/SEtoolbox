@@ -1,16 +1,16 @@
-#' Load Example SummarizedExperiment Object  
-#'  
+#' Load Example SummarizedExperiment Object
+#'
 #' This function loads the example SummarizedExperiment object from the package.  
 #' The example file should be located in the `extdata` directory of the package.  
-#'  
-#' @name loadSE  
-#' @return A SummarizedExperiment object containing example data.  
-#' @export  
-#'   
-#' @examples  
-#' library(SEtoolbox)  
-#' SE <- loadSE()  
-#' # Now you can analyze the example SE object  
+#'
+#' @name loadSE
+#' @return A SummarizedExperiment object containing example data.
+#' @export
+#'
+#' @examples
+#' library(SEtoolbox)
+#' SE <- loadSE()
+#' # Now you can analyze the example SE object
 loadSE <- function() {
   # Set file path
   file_path <- system.file("extdata", "SE.rds", package = "SEtoolbox")
