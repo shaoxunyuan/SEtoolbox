@@ -11,24 +11,23 @@
 #' library(SEtoolbox)  
 #' SE <- loadSE()  
 #' # Now you can analyze the example SE object  
-loadSE <- function() {  
-  library(SummarizedExperiment)
-  # 设文件路径  
-  file_path <- system.file("extdata", "SE.rds", package = "SEtoolbox")  
-  
-  # 检查文件是否存在  
-  if (file.exists(file_path)) {  
-    # 读取 RDS 文件  
-    example_SE <- readRDS(file_path)  
-    
-    # 检查是否为 SummarizedExperiment 对象  
-    if (!is(example_SE, "SummarizedExperiment")) {  
-      stop("The loaded file is not a SummarizedExperiment object.")  
-    }  
-    
-    # 返回 SummarizedExperiment 对象  
-    return(example_SE)  
-  } else {  
-    stop("Example file not found.")  
-  }  
+loadSE <- function() {
+  # Set file path
+  file_path <- system.file("extdata", "SE.rds", package = "SEtoolbox")
+
+  # Check if file exists
+  if (file.exists(file_path)) {
+    # Read RDS file
+    example_se <- readRDS(file_path)
+
+    # Check if it's a SummarizedExperiment object
+    if (!is(example_se, "SummarizedExperiment")) {
+      stop("The loaded file is not a SummarizedExperiment object.")
+    }
+
+    # Return SummarizedExperiment object
+    example_se
+  } else {
+    stop("Example file not found.")
+  }
 }
