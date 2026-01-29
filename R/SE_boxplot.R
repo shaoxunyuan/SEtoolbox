@@ -1,26 +1,26 @@
 #' @title SE_boxplot: Create Boxplots for SummarizedExperiment Object
-#' 
-#' @description 
-#' This function generates violin and box plots for specified genes within a 
-#' \code{SummarizedExperiment} object. It enables the visualization of gene 
-#' expression levels across different groups. Optionally, it can perform data 
-#' normalization and uses ANOVA with Tukey's post-hoc test to add significance 
+#'
+#' @description
+#' This function generates violin and box plots for specified genes within a
+#' \code{SummarizedExperiment} object. It enables the visualization of gene
+#' expression levels across different groups. Optionally, it can perform data
+#' normalization and uses ANOVA with Tukey's post-hoc test to add significance
 #' markers on the generated plot.
-#' 
+#'
 #' @param SE A \code{SummarizedExperiment} object that contains gene expression data.
-#' @param feature_of_interest A character vector specifying the gene names to be plotted. 
+#' @param feature_of_interest A character vector specifying the gene names to be plotted.
 #' Defaults to \code{c("AAGAB", "ABCA13", "ABCC4", "ABHD2")}.
-#' @param assayname A string indicating the assay from which to extract the data. 
+#' @param assayname A string indicating the assay from which to extract the data.
 #' The default value is \code{"TPM"}.
-#' @param group_colname A string representing the column name in \code{colData} that 
+#' @param group_colname A string representing the column name in \code{colData} that
 #' holds group information. Defaults to \code{"group"}.
-#' @param normalization A string specifying the normalization method. 
+#' @param normalization A string specifying the normalization method.
 #' Available options are \code{"none"}, \code{"scale"}, or \code{"log"}. Defaults to \code{"none"}.
 #' 
-#' @return 
+#' @return
 #' A \code{ggplot} object that represents the violin and box plots, including significance markers.
-#' 
-#' @examples 
+#'
+#' @examples
 #' # Create a dummy SummarizedExperiment object
 #' data_matrix <- matrix(rnorm(1000), nrow = 100, ncol = 10)
 #' rownames(data_matrix) <- paste0("Gene", 1:100)
@@ -32,7 +32,7 @@
 #' plot <- SE_boxplot(SE, feature_of_interest = c("Gene1", "Gene2"), 
 #'                    group_colname = "group", normalization = "log")
 #' print(plot)
-#' 
+#'
 #' @import ggforce
 #' @import multcompView
 #' @export
