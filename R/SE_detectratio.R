@@ -155,6 +155,6 @@ SE_detectratio <- function(SE, assayname = "TPM", group_colname = NULL) {
 
 		return(list(SE = SE, 
 		plot_feature_fraction = plot_feature_fraction, 
-		plot_feature_distribution = plot_feature_distribution, data_feature_distribution = zero_counts_df,
+		plot_feature_distribution = plot_feature_distribution, 
 		plot_sample = plot_sample))  
 }
