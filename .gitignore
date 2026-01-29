@@ -1,0 +1,2 @@
+# Ignore R language lintr local configuration files, not submitted to GitHub
+.lintr
