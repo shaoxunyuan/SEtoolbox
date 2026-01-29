@@ -3,10 +3,10 @@
 #' @param SE A \code{SummarizedExperiment} object containing gene expression data.
 #' @param assayname A string indicating which assay to summarize. The default value is \code{"TPM"}.
 #' @param group_colname A string representing the column name in \code{colData} that contains group information. Default is "group".
-#' @return A list containing:  
-#' \item{overall}{Overall summary statistics.}  
-#' \item{sample_stats}{Sample-level statistics.}  
-#' \item{feature_stats}{Feature-level statistics.}  
+#' @return A list containing:
+#' \item{overall}{Overall summary statistics.}
+#' \item{sample_stats}{Sample-level statistics.}
+#' \item{feature_stats}{Feature-level statistics.}
 #' \item{group_stats}{Group-level statistics (if group_colname is provided).}
 #' @examples 
 #' # Load example SummarizedExperiment object
