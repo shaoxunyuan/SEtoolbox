@@ -150,5 +150,3 @@ SE_boxplot <- function(SE,
 
     return(plot)  
 }
-library(ggforce)
-library(multcompView)
