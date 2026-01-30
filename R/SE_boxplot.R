@@ -1,4 +1,4 @@
-#' @title SE_boxplot: Boxplot with Scatter and Significance Letters for SummarizedExperiment
+#' @title SE_boxplot: Boxplot with Scatter and Significance Letters for SummarizedExperiment.
 #'
 #' @description
 #' This function generates boxplots with overlaid points (no jitter) for specified
