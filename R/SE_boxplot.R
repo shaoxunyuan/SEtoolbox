@@ -123,15 +123,39 @@ SE_boxplot <- function(SE,
         return(results)  
     }  
     
-    dfout_summary <- data.frame()  
-    
-    for (feature in unique(exp_data_long$feature)) {  
-        onedata <- exp_data_long[exp_data_long$feature == feature,]  
-        out <- MakeSigMarker(onedata)  
-        dfout_summary <- rbind(dfout_summary, out)  
-    }  
-    dfout_summary <- dfout_summary[!is.na(dfout_summary$label),]  
-   
+    dfout_summary <- data.frame()
+
+    for (feature in unique(exp_data_long$feature)) {
+        onedata <- exp_data_long[exp_data_long$feature == feature, , drop = FALSE]
+        out <- tryCatch(MakeSigMarker(onedata), error = function(e) {
+            warning("计算显著性标记时出错 (feature: ", feature, "): ", conditionMessage(e))
+            data.frame(group = unique(onedata$group), label = NA_character_, y_position = NA_real_, feature = feature, stringsAsFactors = FALSE)
+        })
+        dfout_summary <- rbind(dfout_summary, out)
+    }
+    dfout_summary <- dfout_summary[!is.na(dfout_summary$label), , drop = FALSE]
+
+    # 无任何显著性标记时提示
+    features_all <- unique(exp_data_long$feature)
+    if (nrow(dfout_summary) == 0) {
+        warning(
+            "未生成任何显著性标记 (a/b/c)。可能原因：\n",
+            "  - 每个基因仅有一个分组（需至少 2 组才能做 Tukey HSD）；\n",
+            "  - group_colname 在 colData 中对应的分组水平数 < 2；\n",
+            "  - 某组样本量过少或全为 NA。\n",
+            "请检查 group_colname = \"", group_colname, "\" 及各组的样本量。"
+        )
+    } else {
+        features_with_letters <- unique(dfout_summary$feature)
+        missing <- setdiff(features_all, features_with_letters)
+        if (length(missing) > 0) {
+            warning(
+                "以下基因/特征未显示显著性标记: ", paste(missing, collapse = ", "), "。\n",
+                "可能原因：该基因仅有一个分组，或该基因下分组数 < 2。"
+            )
+        }
+    }
+
     plot <- ggplot(exp_data_long, aes(x = group, y = express, fill = group)) +
             geom_boxplot(width = 0.5, alpha = 0.6, outlier.shape = NA) +
             geom_point(position = position_identity(), alpha = 0.5, size = 1.2) +
