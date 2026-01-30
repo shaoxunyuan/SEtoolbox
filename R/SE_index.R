@@ -40,8 +40,6 @@
 #' x$data             # AUC and Wilcoxon by group pair
 #'
 #' @importFrom pROC roc
-#' @importFrom ggplot2 ggplot aes geom_boxplot geom_point theme_bw theme
-#'   element_blank position_identity labs
 #' @importFrom dplyr group_by summarise n rename filter left_join bind_rows
 #'   mutate ungroup
 #' @importFrom tibble remove_rownames rownames_to_column
@@ -100,18 +98,14 @@ SE_index <- function(SE, DEfeature, assayname = "TPM", group_cols = NULL) {
             grps <- levels(sub_df[[g_col]])
             if (length(grps) < 2) next
 
-            p_box <- ggplot(sub_df, aes(x = .data[[g_col]], y = .data$Index, fill = .data[[g_col]])) +
-                geom_boxplot(width = 0.4, alpha = 0.6, outlier.color = "red", outlier.shape = 8) +
-                geom_point(position = position_identity(), alpha = 0.4, size = 1.2) +
-                theme_bw() +
-                theme(panel.grid = element_blank(), legend.position = "none") +
-                labs(
-                    title = sprintf("Index Distribution: %s", g_col),
-                    y = "TB-Index Score",
-                    x = g_col
-                )
-
-            plot <- p_box
+            plot <- R_boxplot(
+                data = sub_df,
+                class_col = g_col,
+                feature_cols = "Index",
+                title = sprintf("Index Distribution: %s", g_col),
+                ylab = "TB-Index Score",
+                xlab = g_col
+            )
 
             stat_df <- sub_df %>%
                 dplyr::group_by(.data[[g_col]]) %>%
