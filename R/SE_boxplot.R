@@ -1,11 +1,9 @@
-#' @title SE_boxplot: Create Boxplots for SummarizedExperiment Object
+#' @title SE_boxplot: Boxplot with Scatter and Significance Letters for SummarizedExperiment
 #'
 #' @description
-#' This function generates violin and box plots for specified genes within a
-#' \code{SummarizedExperiment} object. It enables the visualization of gene
-#' expression levels across different groups. Optionally, it can perform data
-#' normalization and uses ANOVA with Tukey's post-hoc test to add significance
-#' markers on the generated plot.
+#' This function generates boxplots with overlaid points (no jitter) for specified
+#' genes within a \code{SummarizedExperiment} object, and adds Tukey HSD a/b/c
+#' significance letters. Optionally performs data normalization.
 #'
 #' @param SE A \code{SummarizedExperiment} object that contains gene expression data.
 #' @param feature_of_interest A character vector specifying the gene names to be plotted.
@@ -18,7 +16,7 @@
 #' Available options are \code{"none"}, \code{"scale"}, or \code{"log"}. Defaults to \code{"none"}.
 #' 
 #' @return
-#' A \code{ggplot} object that represents the violin and box plots, including significance markers.
+#' A \code{ggplot} object: boxplot + scatter (no jitter) with significance letters.
 #'
 #' @examples
 #' # Create a dummy SummarizedExperiment object
@@ -33,6 +31,8 @@
 #'                    group_colname = "group", normalization = "log")
 #' print(plot)
 #'
+#' @importFrom ggplot2 ggplot aes geom_boxplot geom_point geom_text theme_minimal
+#'   theme element_rect element_blank position_identity
 #' @import ggforce
 #' @import multcompView
 #' @export
@@ -102,17 +102,20 @@ SE_boxplot <- function(SE,
         formula_str <- as.formula("express ~ group")  
         anova_result <- aov(formula_str, data = onedata)  
          
-        # Get pvalue   
-        tukey_result <- TukeyHSD(anova_result)  
-        p_values <- tukey_result[[group_colname]][, "p adj"]  
-        names(p_values) <- rownames(tukey_result[[group_colname]])  
-         
-        letters <- multcompLetters(p_values)$Letters  
-        letter_df <- data.frame(group = names(letters), label = letters)  
+        # Get pvalue（模型项名为 "group"，与 group_colname 无关）
+        tukey_result <- TukeyHSD(anova_result)
+        tukey_group <- tukey_result[["group"]]
+        p_values <- tukey_group[, "p adj"]
+        names(p_values) <- rownames(tukey_group)
 
-        max_vals <- onedata %>%  
-                    group_by(group) %>%  
-                    summarise(y_position = max(express, na.rm = TRUE) + 0.1)   
+        letters <- multcompLetters(p_values)$Letters
+        letter_df <- data.frame(group = names(letters), label = as.character(letters), stringsAsFactors = FALSE)
+
+        y_range <- diff(range(onedata$express, na.rm = TRUE))
+        if (is.na(y_range) || y_range == 0) y_range <- 1
+        max_vals <- onedata %>%
+                    group_by(group) %>%
+                    summarise(y_position = max(express, na.rm = TRUE) + 0.05 * y_range, .groups = "drop")   
         
         results <- left_join(max_vals, letter_df, by = "group")  
         results$feature <- unique(onedata$feature)  
@@ -129,24 +132,23 @@ SE_boxplot <- function(SE,
     }  
     dfout_summary <- dfout_summary[!is.na(dfout_summary$label),]  
    
-    plot <- ggplot(exp_data_long, aes(x = group, y = express, fill = feature)) +   
-            geom_violin(alpha = 0.5, trim = FALSE, position = position_dodge(width = 0.8), fill = NA, color  = "lightgray") +  
-            geom_boxplot(width = 0.1, position = position_dodge(width = 0.8), outlier.shape = NA, color = "darkgray", alpha = 0.5) +   
-            geom_text(data = dfout_summary, aes(x = group, y = y_position + 0.1 , label = label), size = 5, position = position_nudge(y = 0), inherit.aes = FALSE) +  
-            facet_row(~ feature, scales = "free", space = "free") +  
-            theme_minimal() +  
-            theme(  
-                legend.position = "none",  
-                legend.title = element_text(size = 12, colour = "black"),  
-                strip.text = element_text(size = 12, colour = "black"),  
-                panel.border = element_rect(color = "gray", fill = NA, size = 1),  
-                axis.text.x = element_text(size = 12, colour = "black"),  
-                axis.text.y = element_text(size = 12, colour = "black"),  
-                axis.title.x = element_blank(),  
-                axis.title.y = element_text(size = 12, colour = "black"),  
-                panel.grid.major = element_blank(),  
-                panel.grid.minor = element_blank()  
-            )  
+    plot <- ggplot(exp_data_long, aes(x = group, y = express, fill = group)) +
+            geom_boxplot(width = 0.5, alpha = 0.6, outlier.shape = NA) +
+            geom_point(position = position_identity(), alpha = 0.5, size = 1.2) +
+            geom_text(data = dfout_summary, aes(x = group, y = y_position, label = label), size = 5, inherit.aes = FALSE) +
+            facet_row(~ feature, scales = "free", space = "free") +
+            theme_minimal() +
+            theme(
+                legend.position = "none",
+                strip.text = element_text(size = 12, colour = "black"),
+                panel.border = element_rect(color = "gray", fill = NA, linewidth = 1),
+                axis.text.x = element_text(size = 12, colour = "black"),
+                axis.text.y = element_text(size = 12, colour = "black"),
+                axis.title.x = element_blank(),
+                axis.title.y = element_text(size = 12, colour = "black"),
+                panel.grid.major = element_blank(),
+                panel.grid.minor = element_blank()
+            )
 
     return(plot)  
 }
