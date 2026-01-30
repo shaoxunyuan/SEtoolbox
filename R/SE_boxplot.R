@@ -35,6 +35,7 @@
 #'   theme element_rect element_blank position_identity
 #' @import ggforce
 #' @import multcompView
+#' @importFrom multcompView multcompLetters
 #' @export
 SE_boxplot <- function(SE,   
                        feature_of_interest = c("AAGAB", "ABCA13", "ABCC4", "ABHD2"),   
@@ -108,7 +109,7 @@ SE_boxplot <- function(SE,
         p_values <- tukey_group[, "p adj"]
         names(p_values) <- rownames(tukey_group)
 
-        letters <- multcompLetters(p_values)$Letters
+        letters <- multcompView::multcompLetters(p_values)$Letters
         letter_df <- data.frame(group = names(letters), label = as.character(letters), stringsAsFactors = FALSE)
 
         y_range <- diff(range(onedata$express, na.rm = TRUE))
