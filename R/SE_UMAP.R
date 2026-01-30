@@ -10,18 +10,18 @@
 #' @param color_by A string indicating the column name in colData to use for coloring. Default is NULL.
 #' @param shape_by A string indicating the column name in colData to use for shaping. Default is NULL.
 #' @return A list containing:  
-#' \item{plot}{A \code{ggplot} object showing UMAP visualization.}  
+#' \item{plot}{A \code{ggplot} object showing UMAP visualization.}
 #' \item{umap_coords}{A data frame containing UMAP coordinates.}
-#' @examples 
+#' @examples
 #' # Load example SummarizedExperiment object
 #' SE <- loadSE()
-#' 
+#'
 #' # Perform UMAP
 #' umap_result <- SE_UMAP(SE, assayname = "log2", color_by = "group")
 #' 
 #' # View UMAP plot
 #' print(umap_result$plot)
-#' 
+#'
 #' # Access UMAP coordinates
 #' print(umap_result$umap_coords)
 #' @export
