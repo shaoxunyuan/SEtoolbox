@@ -71,11 +71,11 @@ SE_AUCcalc = function(SE, assayname = "TPM", group_colname = "group", feature_of
     loop_auc = auc_result.df[order(auc_result.df$auc, decreasing = TRUE), ]  
     loop_auc.best = loop_auc[which(loop_auc$auc == max(loop_auc$auc)), ]  
     
-	final_results = data.frame() 
+    final_results = data.frame() 
     final_results.best = data.frame()  
-	
+    
     final_results = rbind(final_results, loop_auc)  
-	final_results.best = rbind(final_results.best, loop_auc.best)  
+    final_results.best = rbind(final_results.best, loop_auc.best)  
 
     # 循环计算  
     for(loopnumber in 2:maxfeaturecount) {             
@@ -103,7 +103,7 @@ SE_AUCcalc = function(SE, assayname = "TPM", group_colname = "group", feature_of
         loop_auc = auc_result.df[order(auc_result.df$auc, decreasing = TRUE), ]  
         loop_auc.best = loop_auc[which(loop_auc$auc == max(loop_auc$auc)), ]  
         final_results = rbind(final_results, loop_auc)  
-	    final_results.best = rbind(final_results.best, loop_auc.best)  
+        final_results.best = rbind(final_results.best, loop_auc.best)  
     }  
   
     return(list(AUC_results = final_results,AUC_results.best = final_results.best))  

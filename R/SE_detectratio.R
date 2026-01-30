@@ -66,21 +66,21 @@ SE_detectratio <- function(SE, assayname = "TPM", group_colname = NULL) {
     sample_info <- as.data.frame(colData(SE))  
     expdata <- as.data.frame(assay(SE, assayname))  
     
-	# zero express plot
-	zero_counts <- rowSums(expdata == 0)  
-	zero_counts_df <- data.frame(Column = names(zero_counts), Zero_Counts = zero_counts)
-	zero_counts_df <- zero_counts_df[order(zero_counts_df$Zero_Counts), ]
-	zero_counts_df$Column <- factor(zero_counts_df$Column,   
-									 levels = zero_counts_df$Column[order(zero_counts_df$Zero_Counts,decreasing = T)])  
-	plot_feature_distribution = ggplot(zero_counts_df, aes(x = Column, y = Zero_Counts)) +  
-	  geom_bar(stat = "identity") +  
-	  labs(title = paste0("Zero express counts (",ncol(expdata)," samples,",nrow(expdata)," features)"),  
-		   x = "Genes",  
-		   y = "Zero express counts") +  
-	  theme(axis.text.x = element_blank(),
-			axis.text.y = element_text(size=12),
-			axis.ticks.x = element_blank(), 
-			axis.line.x = element_blank()) 
+    # zero express plot
+    zero_counts <- rowSums(expdata == 0)  
+    zero_counts_df <- data.frame(Column = names(zero_counts), Zero_Counts = zero_counts)
+    zero_counts_df <- zero_counts_df[order(zero_counts_df$Zero_Counts), ]
+    zero_counts_df$Column <- factor(zero_counts_df$Column,   
+                                     levels = zero_counts_df$Column[order(zero_counts_df$Zero_Counts,decreasing = T)])  
+    plot_feature_distribution = ggplot(zero_counts_df, aes(x = Column, y = Zero_Counts)) +  
+      geom_bar(stat = "identity") +  
+      labs(title = paste0("Zero express counts (",ncol(expdata)," samples,",nrow(expdata)," features)"),  
+           x = "Genes",  
+           y = "Zero express counts") +  
+      theme(axis.text.x = element_blank(),
+            axis.text.y = element_text(size=12),
+            axis.ticks.x = element_blank(), 
+            axis.line.x = element_blank()) 
     # Calculate detection samples and ratios  
     detect_samples <- rowSums(expdata != 0)  
     total_samples <- ncol(expdata)  
@@ -105,13 +105,13 @@ SE_detectratio <- function(SE, assayname = "TPM", group_colname = NULL) {
     express_counts_df <- data.frame(ExpressCount = express_counts, ExpressFraction = round(express_counts / nrow(expdata), 4))  
     
     sample_info$ExpressCount = plyr::mapvalues(rownames(sample_info),rownames(express_counts_df),express_counts_df$ExpressCount,warn_missing = F)
-	
-	sample_info$ExpressFraction = plyr::mapvalues(rownames(sample_info),rownames(express_counts_df),express_counts_df$ExpressFraction,warn_missing = F)
-	
-	sample_info$ExpressCount = as.numeric(sample_info$ExpressCount)
-	
-	sample_info$ExpressFraction = as.numeric(sample_info$ExpressFraction)
-	
+    
+    sample_info$ExpressFraction = plyr::mapvalues(rownames(sample_info),rownames(express_counts_df),express_counts_df$ExpressFraction,warn_missing = F)
+    
+    sample_info$ExpressCount = as.numeric(sample_info$ExpressCount)
+    
+    sample_info$ExpressFraction = as.numeric(sample_info$ExpressFraction)
+    
     colData(SE) <- S4Vectors::DataFrame(sample_info)   
     
     # Histogram of detection ratios  
@@ -134,27 +134,27 @@ SE_detectratio <- function(SE, assayname = "TPM", group_colname = NULL) {
     #        scale_fill_manual(values = brewer.pal(8, "Set2")) +   
     #        scale_color_manual(values = brewer.pal(8, "Set2")) + 
     #        theme_minimal()  
-	#} 
+    #} 
     
     # Sample expression plot  
     plot_sample <- ggplot(sample_info, aes(x = reorder(BioSample, ExpressCount), y = ExpressCount, color = group)) +  
-				geom_point(size = 1, shape = 21, fill = "white") +  
-				geom_smooth(method = "loess", color = "black", size = 1.2) + 
-				labs(title = "", x = "Sample", y = "Expression Count") +  
-				scale_y_continuous(breaks = pretty(range(sample_info$ExpressCount), n = 10)) + 
-				theme_minimal() +   
-				theme(axis.text.x = element_blank(),          
-						axis.text.y = element_text(size = 10),                                  
-						plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
-						panel.grid.major = element_blank(),                                 
-						panel.grid.minor = element_blank(),
-						panel.border = element_rect(color = "gray", fill = NA, size = 0.5),
-						legend.position = c(0.95, 0.05), 
-						legend.justification = c(1, 0)) 
+                geom_point(size = 1, shape = 21, fill = "white") +  
+                geom_smooth(method = "loess", color = "black", size = 1.2) + 
+                labs(title = "", x = "Sample", y = "Expression Count") +  
+                scale_y_continuous(breaks = pretty(range(sample_info$ExpressCount), n = 10)) + 
+                theme_minimal() +   
+                theme(axis.text.x = element_blank(),          
+                        axis.text.y = element_text(size = 10),                                  
+                        plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+                        panel.grid.major = element_blank(),                                 
+                        panel.grid.minor = element_blank(),
+                        panel.border = element_rect(color = "gray", fill = NA, size = 0.5),
+                        legend.position = c(0.95, 0.05), 
+                        legend.justification = c(1, 0)) 
 
 
-		return(list(SE = SE, 
-		plot_feature_fraction = plot_feature_fraction, 
-		plot_feature_distribution = plot_feature_distribution, 
-		plot_sample = plot_sample))  
+        return(list(SE = SE, 
+        plot_feature_fraction = plot_feature_fraction, 
+        plot_feature_distribution = plot_feature_distribution, 
+        plot_sample = plot_sample))  
 }

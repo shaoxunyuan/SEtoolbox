@@ -65,7 +65,7 @@ SE_COCONUT = function(SElist, assayname = NULL, group_col = "group", label_healt
             message("Zero detected in dataset ", names(SElist)[i], ". Adding 0.0001 to expression matrix.")  
             expr_data <- expr_data + 0.0001  
             assay(SElist[[i]], assayname) <- expr_data  # Update the assay with adjusted values   
-        }  	  
+        }      
     }  
   
     create_COCOobj_type <- function(SEinput, assayname, group_col, label_healthy) {  
@@ -87,7 +87,7 @@ SE_COCONUT = function(SElist, assayname = NULL, group_col = "group", label_healt
     sample_info$group[which(sample_info[, group_col] == label_healthy)] <- 0  
     # 
     return(list(pheno = sample_info, genes = expdata))  
-	}  
+    }  
     
     COCOobjs = list()  
     for (i in seq_along(SElist)) {  
