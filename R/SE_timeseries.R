@@ -114,7 +114,7 @@ SE_timeseries <- function(SE, assayname = "TPM", time_col = "time", features = N
                 time = time_points,
                 observed = as.numeric(decomp$x),
                 trend = as.numeric(decomp$trend),
-                seasonal = as.numeric(decomp$seasonal
+                seasonal = as.numeric(decomp$seasonal)
             )
             
             decomp_long <- reshape2(decomp_df, idvar = "time", timevar = "type", 
