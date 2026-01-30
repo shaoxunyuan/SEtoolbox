@@ -8,14 +8,12 @@ R_boxplot(
   data,
   class_col = "class",
   feature_cols = NULL,
-  title = NULL,
   point_alpha = 0.5,
   point_size = 1.2,
   box_width = 0.5,
   box_alpha = 0.6,
   letter_size = 4,
   letter_ymin_frac = 0.05,
-  xlab = NULL,
   ylab = NULL
 )
 }
@@ -27,8 +25,6 @@ R_boxplot(
 
 \item{feature_cols}{Character vector. Which columns to plot as y. Default
 \code{NULL} = all columns except \code{class_col}.}
-
-\item{title}{Character. Plot title. Default \code{NULL}.}
 
 \item{point_alpha}{Numeric. Point transparency. Default \code{0.5}.}
 
@@ -42,8 +38,6 @@ R_boxplot(
 
 \item{letter_ymin_frac}{Numeric. Letter y position as fraction of y range
 above each group max. Default \code{0.05}.}
-
-\item{xlab}{Character. X-axis label. Default uses \code{class_col}.}
 
 \item{ylab}{Character. Y-axis label. Default \code{"value"}.}
 }
@@ -62,5 +56,5 @@ dat <- data.frame(
   gene2 = c(rnorm(20, 2), rnorm(20), rnorm(20, 0.5)),
   class = rep(c("A", "B", "C"), each = 20)
 )
-R_boxplot(dat, title = "Example")
+R_boxplot(dat)
 }

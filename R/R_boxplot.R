@@ -10,7 +10,6 @@
 #' @param class_col Character. Name of the grouping column. Default \code{"class"}.
 #' @param feature_cols Character vector. Which columns to plot as y. Default
 #'   \code{NULL} = all columns except \code{class_col}.
-#' @param title Character. Plot title. Default \code{NULL}.
 #' @param point_alpha Numeric. Point transparency. Default \code{0.5}.
 #' @param point_size Numeric. Point size. Default \code{1.2}.
 #' @param box_width Numeric. Box width. Default \code{0.5}.
@@ -18,7 +17,6 @@
 #' @param letter_size Numeric. Significance letter text size. Default \code{4}.
 #' @param letter_ymin_frac Numeric. Letter y position as fraction of y range
 #'   above each group max. Default \code{0.05}.
-#' @param xlab Character. X-axis label. Default uses \code{class_col}.
 #' @param ylab Character. Y-axis label. Default \code{"value"}.
 #'
 #' @return A \code{ggplot} object (boxplot + points, no jitter, with letters).
@@ -30,7 +28,7 @@
 #'   gene2 = c(rnorm(20, 2), rnorm(20), rnorm(20, 0.5)),
 #'   class = rep(c("A", "B", "C"), each = 20)
 #' )
-#' R_boxplot(dat, title = "Example")
+#' R_boxplot(dat)
 #'
 #' @importFrom ggplot2 ggplot aes geom_boxplot geom_point geom_text
 #'   theme_bw theme element_blank position_identity labs facet_wrap
@@ -42,14 +40,12 @@
 R_boxplot <- function(data,
                       class_col = "class",
                       feature_cols = NULL,
-                      title = NULL,
                       point_alpha = 0.5,
                       point_size = 1.2,
                       box_width = 0.5,
                       box_alpha = 0.6,
                       letter_size = 4,
                       letter_ymin_frac = 0.05,
-                      xlab = NULL,
                       ylab = NULL) {
     if (!class_col %in% colnames(data)) {
         stop("Last column or 'class_col' must be the grouping column (e.g. 'class').")
@@ -134,9 +130,8 @@ R_boxplot <- function(data,
         )
     }
 
-    if (is.null(xlab)) xlab <- class_col
     if (is.null(ylab)) ylab <- "value"
-    p <- p + labs(title = title, x = xlab, y = ylab)
+    p <- p + labs(x = "", y = ylab)
 
     if (length(unique(long$feature)) > 1) {
         p <- p + facet_wrap(~ feature, scales = "free_y")
