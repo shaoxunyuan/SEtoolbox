@@ -102,9 +102,7 @@ SE_index <- function(SE, DEfeature, assayname = "TPM", group_cols = NULL) {
                 data = sub_df,
                 class_col = g_col,
                 feature_cols = "Index",
-                title = sprintf("Index Distribution: %s", g_col),
-                ylab = "TB-Index Score",
-                xlab = g_col
+                ylab = "TB-Index Score"
             )
 
             stat_df <- sub_df %>%
