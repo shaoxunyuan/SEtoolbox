@@ -95,7 +95,11 @@ SE_heatmap <- function(
     }
   }
 
-  expmat <- as.matrix(assay(SE[genes_use, ], assayname))
+  # 用整数索引子集 SE，避免用字符子集时不存在的行导致 "index out of bounds"
+  row_idx <- match(genes_use, rownames(SE))
+  row_idx <- row_idx[!is.na(row_idx)]
+  expmat <- as.matrix(assay(SE[row_idx, ], assayname))
+  rownames(expmat) <- rownames(SE)[row_idx]
 
   if (normalization == "log") {
     expmat <- log2(expmat + 1)
@@ -128,18 +132,18 @@ SE_heatmap <- function(
       if (is.numeric(x_no_na)) {
         uq <- unique(x_no_na)
         if (length(uq) == 1) {
-          cols <- c("#2166ac")
+          cols <- c("#4a90a4")
           names(cols) <- as.character(uq)
           ann_colors[[nm]] <- cols
         } else {
           qs <- quantile(x_no_na, c(0.05, 0.5, 0.95))
           if (length(unique(qs)) < 3) {
             qs <- range(x_no_na)
-            ann_colors[[nm]] <- colorRamp2(qs, c("#2166ac", "#b2182b"))
+            ann_colors[[nm]] <- colorRamp2(qs, c("#26456e", "#c94b3a"))
           } else {
             ann_colors[[nm]] <- colorRamp2(
               qs,
-              c("#2166ac", "#f7f7f7", "#b2182b")
+              c("#26456e", "#faf8f5", "#c94b3a")
             )
           }
         }
@@ -147,14 +151,14 @@ SE_heatmap <- function(
         x_no_na <- as.character(x_no_na)
         lev <- unique(x_no_na)
         if (length(lev) == 1) {
-          cols <- c("#1b9e77")
+          cols <- c("#3d8b82")
           names(cols) <- lev
           ann_colors[[nm]] <- cols
         } else {
-          cols <- colorRampPalette(
-            c("#1b9e77", "#d95f02", "#7570b3", "#e7298a",
-              "#66a61e", "#e6ab02", "#a6761d", "#666666")
-          )(length(lev))
+          # 柔和、易区分的多色方案（Paul Tol 风格）
+          pal <- c("#4477aa", "#66ccee", "#228833", "#ccbb44", "#ee6677",
+                   "#aa3377", "#bbbbbb")
+          cols <- colorRampPalette(pal)(length(lev))
           names(cols) <- lev
           ann_colors[[nm]] <- cols
         }
@@ -170,9 +174,10 @@ SE_heatmap <- function(
     )
   }
 
+  # 热图本体：蓝–米白–红 发散配色，更柔和
   col_fun <- colorRamp2(
     c(quantile(expmat, 0.05), 0, quantile(expmat, 0.95)),
-    c("#2c7bb6", "#f7f7f7", "#d7191c")
+    c("#26456e", "#faf8f5", "#c94b3a")
   )
 
   heatmap_name <- paste0(assayname, "_", normalization)
