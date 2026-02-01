@@ -45,6 +45,7 @@
 #' @importFrom ComplexHeatmap Heatmap HeatmapAnnotation draw
 #' @importFrom circlize colorRamp2
 #' @importFrom grid gpar unit
+#' @importFrom RColorBrewer brewer.pal
 #' @export
 SE_heatmap <- function(
   SE,
@@ -63,6 +64,7 @@ SE_heatmap <- function(
     library(ComplexHeatmap)
     library(circlize)
     library(grid)
+    library(RColorBrewer)
   })
 
   if (!inherits(SE, "SummarizedExperiment")) {
@@ -132,33 +134,29 @@ SE_heatmap <- function(
       if (is.numeric(x_no_na)) {
         uq <- unique(x_no_na)
         if (length(uq) == 1) {
-          cols <- c("#4a90a4")
+          cols <- brewer.pal(3, "Set3")[1]
           names(cols) <- as.character(uq)
           ann_colors[[nm]] <- cols
         } else {
           qs <- quantile(x_no_na, c(0.05, 0.5, 0.95))
+          rdbu <- brewer.pal(11, "RdBu")
           if (length(unique(qs)) < 3) {
             qs <- range(x_no_na)
-            ann_colors[[nm]] <- colorRamp2(qs, c("#26456e", "#c94b3a"))
+            ann_colors[[nm]] <- colorRamp2(qs, c(rdbu[1], rdbu[11]))
           } else {
-            ann_colors[[nm]] <- colorRamp2(
-              qs,
-              c("#26456e", "#faf8f5", "#c94b3a")
-            )
+            ann_colors[[nm]] <- colorRamp2(qs, c(rdbu[1], rdbu[6], rdbu[11]))
           }
         }
       } else {
         x_no_na <- as.character(x_no_na)
         lev <- unique(x_no_na)
+        set3 <- brewer.pal(12, "Set3")
         if (length(lev) == 1) {
-          cols <- c("#3d8b82")
+          cols <- set3[1]
           names(cols) <- lev
           ann_colors[[nm]] <- cols
         } else {
-          # 柔和、易区分的多色方案（Paul Tol 风格）
-          pal <- c("#4477aa", "#66ccee", "#228833", "#ccbb44", "#ee6677",
-                   "#aa3377", "#bbbbbb")
-          cols <- colorRampPalette(pal)(length(lev))
+          cols <- colorRampPalette(set3)(length(lev))
           names(cols) <- lev
           ann_colors[[nm]] <- cols
         }
@@ -174,10 +172,11 @@ SE_heatmap <- function(
     )
   }
 
-  # 热图本体：蓝–米白–红 发散配色，更柔和
+  # 热图本体：RColorBrewer RdBu（蓝–白–红）；注释分类型用 Set3
+  rdbu <- brewer.pal(11, "RdBu")
   col_fun <- colorRamp2(
     c(quantile(expmat, 0.05), 0, quantile(expmat, 0.95)),
-    c("#26456e", "#faf8f5", "#c94b3a")
+    c(rdbu[1], rdbu[6], rdbu[11])
   )
 
   heatmap_name <- paste0(assayname, "_", normalization)
