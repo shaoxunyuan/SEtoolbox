@@ -172,12 +172,22 @@ SE_heatmap <- function(
     )
   }
 
-  # 热图本体：RColorBrewer RdBu（蓝–白–红）；注释分类型用 Set3
+  # 热图本体：表达 0 固定为白色，低→蓝、高→红（RdBu）
   rdbu <- brewer.pal(11, "RdBu")
-  col_fun <- colorRamp2(
-    c(quantile(expmat, 0.05), 0, quantile(expmat, 0.95)),
-    c(rdbu[1], rdbu[6], rdbu[11])
-  )
+  p_lo <- min(quantile(expmat, 0.05, na.rm = TRUE), 0)
+  p_hi <- max(quantile(expmat, 0.95, na.rm = TRUE), 0)
+  if (p_lo >= p_hi) {
+    p_lo <- min(expmat, na.rm = TRUE)
+    p_hi <- max(expmat, na.rm = TRUE)
+    if (p_lo >= p_hi) p_hi <- p_lo + 1
+  }
+  if (p_lo < 0 && p_hi > 0) {
+    col_fun <- colorRamp2(c(p_lo, 0, p_hi), c(rdbu[1], "#FFFFFF", rdbu[11]))
+  } else if (p_hi <= 0) {
+    col_fun <- colorRamp2(c(p_lo, 0), c(rdbu[1], "#FFFFFF"))
+  } else {
+    col_fun <- colorRamp2(c(0, p_hi), c("#FFFFFF", rdbu[11]))
+  }
 
   heatmap_name <- paste0(assayname, "_", normalization)
 
