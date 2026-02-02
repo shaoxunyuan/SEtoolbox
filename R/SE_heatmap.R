@@ -21,6 +21,7 @@
 #' @param show_colnames Whether to show column names. Default is \code{TRUE}.
 #' @param use_raster Whether to rasterize the heatmap body. Default is \code{TRUE}.
 #' @param raster_quality Raster quality (1 or 2). Default is \code{2}.
+#' @param show_cell_value Whether to show numeric labels in each cell (2 decimal places). Default is \code{FALSE}.
 #'
 #' @return
 #' The result of \code{draw(ht, ...)} (the heatmap is plotted; return value is
@@ -58,7 +59,8 @@ SE_heatmap <- function(
   show_rownames = TRUE,
   show_colnames = TRUE,
   use_raster = TRUE,
-  raster_quality = 2
+  raster_quality = 2,
+  show_cell_value = FALSE
 ) {
   suppressPackageStartupMessages({
     library(ComplexHeatmap)
@@ -71,49 +73,49 @@ SE_heatmap <- function(
     stop("Input SE must be a SummarizedExperiment object.")
   }
 
-  normalization <- match.arg(normalization)
+        normalization <- match.arg(normalization)
 
-  # 特征（基因）：部分不在 SE 中则提示并取交集，全部不在则报错退出
-  all_genes <- rownames(SE)
-  genes_use <- intersect(genes_of_interest, all_genes)
-  missing_genes <- setdiff(genes_of_interest, all_genes)
-  if (length(missing_genes) > 0) {
-    warning("The following features are not found in SE and are dropped: ",
-            paste(missing_genes, collapse = ", "))
-  }
-  if (length(genes_use) == 0) {
-    stop("None of the features in genes_of_interest are present in SE. Please check genes_of_interest.")
-  }
+        # 特征（基因）：部分不在 SE 中则提示并取交集，全部不在则报错退出
+        all_genes <- rownames(SE)
+        genes_use <- intersect(genes_of_interest, all_genes)
+        missing_genes <- setdiff(genes_of_interest, all_genes)
+        if (length(missing_genes) > 0) {
+          warning("The following features are not found in SE and are dropped: ",
+                  paste(missing_genes, collapse = ", "))
+        }
+        if (length(genes_use) == 0) {
+          stop("None of the features in genes_of_interest are present in SE. Please check genes_of_interest.")
+        }
 
-  # 样本分组列（select_classcol）：用户指定，必须全部存在于 colData，否则报错退出（不取交集）
-  if (!is.null(select_classcol)) {
-    coldata_nms <- colnames(colData(SE))
-    invalid_cols <- setdiff(select_classcol, coldata_nms)
-    if (length(invalid_cols) > 0) {
-      stop("The following sample annotation columns are not in colData(SE): ",
-           paste(invalid_cols, collapse = ", "),
-           ". Please check select_classcol. Available columns: ",
-           paste(coldata_nms, collapse = ", "))
-    }
-  }
+        # 样本分组列（select_classcol）：用户指定，必须全部存在于 colData，否则报错退出（不取交集）
+        if (!is.null(select_classcol)) {
+          coldata_nms <- colnames(colData(SE))
+          invalid_cols <- setdiff(select_classcol, coldata_nms)
+          if (length(invalid_cols) > 0) {
+            stop("The following sample annotation columns are not in colData(SE): ",
+                paste(invalid_cols, collapse = ", "),
+                ". Please check select_classcol. Available columns: ",
+                paste(coldata_nms, collapse = ", "))
+          }
+        }
 
-  # 用整数索引子集 SE，避免用字符子集时不存在的行导致 "index out of bounds"
-  row_idx <- match(genes_use, rownames(SE))
-  row_idx <- row_idx[!is.na(row_idx)]
-  expmat <- as.matrix(assay(SE[row_idx, ], assayname))
-  rownames(expmat) <- rownames(SE)[row_idx]
+        # 用整数索引子集 SE，避免用字符子集时不存在的行导致 "index out of bounds"
+        row_idx <- match(genes_use, rownames(SE))
+        row_idx <- row_idx[!is.na(row_idx)]
+        expmat <- as.matrix(assay(SE[row_idx, ], assayname))
+        rownames(expmat) <- rownames(SE)[row_idx]
 
-  if (normalization == "log") {
-    expmat <- log2(expmat + 1)
-  }
+        if (normalization == "log") {
+          expmat <- log2(expmat + 1)
+        }
 
-  if (normalization == "scale") {
-    expmat <- t(apply(expmat, 1, function(x) {
-      if (sd(x, na.rm = TRUE) == 0) return(rep(0, length(x)))
-      as.numeric(scale(x))
-    }))
-    colnames(expmat) <- colnames(assay(SE))
-  }
+        if (normalization == "scale") {
+          expmat <- t(apply(expmat, 1, function(x) {
+            if (sd(x, na.rm = TRUE) == 0) return(rep(0, length(x)))
+            as.numeric(scale(x))
+          }))
+          colnames(expmat) <- colnames(assay(SE))
+        }
 
   expmat <- expmat[rowSums(is.na(expmat)) == 0, , drop = FALSE]
   if (nrow(expmat) == 0) {
@@ -172,8 +174,7 @@ SE_heatmap <- function(
     )
   }
 
-  # 热图本体：表达 0 固定为白色，低→蓝、高→红（RdBu）
-  rdbu <- brewer.pal(11, "RdBu")
+  # 热图本体：表达 0 为浅灰，低→蓝，高→橙红（改良发散配色）
   p_lo <- min(quantile(expmat, 0.05, na.rm = TRUE), 0)
   p_hi <- max(quantile(expmat, 0.95, na.rm = TRUE), 0)
   if (p_lo >= p_hi) {
@@ -182,11 +183,20 @@ SE_heatmap <- function(
     if (p_lo >= p_hi) p_hi <- p_lo + 1
   }
   if (p_lo < 0 && p_hi > 0) {
-    col_fun <- colorRamp2(c(p_lo, 0, p_hi), c(rdbu[1], "#FFFFFF", rdbu[11]))
+    col_fun <- colorRamp2(
+      c(p_lo, 0, p_hi),
+      c("#3B6FB6", "#F7F7F7", "#D84A3A")
+    )
   } else if (p_hi <= 0) {
-    col_fun <- colorRamp2(c(p_lo, 0), c(rdbu[1], "#FFFFFF"))
+    col_fun <- colorRamp2(
+      c(p_lo, 0),
+      c("#3B6FB6", "#F7F7F7")
+    )
   } else {
-    col_fun <- colorRamp2(c(0, p_hi), c("#FFFFFF", rdbu[11]))
+    col_fun <- colorRamp2(
+      c(0, p_hi),
+      c("#F7F7F7", "#D84A3A")
+    )
   }
 
   heatmap_name <- paste0(assayname, "_", normalization)
@@ -203,16 +213,18 @@ SE_heatmap <- function(
     row_names_gp = gpar(fontsize = 9),
     column_names_gp = gpar(fontsize = 9),
     column_names_rot = 45,
-    cell_fun = function(j, i, x, y, w, h, fill) {
-      grid.text(sprintf("%.2f", expmat[i, j]), x, y, gp = gpar(fontsize = 8))
-    },
+    cell_fun = if (show_cell_value) {
+      function(j, i, x, y, w, h, fill) {
+        grid.text(sprintf("%.2f", expmat[i, j]), x, y, gp = gpar(fontsize = 8))
+      }
+    } else NULL,
     heatmap_legend_param = list(
       title_gp = gpar(fontsize = 10, fontface = "bold"),
       labels_gp = gpar(fontsize = 8),
       legend_height = unit(4, "cm")
     ),
     border = TRUE,
-    use_raster = FALSE,
+    use_raster = !show_cell_value && use_raster,
     raster_quality = raster_quality,
     row_title = "Genes",
     column_title = "Samples",
