@@ -193,13 +193,16 @@ SE_heatmap <- function(
     row_names_gp = gpar(fontsize = 9),
     column_names_gp = gpar(fontsize = 9),
     column_names_rot = 45,
+    cell_fun = function(j, i, x, y, w, h, fill) {
+      grid.text(sprintf("%.2f", expmat[i, j]), x, y, gp = gpar(fontsize = 8))
+    },
     heatmap_legend_param = list(
       title_gp = gpar(fontsize = 10, fontface = "bold"),
       labels_gp = gpar(fontsize = 8),
       legend_height = unit(4, "cm")
     ),
     border = TRUE,
-    use_raster = use_raster,
+    use_raster = FALSE,
     raster_quality = raster_quality,
     row_title = "Genes",
     column_title = "Samples",
