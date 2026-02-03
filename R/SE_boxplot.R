@@ -93,15 +93,33 @@ SE_boxplot <- function(SE,
                      left_join(sample_info %>% rownames_to_column(var = "sample"), by = "sample") %>%  
                      mutate(group = .data[[group_colname]])  
 
-    MakeSigMarker <- function(onedata) {  
-        if (n_distinct(onedata$group) < 2) {  
-            warning("Only one group found. Skipping analysis.")  
-            return(data.frame(group = unique(onedata$group), label = NA,   
-                              y_position = NA, feature = unique(onedata$feature)))  
-        }  
+    MakeSigMarker <- function(onedata) {
+        if (n_distinct(onedata$group) < 2) {
+            warning("Only one group found. Skipping analysis.")
+            return(data.frame(group = unique(onedata$group), label = NA, 
+                              y_position = NA, feature = unique(onedata$feature)))
+        }
         
-        formula_str <- as.formula("express ~ group")  
-        anova_result <- aov(formula_str, data = onedata)  
+        # 检查表达值是否有变异
+        if (sd(onedata$express, na.rm = TRUE) == 0) {
+            warning("No variation in expression values. Skipping analysis.")
+            return(data.frame(group = unique(onedata$group), label = NA, 
+                              y_position = NA, feature = unique(onedata$feature)))
+        }
+        
+        # 检查每组样本数是否至少为 2
+        group_counts <- onedata %>%
+                        group_by(group) %>%
+                        summarise(count = n(), .groups = "drop")
+        
+        if (any(group_counts$count < 2)) {
+            warning("Some groups have insufficient sample size (< 2). Skipping analysis.")
+            return(data.frame(group = unique(onedata$group), label = NA, 
+                              y_position = NA, feature = unique(onedata$feature)))
+        }
+        
+        formula_str <- as.formula("express ~ group")
+        anova_result <- aov(formula_str, data = onedata)
          
         # Get pvalue（模型项名为 "group"，与 group_colname 无关）
         tukey_result <- TukeyHSD(anova_result)
