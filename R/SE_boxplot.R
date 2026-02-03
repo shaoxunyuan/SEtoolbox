@@ -204,99 +204,116 @@ SE_boxplot <- function(SE,
             pivot_wider(names_from = group, values_from = sample_size, 
                        names_prefix = "n_", values_fill = 0)
         
-        # 使用 BH 校正的差异分析
-        anova_res_BH <- exp_data_long %>% 
-            dplyr::group_by(feature) %>% 
-            anova_test(express ~ group) %>% 
-            adjust_pvalue(method = "BH") %>% 
-            add_significance()
+        # 过滤掉表达值没有变异的 feature
+        features_with_variation <- exp_data_long %>%
+            group_by(feature) %>%
+            summarise(has_variation = sd(express, na.rm = TRUE) > 0, .groups = "drop") %>%
+            filter(has_variation) %>%
+            pull(feature)
         
-        pairwise_res_BH <- exp_data_long %>% 
-            group_by(feature) %>% 
-            tukey_hsd(express ~ group) %>% 
-            select(feature, group1, group2, p.adj, p.adj.signif)
-        
-        # 重命名 pairwise_res 中的列，避免与 anova_res 中的列冲突
-        pairwise_res_BH <- pairwise_res_BH %>%
-            rename(p.adj.tukey = p.adj, p.adj.signif.tukey = p.adj.signif)
-        
-        # 将 grouped_anova_test 对象转换为普通数据框
-        anova_res_BH_df <- as.data.frame(anova_res_BH)
-        
-        diff_results_BH <- anova_res_BH_df %>% 
-            left_join(pairwise_res_BH, by = "feature") %>% 
-            left_join(group_sample_sizes, by = "feature") %>%
-            # 添加 group1 和 group2 对应的样本量列
-            mutate(
-                group1_n = apply(., 1, function(x) {
-                    group1_val <- x["group1"]
-                    if (!is.na(group1_val)) {
-                        return(as.numeric(x[paste0("n_", group1_val)]))
-                    } else {
-                        return(NA)
-                    }
-                }),
-                group2_n = apply(., 1, function(x) {
-                    group2_val <- x["group2"]
-                    if (!is.na(group2_val)) {
-                        return(as.numeric(x[paste0("n_", group2_val)]))
-                    } else {
-                        return(NA)
-                    }
-                }),
-                # 添加校正方法标识符
-                adjustment_method = "BH"
-            ) %>%
-            # 调整列顺序：feature, 样本量列, 校正方法, ANOVA 结果, Tukey HSD 结果（包含组样本量）
-            select(feature, starts_with("n_"), adjustment_method, DFn, DFd, F, p, p.adj, p.adj.signif, 
-                   group1, group1_n, group2, group2_n, p.adj.tukey, p.adj.signif.tukey)
-        
-        # 使用 FDR 校正的差异分析
-        anova_res_FDR <- exp_data_long %>% 
-            dplyr::group_by(feature) %>% 
-            anova_test(express ~ group) %>% 
-            adjust_pvalue(method = "fdr") %>% 
-            add_significance()
-        
-        # 将 grouped_anova_test 对象转换为普通数据框
-        anova_res_FDR_df <- as.data.frame(anova_res_FDR)
-        
-        pairwise_res_FDR <- exp_data_long %>% 
-            group_by(feature) %>% 
-            tukey_hsd(express ~ group) %>% 
-            select(feature, group1, group2, p.adj, p.adj.signif) %>%
-            rename(p.adj.tukey = p.adj, p.adj.signif.tukey = p.adj.signif)
-        
-        diff_results_FDR <- anova_res_FDR_df %>% 
-            left_join(pairwise_res_FDR, by = "feature") %>% 
-            left_join(group_sample_sizes, by = "feature") %>%
-            # 添加 group1 和 group2 对应的样本量列
-            mutate(
-                group1_n = apply(., 1, function(x) {
-                    group1_val <- x["group1"]
-                    if (!is.na(group1_val)) {
-                        return(as.numeric(x[paste0("n_", group1_val)]))
-                    } else {
-                        return(NA)
-                    }
-                }),
-                group2_n = apply(., 1, function(x) {
-                    group2_val <- x["group2"]
-                    if (!is.na(group2_val)) {
-                        return(as.numeric(x[paste0("n_", group2_val)]))
-                    } else {
-                        return(NA)
-                    }
-                }),
-                # 添加校正方法标识符
-                adjustment_method = "FDR"
-            ) %>%
-            # 调整列顺序：feature, 样本量列, 校正方法, ANOVA 结果, Tukey HSD 结果（包含组样本量）
-            select(feature, starts_with("n_"), adjustment_method, DFn, DFd, F, p, p.adj, p.adj.signif, 
-                   group1, group1_n, group2, group2_n, p.adj.tukey, p.adj.signif.tukey)
-        
-        # 合并 BH 和 FDR 结果到一个表格
-        diff_results <- bind_rows(diff_results_BH, diff_results_FDR)
+        # 只对有变异的 feature 进行差异分析
+        if (length(features_with_variation) > 0) {
+            exp_data_long_filtered <- exp_data_long %>%
+                filter(feature %in% features_with_variation)
+            
+            # 使用 BH 校正的差异分析
+            anova_res_BH <- exp_data_long_filtered %>% 
+                dplyr::group_by(feature) %>% 
+                anova_test(express ~ group) %>% 
+                adjust_pvalue(method = "BH") %>% 
+                add_significance()
+            
+            pairwise_res_BH <- exp_data_long_filtered %>% 
+                group_by(feature) %>% 
+                tukey_hsd(express ~ group) %>% 
+                select(feature, group1, group2, p.adj, p.adj.signif)
+            
+            # 重命名 pairwise_res 中的列，避免与 anova_res 中的列冲突
+            pairwise_res_BH <- pairwise_res_BH %>%
+                rename(p.adj.tukey = p.adj, p.adj.signif.tukey = p.adj.signif)
+            
+            # 将 grouped_anova_test 对象转换为普通数据框
+            anova_res_BH_df <- as.data.frame(anova_res_BH)
+            
+            diff_results_BH <- anova_res_BH_df %>% 
+                left_join(pairwise_res_BH, by = "feature") %>% 
+                left_join(group_sample_sizes, by = "feature") %>%
+                # 添加 group1 和 group2 对应的样本量列
+                mutate(
+                    group1_n = apply(., 1, function(x) {
+                        group1_val <- x["group1"]
+                        if (!is.na(group1_val)) {
+                            return(as.numeric(x[paste0("n_", group1_val)]))
+                        } else {
+                            return(NA)
+                        }
+                    }),
+                    group2_n = apply(., 1, function(x) {
+                        group2_val <- x["group2"]
+                        if (!is.na(group2_val)) {
+                            return(as.numeric(x[paste0("n_", group2_val)]))
+                        } else {
+                            return(NA)
+                        }
+                    }),
+                    # 添加校正方法标识符
+                    adjustment_method = "BH"
+                ) %>%
+                # 调整列顺序：feature, 样本量列, 校正方法, ANOVA 结果, Tukey HSD 结果（包含组样本量）
+                select(feature, starts_with("n_"), adjustment_method, DFn, DFd, F, p, p.adj, p.adj.signif, 
+                       group1, group1_n, group2, group2_n, p.adj.tukey, p.adj.signif.tukey)
+            
+            # 使用 FDR 校正的差异分析
+            anova_res_FDR <- exp_data_long_filtered %>% 
+                dplyr::group_by(feature) %>% 
+                anova_test(express ~ group) %>% 
+                adjust_pvalue(method = "fdr") %>% 
+                add_significance()
+            
+            # 将 grouped_anova_test 对象转换为普通数据框
+            anova_res_FDR_df <- as.data.frame(anova_res_FDR)
+            
+            pairwise_res_FDR <- exp_data_long_filtered %>% 
+                group_by(feature) %>% 
+                tukey_hsd(express ~ group) %>% 
+                select(feature, group1, group2, p.adj, p.adj.signif) %>%
+                rename(p.adj.tukey = p.adj, p.adj.signif.tukey = p.adj.signif)
+            
+            diff_results_FDR <- anova_res_FDR_df %>% 
+                left_join(pairwise_res_FDR, by = "feature") %>% 
+                left_join(group_sample_sizes, by = "feature") %>%
+                # 添加 group1 和 group2 对应的样本量列
+                mutate(
+                    group1_n = apply(., 1, function(x) {
+                        group1_val <- x["group1"]
+                        if (!is.na(group1_val)) {
+                            return(as.numeric(x[paste0("n_", group1_val)]))
+                        } else {
+                            return(NA)
+                        }
+                    }),
+                    group2_n = apply(., 1, function(x) {
+                        group2_val <- x["group2"]
+                        if (!is.na(group2_val)) {
+                            return(as.numeric(x[paste0("n_", group2_val)]))
+                        } else {
+                            return(NA)
+                        }
+                    }),
+                    # 添加校正方法标识符
+                    adjustment_method = "FDR"
+                ) %>%
+                # 调整列顺序：feature, 样本量列, 校正方法, ANOVA 结果, Tukey HSD 结果（包含组样本量）
+                select(feature, starts_with("n_"), adjustment_method, DFn, DFd, F, p, p.adj, p.adj.signif, 
+                       group1, group1_n, group2, group2_n, p.adj.tukey, p.adj.signif.tukey)
+            
+            # 合并 BH 和 FDR 结果到一个表格
+            diff_results <- bind_rows(diff_results_BH, diff_results_FDR)
+        } else {
+            # 所有 feature 都没有变异时，返回空的差异分析结果
+            diff_results <- data.frame()
+            warning("No variation in expression values for all features. Skipping differential expression analysis.")
+        }
     } else {
         # 只有一个组时，返回空的差异分析结果
         diff_results <- data.frame()
