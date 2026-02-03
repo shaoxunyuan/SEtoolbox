@@ -179,7 +179,7 @@ SE_boxplot <- function(SE,
 
     plot <- ggplot(exp_data_long, aes(x = group, y = express, fill = group)) +
             geom_boxplot(width = 0.5, alpha = 0.6, outlier.shape = NA) +
-            geom_point(position = position_identity(), alpha = 0.5, size = 1.2) +
+            geom_point(position = position_identity(), alpha = 0.3, size = 1.2) +
             geom_text(data = dfout_summary, aes(x = group, y = y_position, label = label), size = 5, inherit.aes = FALSE) +
             facet_row(~ feature, scales = "free", space = "free") +
             theme_minimal() +
@@ -187,7 +187,7 @@ SE_boxplot <- function(SE,
                 legend.position = "none",
                 strip.text = element_text(size = 12, colour = "black"),
                 panel.border = element_rect(color = "gray", fill = NA, linewidth = 1),
-                axis.text.x = element_text(size = 12, colour = "black"),
+                axis.text.x = element_text(size = 12, colour = "black", angle = 45, hjust = 1),
                 axis.text.y = element_text(size = 12, colour = "black"),
                 axis.title.x = element_blank(),
                 axis.title.y = element_text(size = 12, colour = "black"),
