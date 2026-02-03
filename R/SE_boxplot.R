@@ -255,13 +255,13 @@ SE_boxplot <- function(SE,
                         } else {
                             return(NA)
                         }
-                    }),
-                    # 添加校正方法标识符
-                    adjustment_method = "BH"
+                    })
                 ) %>%
-                # 调整列顺序：feature, 样本量列, 校正方法, ANOVA 结果, Tukey HSD 结果（包含组样本量）
-                select(feature, starts_with("n_"), adjustment_method, DFn, DFd, F, p, p.adj, p.adj.signif, 
-                       group1, group1_n, group2, group2_n, p.adj.tukey, p.adj.signif.tukey)
+                # 调整列顺序：feature, 样本量列, ANOVA 结果, Tukey HSD 结果（包含组样本量）
+                select(feature, starts_with("n_"), DFn, DFd, F, p, p.adj, p.adj.signif, 
+                       group1, group1_n, group2, group2_n, p.adj.tukey, p.adj.signif.tukey) %>%
+                # 按照 p 值从小到大排序
+                arrange(p)
             
             # 使用 FDR 校正的差异分析
             anova_res_FDR <- exp_data_long_filtered %>% 
@@ -299,24 +299,23 @@ SE_boxplot <- function(SE,
                         } else {
                             return(NA)
                         }
-                    }),
-                    # 添加校正方法标识符
-                    adjustment_method = "FDR"
+                    })
                 ) %>%
-                # 调整列顺序：feature, 样本量列, 校正方法, ANOVA 结果, Tukey HSD 结果（包含组样本量）
-                select(feature, starts_with("n_"), adjustment_method, DFn, DFd, F, p, p.adj, p.adj.signif, 
-                       group1, group1_n, group2, group2_n, p.adj.tukey, p.adj.signif.tukey)
-            
-            # 合并 BH 和 FDR 结果到一个表格
-            diff_results <- bind_rows(diff_results_BH, diff_results_FDR)
+                # 调整列顺序：feature, 样本量列, ANOVA 结果, Tukey HSD 结果（包含组样本量）
+                select(feature, starts_with("n_"), DFn, DFd, F, p, p.adj, p.adj.signif, 
+                       group1, group1_n, group2, group2_n, p.adj.tukey, p.adj.signif.tukey) %>%
+                # 按照 p 值从小到大排序
+                arrange(p)
         } else {
             # 所有 feature 都没有变异时，返回空的差异分析结果
-            diff_results <- data.frame()
+            diff_results_BH <- data.frame()
+            diff_results_FDR <- data.frame()
             warning("No variation in expression values for all features. Skipping differential expression analysis.")
         }
     } else {
         # 只有一个组时，返回空的差异分析结果
-        diff_results <- data.frame()
+        diff_results_BH <- data.frame()
+        diff_results_FDR <- data.frame()
     }
     
     # 准备表达矩阵
