@@ -333,7 +333,10 @@ SE_boxplot <- function(SE,
     # 返回结果列表
     return(list(
         plot = plot, 
-        diff_results = diff_results, 
+        diff_results = list(
+            BH = diff_results_BH, 
+            fdr = diff_results_FDR
+        ), 
         expdata = expdata,
         sampledata = sampledata
     ))
