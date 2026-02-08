@@ -50,6 +50,7 @@ SE_boxplot <- function(SE,
     }  
 
     expdata = as.data.frame(assay(SE, assayname))  
+    expdata = round(expdata,2)
     expdata_subset <- expdata[rownames(expdata) %in% feature_of_interest, , drop = FALSE]    
 
     missing_genes <- setdiff(feature_of_interest, rownames(expdata_subset))  
