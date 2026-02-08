@@ -11,10 +11,11 @@
 #' @param setcompare 可选。分组比较列表。如果不指定（NULL），则自动计算所有分组的两两组合；
 #'   如果指定，如 list(c("HC", "LTB"), c("HC", "ATB"))，则只比较指定的分组对。
 #'
-#' @return 返回列表，包含 AUC 结果表格和 ROC 曲线对象列表。
+#' @return 返回列表，包含 AUC 结果表格、ROC 曲线对象列表和 ggplot 对象。
 #'
-#' @importFrom pROC roc plot.roc ci.auc
-#' @importFrom grDevices rainbow
+#' @importFrom pROC roc ci.auc
+#' @importFrom ggplot2 ggplot aes geom_line geom_abline labs theme_bw theme
+#'   element_text element_blank scale_color_manual
 #' @importFrom stats glm binomial predict as.formula
 #' @export
 SE_ROCplot <- function(
@@ -128,35 +129,41 @@ SE_ROCplot <- function(
   auc_results <- do.call(rbind, results_list)
   rownames(auc_results) <- NULL
 
-  # 绘制 ROC 曲线（所有比较放在一张图上）
-  colors <- rainbow(length(roc_objects))
-
-  for (i in seq_along(roc_objects)) {
-    if (i == 1) {
-      plot.roc(
-        roc_objects[[i]],
-        main = "ROC Curves",
-        col = colors[i],
-        lwd = 2,
-        grid = TRUE
-      )
-    } else {
-      plot.roc(roc_objects[[i]], add = TRUE, col = colors[i], lwd = 2)
-    }
+  # 创建 ggplot 数据
+  roc_data <- data.frame()
+  for (comp_name in names(roc_objects)) {
+    roc_obj <- roc_objects[[comp_name]]
+    roc_data <- rbind(roc_data, data.frame(
+      comparison = comp_name,
+      specificity = 1 - roc_obj$specificities,
+      sensitivity = roc_obj$sensitivities,
+      stringsAsFactors = FALSE
+    ))
   }
 
-  # 添加图例
-  legend(
-    "bottomright",
-    legend = names(roc_objects),
-    col = colors,
-    lwd = 2,
-    cex = 0.7,
-    title = "Comparison"
-  )
+  # 创建 ggplot 对象
+  colors <- scales::hue_pal()(length(roc_objects))
+  names(colors) <- names(roc_objects)
+
+  roc_plot <- ggplot2::ggplot(roc_data, ggplot2::aes(x = specificity, y = sensitivity, color = comparison)) +
+    ggplot2::geom_line(linewidth = 1.2) +
+    ggplot2::geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "gray50") +
+    ggplot2::scale_color_manual(values = colors) +
+    ggplot2::labs(
+      title = "ROC Curves",
+      x = "1 - Specificity (False Positive Rate)",
+      y = "Sensitivity (True Positive Rate)",
+      color = "Comparison"
+    ) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(
+      plot.title = ggplot2::element_text(hjust = 0.5, face = "bold"),
+      legend.position = "bottom"
+    )
 
   return(list(
     AUC_results = auc_results,
-    ROC_objects = roc_objects
+    ROC_objects = roc_objects,
+    roc_plot = roc_plot
   ))
 }
