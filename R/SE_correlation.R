@@ -5,7 +5,7 @@
 #' @param assayname A string indicating which assay to use for correlation analysis. The default value is \code{"log2"}.
 #' @param method A character string specifying what to correlate. Options include "features", "samples", "feature_trait". Default is "features".
 #' @param correlation_method A character string specifying the correlation method. Options include "pearson", "spearman", "kendall". Default is "pearson".
-#' @param trait_col A string indicating the column name in colData containing trait information (only used if method = "feature_trait"). Default is NULL.
+#' @param group_colname A string indicating the column name in colData containing trait information (only used if method = "feature_trait"). Default is NULL.
 #' @return A correlation matrix or a list containing correlation results.
 #' @examples
 #' # Load example SummarizedExperiment object
@@ -19,10 +19,10 @@
 #' 
 #' # Compute feature-trait correlations
 #' cor_result <- SE_correlation(SE, assayname = "log2", method = "feature_trait",
-#'                              trait_col = "group")
+#'                              group_colname = "group")
 #' @export
 SE_correlation <- function(se, assayname = "log2", method = "features",
-                          correlation_method = "pearson", trait_col = NULL) {
+                          correlation_method = "pearson", group_colname = NULL) {
     
     exp_data <- assay(se, assayname)
     
@@ -41,15 +41,15 @@ SE_correlation <- function(se, assayname = "log2", method = "features",
         return(cor_matrix)
         
     } else if (method == "feature_trait") {
-        if (is.null(trait_col)) {
-            stop("trait_col must be specified when method = 'feature_trait'")
+        if (is.null(group_colname)) {
+            stop("group_colname must be specified when method = 'feature_trait'")
         }
         
-        if (!trait_col %in% colnames(colData(se))) {
-            stop(paste0("Column '", trait_col, "' not found in colData"))
+        if (!group_colname %in% colnames(colData(se))) {
+            stop(paste0("Column '", group_colname, "' not found in colData"))
         }
         
-        trait <- colData(se)[[trait_col]]
+        trait <- colData(se)[[group_colname]]
         
         if (is.numeric(trait)) {
             cor_values <- apply(exp_data, 1, function(x) cor(x, trait, method = correlation_method))
@@ -70,9 +70,12 @@ SE_correlation <- function(se, assayname = "log2", method = "features",
         cor_df <- cor_df[order(abs(cor_df$correlation), decreasing = TRUE), ]
         rownames(cor_df) <- NULL
         
+        # 格式化结果表格
+        cor_df <- format_numeric_cols(cor_df, digits = 2)
+        
         cat("Feature-trait correlation analysis completed\n")
         cat("Correlation method:", correlation_method, "\n")
-        cat("Trait column:", trait_col, "\n")
+        cat("Trait column:", group_colname, "\n")
         
         return(cor_df)
         

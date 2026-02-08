@@ -21,15 +21,15 @@ SE_ROCplot <- function(
   SE,
   assayname = "TPM",
   features,
-  groupcolname = "group",
+  group_colname = "group",
   setcompare = NULL
 ) {
   # 参数检查
   if (!is.character(features) || length(features) == 0) {
     stop("features must be a non-empty character vector.")
   }
-  if (!groupcolname %in% colnames(colData(SE))) {
-    stop(paste("Column", groupcolname, "not found in colData(SE)."))
+  if (!group_colname %in% colnames(colData(SE))) {
+    stop(paste("Column", group_colname, "not found in colData(SE)."))
   }
 
   # 数据处理
@@ -38,7 +38,7 @@ SE_ROCplot <- function(
   sample_info <- as.data.frame(colData(SE))
 
   # 添加分组信息
-  expdata$group <- sample_info[, groupcolname]
+  expdata$group <- sample_info[, group_colname]
 
   # 筛选存在的特征
   available_features <- intersect(features, names(expdata))
@@ -78,7 +78,7 @@ SE_ROCplot <- function(
     # 验证分组是否存在
     for (pair in compare_pairs) {
       if (!all(pair %in% all_groups)) {
-        stop(paste("Groups", paste(pair, collapse = ", "), "not all found in", groupcolname))
+        stop(paste("Groups", paste(pair, collapse = ", "), "not all found in", group_colname))
       }
     }
   }
@@ -127,6 +127,9 @@ SE_ROCplot <- function(
   # 合并结果
   auc_results <- do.call(rbind, results_list)
   rownames(auc_results) <- NULL
+  
+  # 格式化结果表格
+  auc_results <- format_numeric_cols(auc_results, digits = 2)
 
   # 绘制 ROC 曲线（所有比较放在一张图上）
   colors <- rainbow(length(roc_objects))

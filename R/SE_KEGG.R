@@ -66,6 +66,9 @@ SE_KEGG <- function(SE, gene_col = "gene_id", pvalue_threshold = 0.05, logFC_thr
     
     kegg_results <- as.data.frame(ekegg)
     
+    # 格式化结果表格
+    kegg_results <- format_result_table(kegg_results, pvalue_cols = c("pvalue", "p.adjust", "qvalue"))
+    
     cat("KEGG pathway enrichment analysis completed\n")
     cat("Number of enriched KEGG pathways:", nrow(kegg_results), "\n")
     

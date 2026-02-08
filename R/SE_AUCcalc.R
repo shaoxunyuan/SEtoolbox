@@ -106,5 +106,9 @@ SE_AUCcalc = function(SE, assayname = "TPM", group_colname = "group", feature_of
         final_results.best = rbind(final_results.best, loop_auc.best)  
     }  
   
+    # 格式化结果表格
+    final_results <- format_numeric_cols(final_results, digits = 2)
+    final_results.best <- format_numeric_cols(final_results.best, digits = 2)
+    
     return(list(AUC_results = final_results,AUC_results.best = final_results.best))  
 }

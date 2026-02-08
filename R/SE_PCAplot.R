@@ -1,7 +1,7 @@
 #' @title Generate PCA plots
 #'
 #' @export
-SE_PCAplot <- function(SE,assayname = "TPM",groupname = "group",outlier_threshold = 2,scale = TRUE,feature_of_interesting = NULL,show_legend = FALSE) {
+SE_PCAplot <- function(SE,assayname = "TPM",group_colname = "group",outlier_threshold = 2,scale = TRUE,feature_of_interesting = NULL,show_legend = FALSE) {
 
   stopifnot(inherits(SE, "SummarizedExperiment"))
 
@@ -25,13 +25,13 @@ SE_PCAplot <- function(SE,assayname = "TPM",groupname = "group",outlier_threshol
   pca_data <- as.data.frame(pca_result$x)
 
   ## ---------- group ----------
-  if (is.null(groupname) || !(groupname %in% colnames(sample_info))) {
+  if (is.null(group_colname) || !(group_colname %in% colnames(sample_info))) {
     pca_data$group <- "n/a"
   } else {
     pca_data$group <- plyr::mapvalues(
       rownames(pca_data),
       rownames(sample_info),
-      sample_info[[groupname]],
+      sample_info[[group_colname]],
       warn_missing = FALSE
     )
   }

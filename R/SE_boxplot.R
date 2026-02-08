@@ -270,6 +270,10 @@ SE_boxplot <- function(SE,
                 # 按照 p 值从小到大排序
                 arrange(p)
             
+            # 格式化结果表格
+            diff_results_BH <- format_result_table(diff_results_BH, 
+                pvalue_cols = c("p", "p.adj", "p.adj.tukey"))
+            
             # 使用 FDR 校正的差异分析
             anova_res_FDR <- exp_data_long_filtered %>% 
                 dplyr::group_by(feature) %>% 
@@ -313,6 +317,10 @@ SE_boxplot <- function(SE,
                        group1, group1_n, group2, group2_n, p.adj.tukey, p.adj.signif.tukey) %>%
                 # 按照 p 值从小到大排序
                 arrange(p)
+            
+            # 格式化结果表格
+            diff_results_FDR <- format_result_table(diff_results_FDR, 
+                pvalue_cols = c("p", "p.adj", "p.adj.tukey"))
         } else {
             # 所有 feature 都没有变异时，返回空的差异分析结果
             diff_results_BH <- data.frame()

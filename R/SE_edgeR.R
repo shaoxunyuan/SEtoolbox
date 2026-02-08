@@ -50,6 +50,9 @@ SE_edgeR <- function(SE, assayname = "Counts", group_colname = "group", contrast
     
     results_df$significant <- (results_df$FDR < pvalue_threshold) & (abs(results_df$logFC) >= logFC_threshold)
     
+    # 格式化结果表格
+    results_df <- format_result_table(results_df, pvalue_cols = c("PValue", "FDR"))
+    
     rowData(SE)$logFC <- results_df$logFC[rownames(SE)]
     rowData(SE)$logCPM <- results_df$logCPM[rownames(SE)]
     rowData(SE)$PValue <- results_df$PValue[rownames(SE)]

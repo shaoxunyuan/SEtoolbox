@@ -59,6 +59,9 @@ SE_GO <- function(SE, gene_col = "gene_id", pvalue_threshold = 0.05, logFC_thres
     
     go_results <- as.data.frame(ego)
     
+    # 格式化结果表格
+    go_results <- format_result_table(go_results, pvalue_cols = c("pvalue", "p.adjust", "qvalue"))
+    
     cat("GO enrichment analysis completed\n")
     cat("Number of enriched GO terms:", nrow(go_results), "\n")
     

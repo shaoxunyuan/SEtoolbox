@@ -122,6 +122,9 @@ SE_GSEA <- function(SE, assayname = "log2", group_colname = "group", gene_sets,
     gsea_results <- gsea_results[order(gsea_results$NES, decreasing = TRUE), ]
     rownames(gsea_results) <- NULL
     
+    # 格式化结果表格
+    gsea_results <- format_result_table(gsea_results, pvalue_cols = c("NOM_pvalue", "FDR_qvalue"))
+    
     cat("GSEA analysis completed\n")
     cat("Number of gene sets analyzed:", nrow(gsea_results), "\n")
     

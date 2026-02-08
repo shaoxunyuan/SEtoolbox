@@ -11,7 +11,7 @@
 #' @param genes_of_interest 字符向量，指定要在热图中展示的基因（行）名称。仅会绘制在 \code{rownames(SE)}
 #'   中存在的特征；不存在的会触发 \code{warning} 并被忽略。若全部不存在则 \code{stop}。
 #' @param assayname 字符标量，指定使用的 assay 名称，从中提取表达矩阵。默认为 \code{"TPM"}。
-#' @param select_classcol 可选。字符向量，指定 \code{colData(SE)} 中用于样本注释的列名（可多列）。
+#' @param annot_colname 可选。字符向量，指定 \code{colData(SE)} 中用于样本注释的列名（可多列）。
 #'   这些列会作为热图顶部的注释条；数值型自动用连续色，分类型使用 \code{RColorBrewer} 的 Set3 调色板。
 #'   若为 \code{NULL}，不绘制样本注释。指定的列必须全部存在于 \code{colData(SE)}，否则报错退出。
 #' @param normalization 字符，归一化方式。\code{"log"}：log2(x+1)；\code{"scale"}：按行 z-score（常数列置 0）；
@@ -46,7 +46,7 @@
 #'
 #' SE_heatmap(SE,
 #'   genes_of_interest = c("Gene1", "Gene5", "Gene10"),
-#'   select_classcol = "group",
+#'   annot_colname = "group",
 #'   normalization = "log"
 #' )
 #'
@@ -62,7 +62,7 @@ SE_heatmap <- function(
   SE,
   genes_of_interest,
   assayname = "TPM",
-  select_classcol = NULL,
+  annot_colname = NULL,
   normalization = c("log", "scale", "zscore", "none"),
   cluster_rows = TRUE,
   cluster_cols = TRUE,
@@ -97,14 +97,14 @@ SE_heatmap <- function(
           stop("None of the features in genes_of_interest are present in SE. Please check genes_of_interest.")
         }
 
-        # 样本分组列（select_classcol）：用户指定，必须全部存在于 colData，否则报错退出（不取交集）
-        if (!is.null(select_classcol)) {
+        # 样本分组列（annot_colname）：用户指定，必须全部存在于 colData，否则报错退出（不取交集）
+        if (!is.null(annot_colname)) {
           coldata_nms <- colnames(colData(SE))
-          invalid_cols <- setdiff(select_classcol, coldata_nms)
+          invalid_cols <- setdiff(annot_colname, coldata_nms)
           if (length(invalid_cols) > 0) {
             stop("The following sample annotation columns are not in colData(SE): ",
                 paste(invalid_cols, collapse = ", "),
-                ". Please check select_classcol. Available columns: ",
+                ". Please check annot_colname. Available columns: ",
                 paste(coldata_nms, collapse = ", "))
           }
         }
@@ -138,9 +138,9 @@ SE_heatmap <- function(
   }
 
   ha <- NULL
-  if (!is.null(select_classcol)) {
+  if (!is.null(annot_colname)) {
     sampleinfo <- as.data.frame(colData(SE))
-    ann_df <- sampleinfo[, select_classcol, drop = FALSE]
+    ann_df <- sampleinfo[, annot_colname, drop = FALSE]
     ann_df <- ann_df[colnames(expmat), , drop = FALSE]
 
     ann_colors <- list()

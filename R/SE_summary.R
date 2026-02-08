@@ -54,6 +54,9 @@ SE_summary <- function(SE, assayname = "TPM", group_colname = "group") {
         stringsAsFactors = FALSE
     )
     
+    # 格式化样本统计表格
+    sample_stats <- format_numeric_cols(sample_stats, digits = 2)
+    
     feature_stats <- data.frame(
         Feature = rownames(exp_data),
         Total = rowSums(exp_data, na.rm = TRUE),
@@ -66,6 +69,9 @@ SE_summary <- function(SE, assayname = "TPM", group_colname = "group") {
         Zeros = rowSums(exp_data == 0, na.rm = TRUE),
         stringsAsFactors = FALSE
     )
+    
+    # 格式化特征统计表格
+    feature_stats <- format_numeric_cols(feature_stats, digits = 2)
     
     group_stats <- NULL
     if (!is.null(group_colname) && group_colname %in% colnames(colData(SE))) {
@@ -94,6 +100,9 @@ SE_summary <- function(SE, assayname = "TPM", group_colname = "group") {
                 stringsAsFactors = FALSE
             ))
         }
+        
+        # 格式化分组统计表格
+        group_stats <- format_numeric_cols(group_stats, digits = 2)
     }
     
     cat("Summary statistics generated\n")

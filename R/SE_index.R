@@ -12,7 +12,7 @@
 #'   values are weights (e.g. \code{-1} or \code{1}). Only features present
 #'   in \code{SE} are used.
 #' @param assayname A string indicating which assay to use. Default is \code{"TPM"}.
-#' @param group_cols A character vector of column names in \code{colData(SE)}
+#' @param group_colname A character vector of column names in \code{colData(SE)}
 #'   used for grouping. If \code{NULL}, only the index table is returned
 #'   (no plots or group statistics).
 #' @param setcompare Optional. A list of group pairs to compare, e.g.
@@ -40,7 +40,7 @@
 #' # Load example SE (or use your own filtered SE)
 #' SE <- loadSE()
 #' # Compute index and group comparisons; use group column name in colData(SE)
-#' x <- SE_index(SE = SE, assayname = "TPM", group_cols = "group", DEfeature = DEfeatures)
+#' x <- SE_index(SE = SE, assayname = "TPM", group_colname = "group", DEfeature = DEfeatures)
 #' head(x$index_df)   # sample-level index
 #' x$boxplot          # boxplot by group (if group_cols provided)
 #' x$roc_plot         # ROC curves
@@ -53,7 +53,7 @@
 #'   mutate ungroup
 #' @importFrom tibble remove_rownames rownames_to_column
 #' @export
-SE_index <- function(SE, DEfeature, assayname = "TPM", group_cols = NULL, setcompare = NULL) {
+SE_index <- function(SE, DEfeature, assayname = "TPM", group_colname = NULL, setcompare = NULL) {
     suppressPackageStartupMessages({
         library(pROC)
         library(ggplot2)
@@ -92,7 +92,7 @@ SE_index <- function(SE, DEfeature, assayname = "TPM", group_cols = NULL, setcom
     roc_plot <- NULL
     auc_df <- data.frame()
 
-    if (!is.null(group_cols)) {
+    if (!is.null(group_colname)) {
         meta <- as.data.frame(colData(SE)) %>% tibble::rownames_to_column("Sample")
         audit_df <- dplyr::left_join(
             output_df[, c("Sample", "Index")],
@@ -100,7 +100,7 @@ SE_index <- function(SE, DEfeature, assayname = "TPM", group_cols = NULL, setcom
             by = "Sample"
         )
 
-        for (g_col in group_cols) {
+        for (g_col in group_colname) {
             if (!(g_col %in% colnames(audit_df))) next
 
             sub_df <- audit_df %>% dplyr::filter(!is.na(.data[[g_col]]))
@@ -254,8 +254,8 @@ SE_index <- function(SE, DEfeature, assayname = "TPM", group_cols = NULL, setcom
             dplyr::mutate(P_adj = p.adjust(P_value, method = "BH")) %>%
             dplyr::ungroup()
 
-        num_cols <- sapply(data_out, is.numeric)
-        data_out[num_cols] <- lapply(data_out[num_cols], function(x) round(x, 2))
+        # 格式化数值列：保留两位小数，p值使用科学计数法
+        data_out <- format_result_table(data_out)
     } else {
         data_out <- data.frame(
             GroupCol = character(),

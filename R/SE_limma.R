@@ -42,6 +42,9 @@ SE_limma <- function(SE, assayname = "log2", group_colname = "group", contrast =
     
     results$significant <- (results$adj.P.Val < pvalue_threshold) & (abs(results$logFC) >= logFC_threshold)
     
+    # 格式化结果表格
+    results <- format_result_table(results, pvalue_cols = c("P.Value", "adj.P.Val"))
+    
     rowData(SE)$logFC <- results$logFC[rownames(SE)]
     rowData(SE)$AveExpr <- results$AveExpr[rownames(SE)]
     rowData(SE)$t <- results$t[rownames(SE)]
