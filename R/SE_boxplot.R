@@ -13,7 +13,7 @@
 #' @param group_colname A string representing the column name in \code{colData} that
 #' holds group information. Defaults to \code{"group"}.
 #' @param normalization A string specifying the normalization method.
-#' Available options are \code{"none"}, \code{"scale"}, or \code{"log"}. Defaults to \code{"none"}.
+#' Available options are \code{"none"}, \code{"scale"}, \code{"log"}, or \code{"zscore"}. Defaults to \code{"none"}.
 #' 
 #' @return
 #' A \code{ggplot} object: boxplot + scatter (no jitter) with significance letters.
@@ -71,6 +71,10 @@ SE_boxplot <- function(SE,
         colnames(expdata_subset) = samplename  
     } else if (normalization == "log") {  
         expdata_subset <- log2(expdata_subset + 1)   
+    } else if (normalization == "zscore") {  
+        samplename = colnames(expdata_subset)  
+        expdata_subset <- as.data.frame(t(scale(t(expdata_subset))))  
+        colnames(expdata_subset) = samplename  
     }  
 
     sample_info <- colData(SE)  
