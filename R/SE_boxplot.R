@@ -50,7 +50,6 @@ SE_boxplot <- function(SE,
     }  
 
     expdata = as.data.frame(assay(SE, assayname))  
-    expdata = round(expdata,2)
     expdata_subset <- expdata[rownames(expdata) %in% feature_of_interest, , drop = FALSE]    
 
     missing_genes <- setdiff(feature_of_interest, rownames(expdata_subset))  
@@ -70,12 +69,15 @@ SE_boxplot <- function(SE,
         samplename = colnames(expdata_subset)  
         expdata_subset <- as.data.frame(t(apply(expdata_subset, 1, scale)))  
         colnames(expdata_subset) = samplename  
+        expdata_subset <- round(expdata_subset, 2)
     } else if (normalization == "log") {  
         expdata_subset <- log2(expdata_subset + 1)   
+        expdata_subset <- round(expdata_subset, 2)
     } else if (normalization == "zscore") {  
         samplename = colnames(expdata_subset)  
         expdata_subset <- as.data.frame(t(scale(t(expdata_subset))))  
         colnames(expdata_subset) = samplename  
+        expdata_subset <- round(expdata_subset, 2)
     }  
 
     sample_info <- colData(SE)  
