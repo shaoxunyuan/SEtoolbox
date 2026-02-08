@@ -63,7 +63,7 @@ SE_heatmap <- function(
   genes_of_interest,
   assayname = "TPM",
   select_classcol = NULL,
-  normalization = c("log", "scale", "none"),
+  normalization = c("log", "scale", "zscore", "none"),
   cluster_rows = TRUE,
   cluster_cols = TRUE,
   show_rownames = TRUE,
