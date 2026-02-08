@@ -127,6 +127,11 @@ SE_heatmap <- function(
           colnames(expmat) <- colnames(assay(SE))
         }
 
+        if (normalization == "zscore") {
+          expmat <- t(scale(t(expmat)))
+          colnames(expmat) <- colnames(assay(SE))
+        }
+
   expmat <- expmat[rowSums(is.na(expmat)) == 0, , drop = FALSE]
   if (nrow(expmat) == 0) {
     stop("After removing rows with NA, no rows remain for the heatmap.")
