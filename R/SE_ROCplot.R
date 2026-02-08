@@ -13,7 +13,7 @@
 #'
 #' @return 返回列表，包含 AUC 结果表格和 ROC 曲线对象列表。
 #'
-#' @importFrom pROC roc plot.roc
+#' @importFrom pROC roc plot.roc ci.auc
 #' @importFrom grDevices rainbow
 #' @importFrom stats glm binomial predict as.formula
 #' @export
@@ -50,8 +50,7 @@ SE_ROCplot <- function(
             paste(setdiff(features, available_features), collapse = ", "))
   }
 
-  # 使用逻辑回归计算预测概率作为得分
-  # 构建公式: group ~ feature1 + feature2 + ...
+  # 构建逻辑回归公式: group ~ feature1 + feature2 + ...
   formula_str <- paste("group ~", paste(available_features, collapse = " + "))
   formula_obj <- as.formula(formula_str)
 
@@ -84,17 +83,15 @@ SE_ROCplot <- function(
     }
   }
 
-  # 为每个分组对计算 AUC（使用逻辑回归）
+  # 为每个分组对计算 AUC
   results_list <- list()
   roc_objects <- list()
-
-  feature_set_name <- paste(available_features, collapse = "+")
 
   for (pair in compare_pairs) {
     # 筛选两个分组的数据
     subset_data <- expdata[expdata$group %in% pair, ]
 
-    # 确保分组是二元的 (0/1)
+    # 将分组转换为二元变量 (0/1)
     subset_data$group <- ifelse(subset_data$group == pair[2], 1, 0)
 
     # 拟合逻辑回归模型
@@ -112,13 +109,16 @@ SE_ROCplot <- function(
 
     comparison_name <- paste(pair, collapse = " vs ")
 
+    # 获取 AUC 的 95% 置信区间
+    auc_ci <- ci.auc(roc_curve)
+
     results_list[[comparison_name]] <- data.frame(
-      feature_set = feature_set_name,
-      feature_count = length(available_features),
       comparison = comparison_name,
       group1 = pair[1],
       group2 = pair[2],
       auc = as.numeric(roc_curve$auc),
+      auc_ci_lower = auc_ci[1],
+      auc_ci_upper = auc_ci[3],
       stringsAsFactors = FALSE
     )
     roc_objects[[comparison_name]] <- roc_curve
@@ -135,7 +135,7 @@ SE_ROCplot <- function(
     if (i == 1) {
       plot.roc(
         roc_objects[[i]],
-        main = paste("ROC Curves -", feature_set_name),
+        main = "ROC Curves",
         col = colors[i],
         lwd = 2,
         grid = TRUE
