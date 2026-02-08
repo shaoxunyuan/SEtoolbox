@@ -3,8 +3,9 @@
 #' @description
 #' This function computes a sample-level index (e.g. TB-Index) as a weighted
 #' sum of z-scored gene expression from a \code{SummarizedExperiment} object.
-#' When \code{group_cols} is provided, it generates boxplots by group and
-#' performs pairwise ROC (AUC) and Wilcoxon tests between groups.
+#' When \code{group_cols} is provided, it generates boxplots by group,
+#' performs pairwise ROC (AUC) and Wilcoxon tests between groups,
+#' and outputs ROC curves similar to \code{R_boxplot} style.
 #'
 #' @param SE A \code{SummarizedExperiment} object containing gene expression data.
 #' @param DEfeature A named numeric vector: names are feature (e.g. gene) IDs,
@@ -14,12 +15,17 @@
 #' @param group_cols A character vector of column names in \code{colData(SE)}
 #'   used for grouping. If \code{NULL}, only the index table is returned
 #'   (no plots or group statistics).
+#' @param setcompare Optional. A list of group pairs to compare, e.g.
+#'   \code{list(c("HC", "LTB"), c("HC", "ATB"))}. If \code{NULL}, all pairwise
+#'   comparisons are performed.
 #'
 #' @return A list with:
 #' \item{index_df}{A data frame with columns \code{Sample}, \code{Index}, and
 #'   one column per feature (log2 expression).}
-#' \item{plot}{When \code{group_cols} is not \code{NULL}, the last boxplot
+#' \item{boxplot}{When \code{group_cols} is not \code{NULL}, the last boxplot
 #'   produced (one per group column). Otherwise \code{NULL}.}
+#' \item{roc_plot}{ROC curve plot for group comparisons.}
+#' \item{auc_df}{AUC results data frame with CI for each group comparison.}
 #' \item{data}{When \code{group_cols} is not \code{NULL}, a data frame of
 #'   group comparison statistics (N, mean, SD, AUC, CI, P_value, P_adj).
 #'   Otherwise an empty data frame with the same columns.}
@@ -36,15 +42,18 @@
 #' # Compute index and group comparisons; use group column name in colData(SE)
 #' x <- SE_index(SE = SE, assayname = "TPM", group_cols = "group", DEfeature = DEfeatures)
 #' head(x$index_df)   # sample-level index
-#' x$plot             # boxplot by group (if group_cols provided)
-#' x$data             # AUC and Wilcoxon by group pair
+#' x$boxplot          # boxplot by group (if group_cols provided)
+#' x$roc_plot         # ROC curves
+#' x$auc_df           # AUC results table
+#' x$data             # detailed statistics by group pair
 #'
-#' @importFrom pROC roc
+#' @importFrom pROC roc plot.roc ci.auc
+#' @importFrom grDevices rainbow
 #' @importFrom dplyr group_by summarise n rename filter left_join bind_rows
 #'   mutate ungroup
 #' @importFrom tibble remove_rownames rownames_to_column
 #' @export
-SE_index <- function(SE, DEfeature, assayname = "TPM", group_cols = NULL) {
+SE_index <- function(SE, DEfeature, assayname = "TPM", group_cols = NULL, setcompare = NULL) {
     suppressPackageStartupMessages({
         library(pROC)
         library(ggplot2)
@@ -79,7 +88,9 @@ SE_index <- function(SE, DEfeature, assayname = "TPM", group_cols = NULL) {
 
     res_boxplots <- list()
     audit_table <- list()
-    plot <- NULL
+    boxplot <- NULL
+    roc_plot <- NULL
+    auc_df <- data.frame()
 
     if (!is.null(group_cols)) {
         meta <- as.data.frame(colData(SE)) %>% tibble::rownames_to_column("Sample")
@@ -98,7 +109,7 @@ SE_index <- function(SE, DEfeature, assayname = "TPM", group_cols = NULL) {
             grps <- levels(sub_df[[g_col]])
             if (length(grps) < 2) next
 
-            plot <- R_boxplot(
+            boxplot <- R_boxplot(
                 data = sub_df,
                 class_col = g_col,
                 feature_cols = "Index",
@@ -115,7 +126,25 @@ SE_index <- function(SE, DEfeature, assayname = "TPM", group_cols = NULL) {
                 ) %>%
                 dplyr::rename(group = 1)
 
-            comb_pairs <- combn(grps, 2, simplify = FALSE)
+            # Determine comparison pairs
+            if (is.null(setcompare)) {
+                # Generate all pairwise combinations
+                comb_pairs <- combn(grps, 2, simplify = FALSE)
+            } else {
+                # Use user-specified pairs
+                comb_pairs <- setcompare
+                # Validate groups exist
+                for (pair in comb_pairs) {
+                    if (!all(pair %in% grps)) {
+                        warning(paste("Groups", paste(pair, collapse = ", "), "not all found in", g_col))
+                    }
+                }
+                comb_pairs <- Filter(function(p) all(p %in% grps), comb_pairs)
+            }
+
+            # Store ROC objects for plotting
+            roc_objects <- list()
+            auc_results <- list()
 
             for (pair in comb_pairs) {
                 g1 <- pair[1]
@@ -130,24 +159,32 @@ SE_index <- function(SE, DEfeature, assayname = "TPM", group_cols = NULL) {
                         predictor = pair_df$Index,
                         levels = c(g1, g2),
                         direction = "auto",
-                        quiet = TRUE,
-                        ci = TRUE
+                        quiet = TRUE
                     ),
                     silent = TRUE
                 )
                 if (inherits(roc_res, "try-error")) next
 
+                # Get AUC and CI
                 auc_val <- as.numeric(roc_res$auc)
-                ci_low <- as.numeric(roc_res$ci[1])
-                ci_high <- as.numeric(roc_res$ci[3])
+                auc_ci <- pROC::ci.auc(roc_res)
+                ci_low <- as.numeric(auc_ci[1])
+                ci_high <- as.numeric(auc_ci[3])
 
-                if (!is.na(auc_val) && auc_val < 0.5) {
-                    auc_val <- 1 - auc_val
-                    ci_low_new <- 1 - ci_high
-                    ci_high_new <- 1 - ci_low
-                    ci_low <- ci_low_new
-                    ci_high <- ci_high_new
-                }
+                # Store ROC object
+                comparison_name <- paste(g1, "vs", g2)
+                roc_objects[[comparison_name]] <- roc_res
+
+                # Store AUC result
+                auc_results[[comparison_name]] <- data.frame(
+                    comparison = comparison_name,
+                    group1 = g1,
+                    group2 = g2,
+                    auc = auc_val,
+                    auc_ci_lower = ci_low,
+                    auc_ci_upper = ci_high,
+                    stringsAsFactors = FALSE
+                )
 
                 p_val <- try(stats::wilcox.test(Index ~ Response, data = pair_df)$p.value, silent = TRUE)
                 if (inherits(p_val, "try-error")) p_val <- NA_real_
@@ -171,6 +208,40 @@ SE_index <- function(SE, DEfeature, assayname = "TPM", group_cols = NULL) {
                     P_value = as.numeric(p_val),
                     stringsAsFactors = FALSE
                 )
+            }
+
+            # Plot ROC curves (similar to R_boxplot style)
+            if (length(roc_objects) > 0) {
+                colors <- rainbow(length(roc_objects))
+
+                for (i in seq_along(roc_objects)) {
+                    if (i == 1) {
+                        pROC::plot.roc(
+                            roc_objects[[i]],
+                            main = paste("ROC Curves -", g_col),
+                            col = colors[i],
+                            lwd = 2,
+                            grid = TRUE
+                        )
+                    } else {
+                        pROC::plot.roc(roc_objects[[i]], add = TRUE, col = colors[i], lwd = 2)
+                    }
+                }
+
+                # Add legend
+                legend(
+                    "bottomright",
+                    legend = names(roc_objects),
+                    col = colors,
+                    lwd = 2,
+                    cex = 0.7,
+                    title = "Comparison"
+                )
+
+                # Store results
+                roc_plot <- recordPlot()
+                auc_df <- do.call(rbind, auc_results)
+                rownames(auc_df) <- NULL
             }
         }
     }
@@ -207,7 +278,9 @@ SE_index <- function(SE, DEfeature, assayname = "TPM", group_cols = NULL) {
 
     return(list(
         index_df = output_df,
-        plot = plot,
+        boxplot = boxplot,
+        roc_plot = roc_plot,
+        auc_df = auc_df,
         data = data_out
     ))
 }
