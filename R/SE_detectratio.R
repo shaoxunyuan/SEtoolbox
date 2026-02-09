@@ -91,9 +91,14 @@ SE_detectratio <- function(SE, assayname = "TPM", group_colname = NULL) {
     
     # Group calculations  
     if (!is.null(group_colname) && group_colname %in% colnames(sample_info)) {  
+        # 确保 sample_info 与 expdata 的列顺序一致
+        sample_info <- sample_info[colnames(expdata), , drop = FALSE]
         group_info <- unique(sample_info[[group_colname]])  
         for(selectgroup in group_info) {  
-            expdata_sub <- expdata[, sample_info[, group_colname] == selectgroup, drop = FALSE]  
+            # 使用行名索引确保顺序一致
+            group_mask <- sample_info[[group_colname]] == selectgroup
+            group_mask[is.na(group_mask)] <- FALSE  # 处理 NA 值
+            expdata_sub <- expdata[, group_mask, drop = FALSE]  
             detect_samples <- rowSums(expdata_sub != 0)  
             total_samples <- ncol(expdata_sub)  
             feature_info[, paste0("detectsample_", selectgroup)] <- detect_samples  
