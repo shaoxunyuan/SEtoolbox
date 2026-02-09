@@ -34,7 +34,9 @@
 #' @import tidyr  
 #' @import cowplot  
 #' @import RColorBrewer  
-#' @import scales   
+#' @import scales
+#' @importFrom plyr mapvalues
+#' @importFrom S4Vectors DataFrame   
 #' 
 #' @examples   
 #' # Load example SummarizedExperiment object 
@@ -137,24 +139,42 @@ SE_detectratio <- function(SE, assayname = "TPM", group_colname = NULL) {
     #} 
     
     # Sample expression plot  
-    plot_sample <- ggplot(sample_info, aes(x = reorder(BioSample, ExpressCount), y = ExpressCount, color = group)) +  
-                geom_point(size = 1, shape = 21, fill = "white") +  
-                geom_smooth(method = "loess", color = "black", size = 1.2) + 
-                labs(title = "", x = "Sample", y = "Expression Count") +  
-                scale_y_continuous(breaks = pretty(range(sample_info$ExpressCount), n = 10)) + 
-                theme_minimal() +   
-                theme(axis.text.x = element_blank(),          
-                        axis.text.y = element_text(size = 10),                                  
-                        plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
-                        panel.grid.major = element_blank(),                                 
-                        panel.grid.minor = element_blank(),
-                        panel.border = element_rect(color = "gray", fill = NA, size = 0.5),
-                        legend.position = c(0.95, 0.05), 
-                        legend.justification = c(1, 0)) 
+    # 动态确定颜色映射列：优先使用 group_colname，如果不存在则不使用颜色映射
+    if (!is.null(group_colname) && group_colname %in% colnames(sample_info)) {
+        plot_sample <- ggplot(sample_info, aes(x = reorder(rownames(sample_info), ExpressCount), 
+                                                y = ExpressCount, 
+                                                color = .data[[group_colname]])) +  
+                    geom_point(size = 1, shape = 21, fill = "white") +  
+                    geom_smooth(method = "loess", color = "black", size = 1.2) + 
+                    labs(title = "", x = "Sample", y = "Expression Count") +  
+                    scale_y_continuous(breaks = pretty(range(sample_info$ExpressCount), n = 10)) + 
+                    theme_minimal() +   
+                    theme(axis.text.x = element_blank(),          
+                          axis.text.y = element_text(size = 10),                                  
+                          plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+                          panel.grid.major = element_blank(),                                 
+                          panel.grid.minor = element_blank(),
+                          panel.border = element_rect(color = "gray", fill = NA, size = 0.5),
+                          legend.position = c(0.95, 0.05), 
+                          legend.justification = c(1, 0))
+    } else {
+        plot_sample <- ggplot(sample_info, aes(x = reorder(rownames(sample_info), ExpressCount), 
+                                                y = ExpressCount)) +  
+                    geom_point(size = 1, shape = 21, fill = "white", color = "steelblue") +  
+                    geom_smooth(method = "loess", color = "black", size = 1.2) + 
+                    labs(title = "", x = "Sample", y = "Expression Count") +  
+                    scale_y_continuous(breaks = pretty(range(sample_info$ExpressCount), n = 10)) + 
+                    theme_minimal() +   
+                    theme(axis.text.x = element_blank(),          
+                          axis.text.y = element_text(size = 10),                                  
+                          plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+                          panel.grid.major = element_blank(),                                 
+                          panel.grid.minor = element_blank(),
+                          panel.border = element_rect(color = "gray", fill = NA, size = 0.5))
+    }
 
-
-        return(list(SE = SE, 
-        plot_feature_fraction = plot_feature_fraction, 
-        plot_feature_distribution = plot_feature_distribution, 
-        plot_sample = plot_sample))  
+    return(list(SE = SE, 
+                plot_feature_fraction = plot_feature_fraction, 
+                plot_feature_distribution = plot_feature_distribution, 
+                plot_sample = plot_sample))  
 }
