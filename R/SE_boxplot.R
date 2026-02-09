@@ -65,12 +65,7 @@ SE_boxplot <- function(SE,
         }  
     }  
 
-    if (normalization == "scale") {  
-        samplename = colnames(expdata_subset)  
-        expdata_subset <- as.data.frame(t(apply(expdata_subset, 1, scale)))  
-        colnames(expdata_subset) = samplename  
-        expdata_subset <- round(expdata_subset, 2)
-    } else if (normalization == "log") {  
+    if (normalization == "log") {  
         expdata_subset <- log2(expdata_subset + 1)   
         expdata_subset <- round(expdata_subset, 2)
     } else if (normalization == "zscore") {  
