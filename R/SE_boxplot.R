@@ -211,31 +211,27 @@ SE_boxplot <- function(SE,
             pivot_wider(names_from = group, values_from = sample_size, 
                        names_prefix = "n_", values_fill = 0)
         
-        # 检查每个 feature 在每个组中是否有足够的样本（>=2）用于差异分析
-        feature_group_counts <- exp_data_long %>%
+        # 检查每个 feature 在每个组中是否有足够的样本（>=2）和变异用于差异分析
+        feature_group_stats <- exp_data_long %>%
             group_by(feature, group) %>%
-            summarise(n_samples = n(), .groups = "drop")
+            summarise(
+                n_samples = n(),
+                sd_expr = sd(express, na.rm = TRUE),
+                .groups = "drop"
+            )
         
-        # 找出满足条件的 feature：每个组至少有2个样本，且至少有2个组
-        valid_features <- feature_group_counts %>%
-            filter(n_samples >= 2) %>%
+        # 找出满足条件的 feature：每个组至少有2个样本且有变异（sd>0），且至少有2个组
+        valid_features <- feature_group_stats %>%
+            filter(n_samples >= 2, sd_expr > 0) %>%
             group_by(feature) %>%
             summarise(n_groups = n(), .groups = "drop") %>%
             filter(n_groups >= 2) %>%
             pull(feature)
         
-        # 过滤掉表达值没有变异的 feature
-        features_with_variation <- exp_data_long %>%
-            filter(feature %in% valid_features) %>%
-            group_by(feature) %>%
-            summarise(has_variation = sd(express, na.rm = TRUE) > 0, .groups = "drop") %>%
-            filter(has_variation) %>%
-            pull(feature)
-        
-        # 只对有足够样本且有变异的 feature 进行差异分析
-        if (length(features_with_variation) > 0) {
+        # 只对有足够样本且每组都有变异的 feature 进行差异分析
+        if (length(valid_features) > 0) {
             exp_data_long_filtered <- exp_data_long %>%
-                filter(feature %in% features_with_variation)
+                filter(feature %in% valid_features)
             
             # 使用 BH 校正的差异分析
             anova_res_BH <- exp_data_long_filtered %>% 
@@ -336,10 +332,10 @@ SE_boxplot <- function(SE,
             diff_results_FDR <- format_result_table(diff_results_FDR, 
                 pvalue_cols = c("p", "p.adj", "p.adj.tukey"))
         } else {
-            # 所有 feature 都没有变异时，返回空的差异分析结果
+            # 没有满足条件的 feature 时，返回空的差异分析结果
             diff_results_BH <- data.frame()
             diff_results_FDR <- data.frame()
-            warning("No variation in expression values for all features. Skipping differential expression analysis.")
+            warning("No features meet criteria for differential analysis (requires >=2 samples per group with variation in each group). Skipping differential expression analysis.")
         }
     } else {
         # 只有一个组时，返回空的差异分析结果
