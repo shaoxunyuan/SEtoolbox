@@ -249,20 +249,19 @@ SE_heatmap <- function(
   )
 
   # 捕获热图为grob并转换为ggplot对象
-  grob <- grid::recordGrob(
-    expr = {
-      draw(ht,
-        heatmap_legend_side = "right",
-        annotation_legend_side = "right",
-        merge_legend = TRUE
-      )
-    },
-    list = list()
+  # 先绘制到null设备，然后grid.grab捕获
+  pdf(NULL)
+  draw(ht,
+    heatmap_legend_side = "right",
+    annotation_legend_side = "right",
+    merge_legend = TRUE
   )
-  
+  grob <- grid::grid.grab()
+  dev.off()
+
   heatmap_gg <- ggplot() +
     annotation_custom(grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf) +
     theme_void()
-  
+
   return(heatmap_gg)
 }
