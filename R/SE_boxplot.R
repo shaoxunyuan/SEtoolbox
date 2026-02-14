@@ -199,10 +199,10 @@ SE_boxplot <- function(SE,
 
     # 执行差异分析
     if (n_distinct(exp_data_long$group) >= 2) {
-        # 计算每个feature在每个组中的样本量
+        # 计算每个feature在每个组中的非零表达样本量
         group_sample_sizes <- exp_data_long %>% 
             group_by(feature, group) %>% 
-            summarise(sample_size = n(), .groups = "drop") %>% 
+            summarise(sample_size = sum(express > 0, na.rm = TRUE), .groups = "drop") %>% 
             pivot_wider(names_from = group, values_from = sample_size, 
                        names_prefix = "n_", values_fill = 0)
         
