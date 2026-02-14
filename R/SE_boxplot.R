@@ -87,7 +87,12 @@ SE_boxplot <- function(SE,
 
     exp_data_long <- as.data.frame(expdata_subset) %>%   
                      rownames_to_column(var = "feature") %>%   
-                     pivot_longer(cols = -feature, names_to = "sample", values_to = "express")  
+                     pivot_longer(cols = -feature, names_to = "sample", values_to = "express") %>%
+                     filter(express > 0)  # 只保留非0表达值
+
+    if (nrow(exp_data_long) == 0) {
+        stop("No non-zero expression values found for the selected features.")
+    }
 
     if (!is.null(group_colname) && !(group_colname %in% colnames(sample_info))) {  
         stop("Provided group_colname does not exist in colData of the SummarizedExperiment.")  
@@ -95,7 +100,7 @@ SE_boxplot <- function(SE,
 
     exp_data_long <- exp_data_long %>%  
                      left_join(sample_info %>% rownames_to_column(var = "sample"), by = "sample") %>%  
-                     mutate(group = .data[[group_colname]])  
+                     mutate(group = .data[[group_colname]])
 
     MakeSigMarker <- function(onedata) {
         if (n_distinct(onedata$group) < 2) {
