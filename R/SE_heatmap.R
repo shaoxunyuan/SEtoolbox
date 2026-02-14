@@ -248,16 +248,7 @@ SE_heatmap <- function(
     column_title_gp = gpar(fontsize = 11, fontface = "bold")
   )
 
-  # 先绘制热图
-  draw(
-    ht,
-    heatmap_legend_side = "right",
-    annotation_legend_side = "right",
-    merge_legend = TRUE
-  )
-  
   # 捕获热图为grob并转换为ggplot对象
-  grid::grid.newpage()
   grob <- grid::recordGrob(
     expr = {
       draw(ht,
