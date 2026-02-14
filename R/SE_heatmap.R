@@ -55,8 +55,9 @@
 #'
 #' @importFrom ComplexHeatmap Heatmap HeatmapAnnotation draw
 #' @importFrom circlize colorRamp2
-#' @importFrom grid gpar unit
+#' @importFrom grid gpar unit grid.newpage recordGrob
 #' @importFrom RColorBrewer brewer.pal
+#' @importFrom ggplot2 ggplot annotation_custom theme_void
 #' @export
 SE_heatmap <- function(
   SE,
@@ -247,10 +248,30 @@ SE_heatmap <- function(
     column_title_gp = gpar(fontsize = 11, fontface = "bold")
   )
 
+  # 先绘制热图
   draw(
     ht,
     heatmap_legend_side = "right",
     annotation_legend_side = "right",
     merge_legend = TRUE
   )
+  
+  # 捕获热图为grob并转换为ggplot对象
+  grid::grid.newpage()
+  grob <- grid::recordGrob(
+    expr = {
+      draw(ht,
+        heatmap_legend_side = "right",
+        annotation_legend_side = "right",
+        merge_legend = TRUE
+      )
+    },
+    list = list()
+  )
+  
+  heatmap_gg <- ggplot() +
+    annotation_custom(grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf) +
+    theme_void()
+  
+  return(heatmap_gg)
 }
