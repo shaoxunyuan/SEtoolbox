@@ -211,14 +211,28 @@ SE_boxplot <- function(SE,
             pivot_wider(names_from = group, values_from = sample_size, 
                        names_prefix = "n_", values_fill = 0)
         
+        # 检查每个 feature 在每个组中是否有足够的样本（>=2）用于差异分析
+        feature_group_counts <- exp_data_long %>%
+            group_by(feature, group) %>%
+            summarise(n_samples = n(), .groups = "drop")
+        
+        # 找出满足条件的 feature：每个组至少有2个样本，且至少有2个组
+        valid_features <- feature_group_counts %>%
+            filter(n_samples >= 2) %>%
+            group_by(feature) %>%
+            summarise(n_groups = n(), .groups = "drop") %>%
+            filter(n_groups >= 2) %>%
+            pull(feature)
+        
         # 过滤掉表达值没有变异的 feature
         features_with_variation <- exp_data_long %>%
+            filter(feature %in% valid_features) %>%
             group_by(feature) %>%
             summarise(has_variation = sd(express, na.rm = TRUE) > 0, .groups = "drop") %>%
             filter(has_variation) %>%
             pull(feature)
         
-        # 只对有变异的 feature 进行差异分析
+        # 只对有足够样本且有变异的 feature 进行差异分析
         if (length(features_with_variation) > 0) {
             exp_data_long_filtered <- exp_data_long %>%
                 filter(feature %in% features_with_variation)
