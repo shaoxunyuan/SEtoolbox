@@ -57,8 +57,7 @@ SE_index <- function(SE,
                      DEfeature,
                      assayname = "TPM",
                      group_colname = NULL,
-                     setcompare = NULL,
-                     plot_roc = TRUE) {
+                     setcompare = NULL) {
     suppressPackageStartupMessages({
         library(pROC)
         library(ggplot2)
@@ -215,39 +214,36 @@ SE_index <- function(SE,
                 )
             }
 
-            # Prepare ROC curves (similar to R_boxplot style), but do NOT plot immediately
+            # Plot ROC curves (similar to R_boxplot style)
             if (length(roc_objects) > 0) {
-                # Store AUC results
+                colors <- rainbow(length(roc_objects))
+
+                for (i in seq_along(roc_objects)) {
+                    if (i == 1) {
+                        pROC::plot.roc(
+                            roc_objects[[i]],
+                            main = paste("ROC Curves -", g_col),
+                            col = colors[i],
+                            lwd = 2,
+                            grid = TRUE
+                        )
+                    } else {
+                        pROC::plot.roc(roc_objects[[i]], add = TRUE, col = colors[i], lwd = 2)
+                    }
+                }
+
+                legend(
+                    "bottomright",
+                    legend = names(roc_objects),
+                    col = colors,
+                    lwd = 2,
+                    cex = 0.7,
+                    title = "Comparison"
+                )
+
+                roc_plot <- recordPlot()
                 auc_df <- do.call(rbind, auc_results)
                 rownames(auc_df) <- NULL
-
-                # Create a lazy plotting function; user calls results_index$roc_plot()
-                roc_plot <- function() {
-                    colors <- rainbow(length(roc_objects))
-
-                    for (i in seq_along(roc_objects)) {
-                        if (i == 1) {
-                            pROC::plot.roc(
-                                roc_objects[[i]],
-                                main = paste("ROC Curves -", g_col),
-                                col = colors[i],
-                                lwd = 2,
-                                grid = TRUE
-                            )
-                        } else {
-                            pROC::plot.roc(roc_objects[[i]], add = TRUE, col = colors[i], lwd = 2)
-                        }
-                    }
-
-                    legend(
-                        "bottomright",
-                        legend = names(roc_objects),
-                        col = colors,
-                        lwd = 2,
-                        cex = 0.7,
-                        title = "Comparison"
-                    )
-                }
             }
         }
     }
