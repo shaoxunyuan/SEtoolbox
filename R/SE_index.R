@@ -216,7 +216,7 @@ SE_index <- function(SE,
                 )
             }
 
-            # 使用 plotROC 绘制 ROC 曲线
+            # 使用 plotROC 绘制 ROC 曲线（无 cutpoint 数字，带对角线和边框，底部居中显示比较与 AUC）
             if (length(roc_objects) > 0) {
                 plot_df <- dplyr::bind_rows(lapply(names(roc_objects), function(nm) {
                     r <- roc_objects[[nm]]
@@ -230,16 +230,31 @@ SE_index <- function(SE,
 
                 colors <- rainbow(length(unique(plot_df$comparison)))
 
-                roc_plot <- ggplot(plot_df, aes(d = d, m = m, colour = comparison)) +
-                    plotROC::geom_roc(size = 1) +
-                    scale_colour_manual(values = colors) +
-                    ggtitle(paste("ROC Curves -", g_col)) +
-                    theme_classic()
-
-                print(roc_plot)
-
                 auc_df <- do.call(rbind, auc_results)
                 rownames(auc_df) <- NULL
+
+                # 准备底部说明文本
+                auc_labels <- paste0(
+                    auc_df$group1, " vs ", auc_df$group2,
+                    " (AUC = ", round(auc_df$auc, 3), ")"
+                )
+                auc_label_text <- paste(auc_labels, collapse = "; ")
+
+                roc_plot <- ggplot(plot_df, aes(d = d, m = m, colour = comparison)) +
+                    plotROC::geom_roc(size = 1, n.cuts = 0) +
+                    scale_colour_manual(values = colors) +
+                    ggtitle(paste("ROC Curves -", g_col)) +
+                    geom_abline(intercept = 0, slope = 1,
+                                linetype = "dashed", colour = "grey60") +
+                    theme_bw() +
+                    theme(
+                        legend.position = "none",
+                        panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.8),
+                        plot.caption = element_text(hjust = 0.5)
+                    ) +
+                    labs(caption = auc_label_text)
+
+                print(roc_plot)
             }
         }
     }

@@ -142,15 +142,32 @@ SE_ROCplot <- function(
   # 格式化结果表格
   auc_results <- format_numeric_cols(auc_results, digits = 2)
 
-  # 使用 plotROC 生成 ggplot ROC 图
+  # 使用 plotROC 生成 ggplot ROC 图（无 cutpoint 数字，带对角线和边框，底部居中显示比较与 AUC）
   plot_df <- do.call(rbind, plot_dfs)
   colors <- rainbow(length(unique(plot_df$comparison)))
 
+  # 准备底部说明文本：每个比较及其 AUC，用分号分隔
+  auc_labels <- paste0(
+    auc_results$comparison,
+    " (AUC = ",
+    round(auc_results$auc, 3),
+    ")"
+  )
+  auc_label_text <- paste(auc_labels, collapse = "; ")
+
   roc_plot <- ggplot(plot_df, aes(d = d, m = m, colour = comparison)) +
-    plotROC::geom_roc(size = 1) +
+    plotROC::geom_roc(size = 1, n.cuts = 0) +        # 不显示曲线上的 cutpoint 数字
     scale_colour_manual(values = colors) +
     ggtitle("ROC Curves") +
-    theme_classic()
+    geom_abline(intercept = 0, slope = 1,
+                linetype = "dashed", colour = "grey60") +  # 45 度参考线
+    theme_bw() +
+    theme(
+      legend.position = "none",                                        # 不要右侧图例
+      panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.8),
+      plot.caption = element_text(hjust = 0.5)                         # caption 居中
+    ) +
+    labs(caption = auc_label_text)                                     # 底部居中显示比较 + AUC
 
   print(roc_plot)
 
