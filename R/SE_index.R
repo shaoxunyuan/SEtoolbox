@@ -215,9 +215,14 @@ SE_index <- function(SE,
                 )
             }
 
-            # Plot ROC curves (similar to R_boxplot style)
+            # Prepare ROC curves (similar to R_boxplot style), but do NOT plot immediately
             if (length(roc_objects) > 0) {
-                if (isTRUE(plot_roc)) {
+                # Store AUC results
+                auc_df <- do.call(rbind, auc_results)
+                rownames(auc_df) <- NULL
+
+                # Create a lazy plotting function; user calls results_index$roc_plot()
+                roc_plot <- function() {
                     colors <- rainbow(length(roc_objects))
 
                     for (i in seq_along(roc_objects)) {
@@ -234,7 +239,6 @@ SE_index <- function(SE,
                         }
                     }
 
-                    # Add legend
                     legend(
                         "bottomright",
                         legend = names(roc_objects),
@@ -243,14 +247,7 @@ SE_index <- function(SE,
                         cex = 0.7,
                         title = "Comparison"
                     )
-
-                    # Store plot snapshot
-                    roc_plot <- recordPlot()
                 }
-
-                # Store AUC results (independent of whether we plotted)
-                auc_df <- do.call(rbind, auc_results)
-                rownames(auc_df) <- NULL
             }
         }
     }
