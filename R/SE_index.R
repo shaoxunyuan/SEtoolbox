@@ -52,6 +52,8 @@
 #' @importFrom dplyr group_by summarise n rename filter left_join bind_rows
 #'   mutate ungroup
 #' @importFrom tibble remove_rownames rownames_to_column
+#' @import ggplot2
+#' @import plotROC
 #' @export
 SE_index <- function(SE,
                      DEfeature,

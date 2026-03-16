@@ -16,6 +16,7 @@
 #' @importFrom pROC roc ci.auc
 #' @importFrom grDevices rainbow
 #' @importFrom stats glm binomial predict as.formula
+#' @import ggplot2
 #' @import plotROC
 #' @export
 SE_ROCplot <- function(
@@ -146,7 +147,7 @@ SE_ROCplot <- function(
   colors <- rainbow(length(unique(plot_df$comparison)))
 
   roc_plot <- ggplot(plot_df, aes(d = d, m = m, colour = comparison)) +
-    geom_roc(size = 1) +
+    plotROC::geom_roc(size = 1) +
     scale_colour_manual(values = colors) +
     ggtitle("ROC Curves") +
     theme_classic()
