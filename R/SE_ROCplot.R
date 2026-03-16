@@ -13,9 +13,10 @@
 #'
 #' @return 返回列表，包含 AUC 结果表格和 ROC 曲线对象列表。
 #'
-#' @importFrom pROC roc plot.roc ci.auc
+#' @importFrom pROC roc ci.auc
 #' @importFrom grDevices rainbow
 #' @importFrom stats glm binomial predict as.formula
+#' @import plotROC
 #' @export
 SE_ROCplot <- function(
   SE,
@@ -83,9 +84,10 @@ SE_ROCplot <- function(
     }
   }
 
-  # 为每个分组对计算 AUC
+  # 为每个分组对计算 AUC，并准备绘图数据
   results_list <- list()
   roc_objects <- list()
+  plot_dfs <- list()
 
   for (pair in compare_pairs) {
     # 筛选两个分组的数据
@@ -100,7 +102,7 @@ SE_ROCplot <- function(
     # 获取预测概率
     subset_data$score <- predict(model, type = "response")
 
-    # 计算 ROC
+    # 计算 ROC（用于 AUC 和 CI）
     roc_curve <- roc(
       response = subset_data$group,
       predictor = subset_data$score,
@@ -122,6 +124,14 @@ SE_ROCplot <- function(
       stringsAsFactors = FALSE
     )
     roc_objects[[comparison_name]] <- roc_curve
+
+    # 为 plotROC 准备数据（d 为 0/1 标签，m 为预测分数）
+    plot_dfs[[comparison_name]] <- data.frame(
+      d = subset_data$group,
+      m = subset_data$score,
+      comparison = comparison_name,
+      stringsAsFactors = FALSE
+    )
   }
 
   # 合并结果
@@ -131,43 +141,21 @@ SE_ROCplot <- function(
   # 格式化结果表格
   auc_results <- format_numeric_cols(auc_results, digits = 2)
 
-  # 绘制 ROC 曲线（所有比较放在一张图上）
-  colors <- rainbow(length(roc_objects))
+  # 使用 plotROC 生成 ggplot ROC 图
+  plot_df <- do.call(rbind, plot_dfs)
+  colors <- rainbow(length(unique(plot_df$comparison)))
 
-  for (i in seq_along(roc_objects)) {
-    if (i == 1) {
-      plot.roc(
-        roc_objects[[i]],
-        main = "ROC Curves",
-        col = colors[i],
-        lwd = 2,
-        grid = TRUE
-      )
-    } else {
-      plot.roc(roc_objects[[i]], add = TRUE, col = colors[i], lwd = 2)
-    }
-  }
+  roc_plot <- ggplot(plot_df, aes(d = d, m = m, colour = comparison)) +
+    geom_roc(size = 1) +
+    scale_colour_manual(values = colors) +
+    ggtitle("ROC Curves") +
+    theme_classic()
 
-  # 添加图例：显示比较组名 + AUC，放在左下角避免被裁切
-  legend_labels <- paste0(
-    auc_results$comparison,
-    " (AUC = ",
-    round(auc_results$auc, 3),
-    ")"
-  )
-  legend(
-    "bottomleft",
-    legend = legend_labels,
-    col = colors,
-    lwd = 2,
-    cex = 0.8,
-    bty = "n",
-    inset = 0.02,
-    xjust = 0.5
-  )
+  print(roc_plot)
 
   return(list(
     AUC_results = auc_results,
-    ROC_objects = roc_objects
+    ROC_objects = roc_objects,
+    ROC_plot = roc_plot
   ))
 }

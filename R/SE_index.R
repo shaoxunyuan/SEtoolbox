@@ -47,7 +47,7 @@
 #' x$auc_df           # AUC results table
 #' x$data             # detailed statistics by group pair
 #'
-#' @importFrom pROC roc plot.roc ci.auc
+#' @importFrom pROC roc ci.auc
 #' @importFrom grDevices rainbow
 #' @importFrom dplyr group_by summarise n rename filter left_join bind_rows
 #'   mutate ungroup
@@ -214,40 +214,28 @@ SE_index <- function(SE,
                 )
             }
 
-            # Plot ROC curves (similar to R_boxplot style)
+            # 使用 plotROC 绘制 ROC 曲线
             if (length(roc_objects) > 0) {
-                colors <- rainbow(length(roc_objects))
+                plot_df <- dplyr::bind_rows(lapply(names(roc_objects), function(nm) {
+                    r <- roc_objects[[nm]]
+                    data.frame(
+                        d = r$response,
+                        m = r$predictor,
+                        comparison = nm,
+                        stringsAsFactors = FALSE
+                    )
+                }))
 
-                for (i in seq_along(roc_objects)) {
-                    if (i == 1) {
-                        pROC::plot.roc(
-                            roc_objects[[i]],
-                            main = paste("ROC Curves -", g_col),
-                            col = colors[i],
-                            lwd = 2,
-                            grid = TRUE
-                        )
-                    } else {
-                        pROC::plot.roc(roc_objects[[i]], add = TRUE, col = colors[i], lwd = 2)
-                    }
-                }
+                colors <- rainbow(length(unique(plot_df$comparison)))
 
-                legend_labels <- vapply(names(roc_objects), function(nm) {
-                    a <- auc_results[[nm]]
-                    paste0(nm, " (AUC = ", round(a$auc, 3), ")")
-                }, character(1))
-                legend(
-                    "bottomleft",
-                    legend = legend_labels,
-                    col = colors,
-                    lwd = 2,
-                    cex = 0.8,
-                    bty = "n",
-                    inset = 0.02,
-                    xjust = 0.5
-                )
+                roc_plot <- ggplot(plot_df, aes(d = d, m = m, colour = comparison)) +
+                    plotROC::geom_roc(size = 1) +
+                    scale_colour_manual(values = colors) +
+                    ggtitle(paste("ROC Curves -", g_col)) +
+                    theme_classic()
 
-                roc_plot <- recordPlot()
+                print(roc_plot)
+
                 auc_df <- do.call(rbind, auc_results)
                 rownames(auc_df) <- NULL
             }
