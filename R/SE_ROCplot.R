@@ -148,14 +148,21 @@ SE_ROCplot <- function(
     }
   }
 
-  # 添加图例
+  # 添加图例：显示比较组名 + AUC，放在左下角避免被裁切
+  legend_labels <- paste0(
+    auc_results$comparison,
+    " (AUC = ",
+    round(auc_results$auc, 3),
+    ")"
+  )
   legend(
-    "bottomright",
-    legend = names(roc_objects),
+    "bottomleft",
+    legend = legend_labels,
     col = colors,
     lwd = 2,
-    cex = 0.7,
-    title = "Comparison"
+    cex = 0.8,
+    title = "Comparison",
+    inset = 0.02
   )
 
   return(list(

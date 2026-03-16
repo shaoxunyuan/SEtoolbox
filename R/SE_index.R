@@ -232,13 +232,18 @@ SE_index <- function(SE,
                     }
                 }
 
+                legend_labels <- vapply(names(roc_objects), function(nm) {
+                    a <- auc_results[[nm]]
+                    paste0(nm, " (AUC = ", round(a$auc, 3), ")")
+                }, character(1))
                 legend(
-                    "bottomright",
-                    legend = names(roc_objects),
+                    "bottomleft",
+                    legend = legend_labels,
                     col = colors,
                     lwd = 2,
-                    cex = 0.7,
-                    title = "Comparison"
+                    cex = 0.8,
+                    title = "Comparison",
+                    inset = 0.02
                 )
 
                 roc_plot <- recordPlot()
