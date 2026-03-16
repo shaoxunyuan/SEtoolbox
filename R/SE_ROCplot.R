@@ -161,8 +161,9 @@ SE_ROCplot <- function(
     col = colors,
     lwd = 2,
     cex = 0.8,
-    title = "Comparison",
-    inset = 0.02
+    bty = "n",
+    inset = 0.02,
+    xjust = 0.5
   )
 
   return(list(
