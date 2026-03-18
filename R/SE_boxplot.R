@@ -102,6 +102,27 @@ SE_boxplot <- function(SE,
                      left_join(sample_info %>% rownames_to_column(var = "sample"), by = "sample") %>%  
                      mutate(group = .data[[group_colname]])
 
+    # 计算每个 feature 在每个 group 中的非零表达样本量，并用于横坐标标签（如 HC(2)）
+    group_levels <- unique(exp_data_long$group)
+    group_counts_per_feature <- exp_data_long %>%
+        distinct(feature, group, sample) %>%
+        group_by(feature, group) %>%
+        summarise(n_expr = n(), .groups = "drop") %>%
+        mutate(
+            group = factor(group, levels = group_levels),
+            group_label = paste0(as.character(group), "(", n_expr, ")")
+        ) %>%
+        arrange(feature, group)
+
+    label_levels <- group_counts_per_feature %>%
+        mutate(group_order = as.integer(group)) %>%
+        arrange(feature, group_order) %>%
+        pull(group_label)
+
+    exp_data_long <- exp_data_long %>%
+        left_join(group_counts_per_feature %>% select(feature, group, group_label), by = c("feature", "group")) %>%
+        mutate(group_label = factor(group_label, levels = unique(label_levels)))
+
     MakeSigMarker <- function(onedata) {
         if (n_distinct(onedata$group) < 2) {
             warning("Only one group found. Skipping analysis.")
@@ -162,6 +183,10 @@ SE_boxplot <- function(SE,
         dfout_summary <- rbind(dfout_summary, out)
     }
     dfout_summary <- dfout_summary[!is.na(dfout_summary$label), , drop = FALSE]
+    if (nrow(dfout_summary) > 0) {
+        dfout_summary <- dfout_summary %>%
+            left_join(group_counts_per_feature %>% select(feature, group, group_label), by = c("feature", "group"))
+    }
 
     # 无任何显著性标记时提示
     features_all <- unique(exp_data_long$feature)
@@ -184,10 +209,10 @@ SE_boxplot <- function(SE,
         }
     }
 
-    plot <- ggplot(exp_data_long, aes(x = group, y = express, fill = group)) +
+    plot <- ggplot(exp_data_long, aes(x = group_label, y = express, fill = group)) +
             geom_boxplot(width = 0.5, alpha = 0.6, outlier.shape = NA) +
             geom_point(position = position_identity(), alpha = 0.3, size = 1.2) +
-            geom_text(data = dfout_summary, aes(x = group, y = y_position, label = label), size = 5, inherit.aes = FALSE) +
+            geom_text(data = dfout_summary, aes(x = group_label, y = y_position, label = label), size = 5, inherit.aes = FALSE) +
             facet_row(~ feature, scales = "free", space = "free") +
             theme_minimal() +
             theme(
