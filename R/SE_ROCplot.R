@@ -10,6 +10,7 @@
 #' @param groupcolname 分组列名，指定 colData(SE) 中用于分组的列，默认 "group"。
 #' @param setcompare 可选。分组比较列表。如果不指定（NULL），则自动计算所有分组的两两组合；
 #'   如果指定，如 list(c("HC", "LTB"), c("HC", "ATB"))，则只比较指定的分组对。
+#' @param show_plot 逻辑值。是否在函数内部立即显示 ROC 图。默认 FALSE（仅返回图对象）。
 #'
 #' @return 返回列表，包含 AUC 结果表格和 ROC 曲线对象列表。
 #'
@@ -24,7 +25,8 @@ SE_ROCplot <- function(
   assayname = "TPM",
   features,
   group_colname = "group",
-  setcompare = NULL
+  setcompare = NULL,
+  show_plot = FALSE
 ) {
   # 参数检查
   if (!is.character(features) || length(features) == 0) {
@@ -175,7 +177,9 @@ SE_ROCplot <- function(
       panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.8)
     )
 
-  print(roc_plot)
+  if (isTRUE(show_plot)) {
+    print(roc_plot)
+  }
 
   return(list(
     AUC_results = auc_results,
