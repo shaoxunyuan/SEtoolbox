@@ -183,10 +183,9 @@ SE_boxplot <- function(SE,
         dfout_summary <- rbind(dfout_summary, out)
     }
     dfout_summary <- dfout_summary[!is.na(dfout_summary$label), , drop = FALSE]
-    if (nrow(dfout_summary) > 0) {
-        dfout_summary <- dfout_summary %>%
-            left_join(group_counts_per_feature %>% select(feature, group, group_label), by = c("feature", "group"))
-    }
+    # 始终 left_join，确保 dfout_summary 有 group_label（空时也需有此列，否则 geom_text 报错）
+    dfout_summary <- dfout_summary %>%
+        left_join(group_counts_per_feature %>% select(feature, group, group_label), by = c("feature", "group"))
 
     # 无任何显著性标记时提示
     features_all <- unique(exp_data_long$feature)
