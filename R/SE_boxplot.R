@@ -103,7 +103,12 @@ SE_boxplot <- function(SE,
                      mutate(group = .data[[group_colname]])
 
     # 计算每个 feature 在每个 group 中的非零表达样本量，并用于横坐标标签（如 HC(2)）
-    group_levels <- unique(exp_data_long$group)
+    # 优先使用 colData 中 group 列的 factor levels，以保持用户指定的分组顺序
+    group_levels <- if (is.factor(sample_info[[group_colname]])) {
+        levels(sample_info[[group_colname]])
+    } else {
+        unique(exp_data_long$group)
+    }
     group_counts_per_feature <- exp_data_long %>%
         distinct(feature, group, sample) %>%
         group_by(feature, group) %>%
@@ -114,9 +119,10 @@ SE_boxplot <- function(SE,
         ) %>%
         arrange(feature, group)
 
+    # 按 group 顺序排列 label_levels，使各 facet 的 X 轴分组顺序一致（HC, LTB, ATB, PNEU, Cancer）
     label_levels <- group_counts_per_feature %>%
         mutate(group_order = as.integer(group)) %>%
-        arrange(feature, group_order) %>%
+        arrange(group_order, feature) %>%
         pull(group_label)
 
     exp_data_long <- exp_data_long %>%
