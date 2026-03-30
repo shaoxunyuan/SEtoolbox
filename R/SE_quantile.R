@@ -20,12 +20,12 @@ SE_quantile <- function(se, assayname = "TPM", reference = NULL) {
   if (!is.null(reference)) { 
     if (!is.numeric(reference)) stop("reference must be a numeric vector") 
     if (length(reference) != n_features) stop("reference length must equal nrow(se)") 
-    rank_mean <- reference 
+    rank_mean <- as.vector(reference) 
   } 
   
   if (ncol(mat) == 1) { 
     qn_mat <- mat 
-    if (is.null(reference)) rank_mean <- sort(mat[, 1]) 
+    if (is.null(reference)) rank_mean <- as.vector(sort(mat[, 1])) 
     assays(se)[[paste0(assayname, "_quantile")]] <- qn_mat 
     metadata(se)$qn_rank_mean <- rank_mean 
     return(se) 
@@ -34,7 +34,7 @@ SE_quantile <- function(se, assayname = "TPM", reference = NULL) {
   if (is.null(reference)) { 
     sorted_list <- lapply(seq_len(ncol(mat)), function(i) sort(mat[, i])) 
     sorted_mat <- do.call(cbind, sorted_list) 
-    rank_mean <- rowMeans(sorted_mat, na.rm = TRUE) 
+    rank_mean <- as.vector(rowMeans(sorted_mat, na.rm = TRUE)) 
   } 
   
   rank_mat <- apply(mat, 2, function(x) rank(x, ties.method = "first")) 
